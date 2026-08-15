@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>윤하의 스마트 시간표 (반응형 최종본)</title>
+    <title>윤하의 스마트 시간표 (동기화 기능 추가)</title>
     <style>
         /* =========================================================
            공통 및 기본 리셋 설정
@@ -18,6 +18,7 @@
             --text-sub: #8E8E93;
             --border-color: #E5E5EA;
             --danger: #FF3B30;
+            --success: #34C759;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -32,7 +33,7 @@
         button { cursor: pointer; outline: none; font-family: inherit; }
 
         /* =========================================================
-           데스크톱 뷰 (PC/태블릿) 스타일 (화면 너비 769px 이상)
+           데스크톱 뷰 (PC/태블릿) 스타일
         ========================================================= */
         #desktop-view { display: none; padding: 30px 20px; }
         
@@ -43,58 +44,56 @@
         
         .dk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
         .dk-header h1 { margin: 0; font-size: 26px; color: #333; }
-        .dk-controls { display: flex; gap: 15px; align-items: center; }
-        .dk-info { font-size: 14px; color: #666; font-weight: bold; background: #eef2f3; padding: 8px 16px; border-radius: 20px; }
+        .dk-controls { display: flex; gap: 10px; align-items: center; }
+        
+        /* 추가된 동기화 버튼 스타일 (PC) */
+        .dk-btn-sync { padding: 10px 15px; background-color: #eef2f3; color: #444; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; transition: 0.2s; }
+        .dk-btn-sync:hover { background-color: #dde4e6; }
+        
         .dk-btn-add { padding: 10px 20px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; transition: 0.2s; }
         .dk-btn-add:hover { background-color: var(--primary-hover); }
 
         .dk-timetable { display: flex; background: #fff; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; padding-top: 15px; }
-        
         .dk-time-axis { width: 75px; flex-shrink: 0; background: #fafafa; border-right: 1px solid #ddd; position: relative; }
         .dk-time-label { position: relative; border-bottom: 1px solid transparent; }
         .dk-time-label span { position: absolute; top: 0; right: 10px; transform: translateY(-50%); background: white; padding: 2px 8px; border-radius: 12px; border: 1px solid #ddd; font-size: 12px; color: #555; z-index: 10; user-select: none; }
-
         .dk-days-wrap { flex: 1; display: flex; flex-direction: column; }
         .dk-days-header { display: flex; height: 45px; border-bottom: 1px solid #ddd; background: #f8f9fa; }
         .dk-day-title { flex: 1; text-align: center; font-weight: bold; line-height: 45px; color: #444; border-right: 1px solid #eee; }
         .dk-day-title:last-child { border-right: none; }
-        
         .dk-body-container { position: relative; flex: 1; }
         .dk-bg-rows { width: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
         .dk-bg-row { box-sizing: border-box; border-top: 1px solid #eee; position: relative; }
         .dk-half-line { position: absolute; top: 50%; width: 100%; border-top: 1px dashed #f0f0f0; }
-
         .dk-fg-cols { display: flex; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 2; }
         .dk-day-col { flex: 1; border-right: 1px solid #eee; position: relative; }
         .dk-day-col:last-child { border-right: none; }
-
-        .dk-event { 
-            position: absolute; left: 4%; width: 92%; border-radius: 8px; padding: 8px; box-sizing: border-box;
-            font-size: 13px; transition: transform 0.2s, box-shadow 0.2s;
-            overflow: hidden; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 5; cursor: pointer;
-        }
+        .dk-event { position: absolute; left: 4%; width: 92%; border-radius: 8px; padding: 8px; box-sizing: border-box; font-size: 13px; transition: transform 0.2s, box-shadow 0.2s; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 5; cursor: pointer; }
         .dk-event:hover { transform: translateY(-2px); z-index: 15; box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
         .dk-ev-time { font-size: 11px; font-weight: 800; margin-bottom: 4px; opacity: 0.9; }
         .dk-ev-name { font-weight: 700; color: #222; line-height: 1.3; word-break: keep-all; }
         .dk-ev-memo { margin-top: 4px; font-size: 11px; color: #555; background: rgba(255,255,255,0.7); padding: 3px 6px; border-radius: 4px; display: inline-block; }
-        
         .dk-delete-btn { position: absolute; top: 6px; right: 6px; background: rgba(255,255,255,0.9); border: 1px solid #ddd; border-radius: 50%; color: #555; width: 24px; height: 24px; display: none; text-align: center; line-height: 22px; font-size: 12px; }
         .dk-event:hover .dk-delete-btn { display: block; }
         .dk-delete-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
         /* =========================================================
-           모바일 뷰 (아이폰/안드로이드) 스타일 (화면 너비 768px 이하)
+           모바일 뷰 (아이폰/안드로이드) 스타일
         ========================================================= */
         #mobile-view { display: none; flex-direction: column; height: 100vh; overflow: hidden; background-color: var(--bg-ios); }
         
         .mb-header { background-color: var(--card-bg); padding: env(safe-area-inset-top, 20px) 20px 15px 20px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); z-index: 10; }
+        .mb-header-top { display: flex; justify-content: space-between; align-items: center; }
         .mb-header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
         .mb-header p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); }
+        
+        /* 추가된 동기화 버튼 스타일 (모바일) */
+        .mb-sync-group { display: flex; gap: 8px; }
+        .mb-btn-sync { background: var(--bg-ios); border: none; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-weight: 600; color: #555; }
+        .mb-btn-sync:active { background: #e0e0e0; }
 
         .mb-tabs { display: flex; background: var(--card-bg); padding: 10px 15px; gap: 8px; overflow-x: auto; border-bottom: 1px solid var(--border-color); -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .mb-tabs::-webkit-scrollbar { display: none; }
-        
-        /* 토요일 탭 찌그러짐 방지 */
         .mb-tab-btn { flex: 1; flex-shrink: 0; min-width: 45px; height: 36px; border: none; border-radius: 18px; background-color: transparent; color: var(--text-sub); font-size: 15px; font-weight: 600; transition: 0.2s ease; }
         .mb-tab-btn.active { background-color: var(--primary); color: white; box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3); }
 
@@ -115,7 +114,7 @@
         .fab:active { transform: scale(0.9); }
 
         /* =========================================================
-           통합 모달 (PC: 중앙 팝업 / Mobile: 바텀 시트)
+           통합 모달 (일정 추가/수정 & 데이터 동기화)
         ========================================================= */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -135,7 +134,7 @@
         .modal-header h2 { margin: 0; font-size: 20px; color: #333; }
         .btn-close { background: none; border: none; font-size: 24px; color: #999; padding: 0; line-height: 1; }
 
-        /* 입력 폼 스타일 */
+        /* 입력 폼 공통 스타일 */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 13px; color: #555; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; font-family: inherit; background: #fafafa; }
@@ -150,12 +149,11 @@
         .btn-submit:hover { background-color: var(--primary-hover); }
         .btn-delete-mobile { width: 100%; padding: 15px; background: transparent; color: var(--danger); border: 1px solid var(--danger); border-radius: 8px; font-size: 15px; font-weight: bold; margin-top: 10px; display: none; }
 
-        /* --- 반응형 분기 --- */
+        /* 반응형 분기 */
         @media (min-width: 769px) {
             body { background-color: var(--bg-light); }
             #desktop-view { display: block; }
             #mobile-view { display: none; }
-            
             .modal-content { max-width: 400px; border-radius: 16px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.9); opacity: 0; }
             .modal-overlay.show .modal-content { transform: scale(1); opacity: 1; }
             .btn-close:hover { color: var(--danger); }
@@ -165,7 +163,6 @@
             body { background-color: var(--bg-ios); }
             #desktop-view { display: none; }
             #mobile-view { display: flex; }
-            
             .modal-overlay { align-items: flex-end; }
             .modal-content { max-width: none; border-radius: 24px 24px 0 0; padding: 25px 20px env(safe-area-inset-bottom, 30px) 20px; transform: translateY(100%); }
             .modal-overlay.show .modal-content { transform: translateY(0); }
@@ -184,8 +181,10 @@
             <div class="dk-header">
                 <h1>📅 윤하의 스마트 학원 시간표</h1>
                 <div class="dk-controls">
-                    <span class="dk-info">💡 일정을 클릭하면 메모 수정 가능!</span>
-                    <button class="dk-btn-add" onclick="openModal()">+ 새 일정 추가</button>
+                    <!-- 동기화 버튼 -->
+                    <button class="dk-btn-sync" onclick="openDataModal('import')">📥 데이터 가져오기</button>
+                    <button class="dk-btn-sync" onclick="openDataModal('export')">📤 내보내기</button>
+                    <button class="dk-btn-add" onclick="openEventModal()">+ 새 일정 추가</button>
                 </div>
             </div>
 
@@ -215,7 +214,13 @@
     =========================================== -->
     <div id="mobile-view">
         <header class="mb-header">
-            <h1>📅 윤하의 시간표</h1>
+            <div class="mb-header-top">
+                <h1>📅 윤하의 시간표</h1>
+                <div class="mb-sync-group">
+                    <button class="mb-btn-sync" onclick="openDataModal('import')">📥 가져오기</button>
+                    <button class="mb-btn-sync" onclick="openDataModal('export')">📤 내보내기</button>
+                </div>
+            </div>
             <p>오늘의 일정을 확인하고 관리해보세요!</p>
         </header>
 
@@ -233,17 +238,17 @@
             <div class="mb-events-layer" id="mbEventsLayer"></div>
         </main>
 
-        <button class="fab" onclick="openModal()">+</button>
+        <button class="fab" onclick="openEventModal()">+</button>
     </div>
 
     <!-- ==========================================
-         [3] 통합 입력 모달 (PC: 팝업 / Mobile: 바텀시트)
+         [3] 모달 (A. 일정 추가/수정용)
     =========================================== -->
-    <div class="modal-overlay" id="unifiedModal" onclick="handleOverlayClick(event)">
+    <div class="modal-overlay" id="eventModal" onclick="handleEventOverlayClick(event)">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">새 일정 추가</h2>
-                <button class="btn-close" onclick="closeModal()">✕</button>
+                <h2 id="eventModalTitle">새 일정 추가</h2>
+                <button class="btn-close" onclick="closeEventModal()">✕</button>
             </div>
             
             <div class="form-group">
@@ -275,8 +280,27 @@
                 <input type="color" id="inpColor" class="form-control" value="#007AFF">
             </div>
             
-            <button class="btn-submit" id="btnSubmit" onclick="saveEvent()">저장 완료</button>
-            <button class="btn-delete-mobile" id="btnDeleteMobile" onclick="deleteEventFromModal()">일정 삭제하기</button>
+            <button class="btn-submit" id="btnEventSubmit" onclick="saveEvent()">저장 완료</button>
+            <button class="btn-delete-mobile" id="btnEventDelete" onclick="deleteEventFromModal()">일정 삭제하기</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         [4] 모달 (B. 데이터 동기화용)
+    =========================================== -->
+    <div class="modal-overlay" id="dataModal" onclick="handleDataOverlayClick(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="dataModalTitle">데이터 동기화</h2>
+                <button class="btn-close" onclick="closeDataModal()">✕</button>
+            </div>
+            
+            <div class="form-group">
+                <label id="dataModalDesc">아래 코드를 복사하거나 붙여넣으세요.</label>
+                <textarea id="dataTextarea" class="form-control" style="font-family: monospace; font-size: 13px;" rows="8"></textarea>
+            </div>
+            
+            <button class="btn-submit" id="btnDataSubmit" onclick="processData()">실행하기</button>
         </div>
     </div>
 
@@ -292,6 +316,7 @@
         let events = [];
         let editingId = null;       
         let currentMobileDay = '월'; 
+        let dataSyncMode = ''; // 'export' or 'import'
 
         const defaultEvents = [
             { id: 1, day: '월', start: '14:55', end: '16:45', name: '코스모스 영어학원', color: '#007AFF', memo: '단어장 챙기기' },
@@ -324,10 +349,10 @@
             setupMobileTabs();
             renderAll();
             
-            // 로딩 후 해당 요일의 "가장 첫 번째 일정"으로 스크롤 이동!
             setTimeout(scrollToFirstEvent, 150);
         };
 
+        // 데이터 Load / Save
         function loadData() {
             try {
                 const saved = localStorage.getItem('younha_hybrid_timetable');
@@ -347,7 +372,7 @@
             renderMobileEvents();
         }
 
-        // --- 데스크톱 로직 ---
+        /* --- 데스크톱 화면 렌더링 --- */
         function initDesktopBackground() {
             const axis = document.getElementById('dkTimeAxis');
             const bgRows = document.getElementById('dkBgRows');
@@ -379,7 +404,7 @@
                 div.style.height = `${height}px`;
                 div.style.backgroundColor = getRgba(ev.color, 0.15);
                 div.style.borderLeft = `5px solid ${ev.color}`;
-                div.onclick = () => openModal(ev.id);
+                div.onclick = () => openEventModal(ev.id);
 
                 let memoHtml = (ev.memo && height >= 50) ? `<div class="dk-ev-memo">📝 ${ev.memo}</div>` : '';
                 let nameStyle = height < 35 ? 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' : '';
@@ -401,7 +426,7 @@
             }
         }
 
-        // --- 모바일 로직 ---
+        /* --- 모바일 화면 렌더링 --- */
         function initMobileBackground() {
             const bg = document.getElementById('mbTimelineBg');
             let html = '';
@@ -423,45 +448,28 @@
                     tab.classList.add('active');
                     currentMobileDay = tab.dataset.day;
                     renderMobileEvents();
-                    
-                    // 요일 탭 클릭 시 해당 요일의 첫 일정으로 스크롤!
                     setTimeout(scrollToFirstEvent, 50); 
                 };
             });
         }
 
-        // 🌟 수정된 부분: "현재 시간"이 아닌 해당 요일의 "가장 빠른 일정"으로 스크롤
         function scrollToFirstEvent() {
             const container = document.getElementById('mbTimeline');
             if (!container) return;
-            
             const dayEvents = events.filter(ev => ev.day === currentMobileDay);
             let scrollY = 0;
-
             if (dayEvents.length > 0) {
-                // 시작 시간 기준으로 오름차순 정렬하여 가장 첫 번째 일정 찾기
                 dayEvents.sort((a, b) => a.start.localeCompare(b.start));
                 const firstEvent = dayEvents[0];
                 let [h, m] = firstEvent.start.split(':').map(Number);
-                
                 if (h >= START_HOUR) {
-                    // 첫 일정의 Y좌표 계산
                     scrollY = (h - START_HOUR) * MB_HOUR_HEIGHT + (m / 60) * MB_HOUR_HEIGHT;
-                    // 일정이 살짝 아래에 보이도록 여백(30px)을 빼줌
                     scrollY -= 30; 
                 }
-            } else {
-                // 일정이 아예 없으면 화면 맨 위로
-                scrollY = 0;
             }
-
             if(scrollY < 0) scrollY = 0;
-
-            try {
-                container.scrollTo({ top: scrollY, behavior: 'smooth' });
-            } catch (e) {
-                container.scrollTop = scrollY;
-            }
+            try { container.scrollTo({ top: scrollY, behavior: 'smooth' }); } 
+            catch (e) { container.scrollTop = scrollY; }
         }
 
         function getMobileY(timeStr) {
@@ -483,7 +491,7 @@
                 card.style.height = height + 'px';
                 card.style.backgroundColor = getRgba(ev.color, 0.12);
                 card.style.borderLeft = `4px solid ${ev.color}`;
-                card.onclick = () => openModal(ev.id);
+                card.onclick = () => openEventModal(ev.id);
 
                 let memoHtml = (ev.memo && height >= 60) ? `<div class="mb-ev-memo" style="margin-top:auto;">✏️ ${ev.memo}</div>` : '';
                 card.innerHTML = `
@@ -495,14 +503,16 @@
             });
         }
 
-        // --- 통합 모달 제어 ---
-        const modal = document.getElementById('unifiedModal');
+        /* ==============================================
+           일정 추가/수정 모달 제어
+        ============================================== */
+        const eventModal = document.getElementById('eventModal');
 
-        function openModal(id = null) {
+        function openEventModal(id = null) {
             editingId = id;
-            const title = document.getElementById('modalTitle');
-            const btnSubmit = document.getElementById('btnSubmit');
-            const btnDelMobile = document.getElementById('btnDeleteMobile');
+            const title = document.getElementById('eventModalTitle');
+            const btnSubmit = document.getElementById('btnEventSubmit');
+            const btnDelMobile = document.getElementById('btnEventDelete');
             const isMobileView = window.innerWidth <= 768;
 
             if (id !== null) {
@@ -529,17 +539,11 @@
                 btnSubmit.innerText = '등록 완료';
                 btnDelMobile.style.display = 'none';
             }
-            modal.classList.add('show');
+            eventModal.classList.add('show');
         }
 
-        function closeModal() {
-            modal.classList.remove('show');
-            editingId = null;
-        }
-
-        function handleOverlayClick(e) {
-            if(e.target === modal) closeModal();
-        }
+        function closeEventModal() { eventModal.classList.remove('show'); editingId = null; }
+        function handleEventOverlayClick(e) { if(e.target === eventModal) closeEventModal(); }
 
         function saveEvent() {
             const day = document.getElementById('inpDay').value;
@@ -565,22 +569,102 @@
                 document.querySelector(`.mb-tab-btn[data-day="${day}"]`).click();
             } else {
                 renderAll();
-                setTimeout(scrollToFirstEvent, 50); // 저장 후에도 첫 일정으로 정렬되게 추가
+                setTimeout(scrollToFirstEvent, 50); 
             }
-            closeModal();
+            closeEventModal();
         }
 
         function deleteEventFromModal() {
             if(!confirm('이 일정을 삭제하시겠습니까?')) return;
             events = events.filter(e => e.id !== editingId);
-            saveData();
-            renderAll();
-            closeModal();
+            saveData(); renderAll(); closeEventModal();
         }
 
+        /* ==============================================
+           데이터 동기화 (내보내기/가져오기) 모달 제어
+        ============================================== */
+        const dataModal = document.getElementById('dataModal');
+
+        function openDataModal(mode) {
+            dataSyncMode = mode;
+            const title = document.getElementById('dataModalTitle');
+            const desc = document.getElementById('dataModalDesc');
+            const textarea = document.getElementById('dataTextarea');
+            const btnSubmit = document.getElementById('btnDataSubmit');
+
+            textarea.value = ''; // 초기화
+            textarea.style.border = "1px solid #ccc";
+
+            if (mode === 'export') {
+                title.innerText = '📤 시간표 내보내기';
+                desc.innerText = '아래 코드를 복사해서 다른 기기의 [가져오기] 창에 붙여넣으세요.';
+                textarea.value = JSON.stringify(events); // 데이터를 코드로 변환
+                textarea.readOnly = true;
+                btnSubmit.innerText = '코드 복사하기';
+                btnSubmit.style.backgroundColor = 'var(--primary)';
+            } else if (mode === 'import') {
+                title.innerText = '📥 시간표 가져오기';
+                desc.innerText = '다른 기기에서 복사한 코드를 아래에 붙여넣으세요. (기존 일정은 덮어씌워집니다)';
+                textarea.readOnly = false;
+                btnSubmit.innerText = '데이터 적용하기';
+                btnSubmit.style.backgroundColor = 'var(--success)';
+            }
+            dataModal.classList.add('show');
+        }
+
+        function closeDataModal() { dataModal.classList.remove('show'); }
+        function handleDataOverlayClick(e) { if(e.target === dataModal) closeDataModal(); }
+
+        function processData() {
+            const textarea = document.getElementById('dataTextarea');
+            
+            if (dataSyncMode === 'export') {
+                // 클립보드에 복사
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(textarea.value).then(() => {
+                        alert('✅ 코드가 복사되었습니다!\n카카오톡 나에게 쓰기 등으로 다른 기기에 보내주세요.');
+                        closeDataModal();
+                    }).catch(() => fallbackCopy(textarea));
+                } else {
+                    fallbackCopy(textarea);
+                }
+            } else if (dataSyncMode === 'import') {
+                // 데이터 적용
+                const inputData = textarea.value.trim();
+                if (!inputData) return alert('코드를 먼저 붙여넣어 주세요!');
+                
+                try {
+                    const parsed = JSON.parse(inputData);
+                    if (Array.isArray(parsed)) {
+                        events = parsed;
+                        saveData();
+                        renderAll();
+                        alert('🎉 시간표를 성공적으로 가져왔습니다!');
+                        closeDataModal();
+                        if (window.innerWidth <= 768) setTimeout(scrollToFirstEvent, 50);
+                    } else {
+                        throw new Error("Invalid Format");
+                    }
+                } catch (error) {
+                    textarea.style.border = "2px solid var(--danger)";
+                    alert('❌ 잘못된 형식의 코드입니다. 코드를 다시 한번 확인해 주세요.');
+                }
+            }
+        }
+
+        // 아이폰 사파리 등 구형 브라우저 복사 지원용 함수
+        function fallbackCopy(textarea) {
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // 모바일용
+            document.execCommand('copy');
+            alert('✅ 코드가 복사되었습니다!\n카카오톡 나에게 쓰기 등으로 다른 기기에 보내주세요.');
+            closeDataModal();
+        }
+
+        // 화면 크기 변경 시 이벤트 삭제 버튼 노출 여부 처리
         window.addEventListener('resize', () => {
             const isMobileView = window.innerWidth <= 768;
-            const btnDelMobile = document.getElementById('btnDeleteMobile');
+            const btnDelMobile = document.getElementById('btnEventDelete');
             if (editingId !== null && isMobileView) {
                 btnDelMobile.style.display = 'block';
             } else {
