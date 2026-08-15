@@ -2,454 +2,591 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>윤하의 스마트 학원 시간표 (수정판)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>윤하의 스마트 시간표 (반응형 최종본)</title>
     <style>
+        /* =========================================================
+           공통 및 기본 리셋 설정
+        ========================================================= */
+        :root {
+            --primary: #007AFF;
+            --primary-hover: #005bb5;
+            --bg-light: #f4f7f6;
+            --bg-ios: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-main: #1C1C1E;
+            --text-sub: #8E8E93;
+            --border-color: #E5E5EA;
+            --danger: #FF3B30;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body { 
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
-            background-color: #f4f7f6; 
-            margin: 0; 
-            padding: 20px; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; 
+            margin: 0; padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-main);
         }
-        .container { 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+
+        button { cursor: pointer; outline: none; font-family: inherit; }
+
+        /* =========================================================
+           데스크톱 뷰 (PC/태블릿) 스타일 (화면 너비 769px 이상)
+        ========================================================= */
+        #desktop-view { display: none; padding: 30px 20px; }
+        
+        .desktop-container {
+            max-width: 1200px; margin: 0 auto; background: white; 
+            padding: 25px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.06);
         }
         
-        /* 상단 헤더 및 버튼 영역 */
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0;
-        }
-        .header h1 { color: #333; margin: 0; font-size: 24px; }
-        .header-controls { display: flex; gap: 10px; align-items: center; }
-        .info-text { font-size: 13px; color: #666; font-weight: bold; background: #eef2f3; padding: 6px 12px; border-radius: 20px; }
-        #openModalBtn {
-            padding: 10px 20px; background-color: #2b6cb0; color: white; border: none;
-            border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s;
-        }
-        #openModalBtn:hover { background-color: #1a4a7e; }
+        .dk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
+        .dk-header h1 { margin: 0; font-size: 26px; color: #333; }
+        .dk-controls { display: flex; gap: 15px; align-items: center; }
+        .dk-info { font-size: 14px; color: #666; font-weight: bold; background: #eef2f3; padding: 8px 16px; border-radius: 20px; }
+        .dk-btn-add { padding: 10px 20px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; transition: 0.2s; }
+        .dk-btn-add:hover { background-color: var(--primary-hover); }
 
-        /* --- 시간표 전체 레이아웃 --- */
-        .timetable-wrapper {
-            display: flex;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-sizing: border-box;
-            padding-top: 15px;
+        .dk-timetable { display: flex; background: #fff; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; padding-top: 15px; }
+        
+        .dk-time-axis { width: 75px; flex-shrink: 0; background: #fafafa; border-right: 1px solid #ddd; position: relative; }
+        .dk-time-label { position: relative; border-bottom: 1px solid transparent; }
+        .dk-time-label span { position: absolute; top: 0; right: 10px; transform: translateY(-50%); background: white; padding: 2px 8px; border-radius: 12px; border: 1px solid #ddd; font-size: 12px; color: #555; z-index: 10; user-select: none; }
+
+        .dk-days-wrap { flex: 1; display: flex; flex-direction: column; }
+        .dk-days-header { display: flex; height: 45px; border-bottom: 1px solid #ddd; background: #f8f9fa; }
+        .dk-day-title { flex: 1; text-align: center; font-weight: bold; line-height: 45px; color: #444; border-right: 1px solid #eee; }
+        .dk-day-title:last-child { border-right: none; }
+        
+        .dk-body-container { position: relative; flex: 1; }
+        .dk-bg-rows { width: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        .dk-bg-row { box-sizing: border-box; border-top: 1px solid #eee; position: relative; }
+        .dk-half-line { position: absolute; top: 50%; width: 100%; border-top: 1px dashed #f0f0f0; }
+
+        .dk-fg-cols { display: flex; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 2; }
+        .dk-day-col { flex: 1; border-right: 1px solid #eee; position: relative; }
+        .dk-day-col:last-child { border-right: none; }
+
+        .dk-event { 
+            position: absolute; left: 4%; width: 92%; border-radius: 8px; padding: 8px; box-sizing: border-box;
+            font-size: 13px; transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 5; cursor: pointer;
+        }
+        .dk-event:hover { transform: translateY(-2px); z-index: 15; box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
+        .dk-ev-time { font-size: 11px; font-weight: 800; margin-bottom: 4px; opacity: 0.9; }
+        .dk-ev-name { font-weight: 700; color: #222; line-height: 1.3; word-break: keep-all; }
+        .dk-ev-memo { margin-top: 4px; font-size: 11px; color: #555; background: rgba(255,255,255,0.7); padding: 3px 6px; border-radius: 4px; display: inline-block; }
+        
+        .dk-delete-btn { position: absolute; top: 6px; right: 6px; background: rgba(255,255,255,0.9); border: 1px solid #ddd; border-radius: 50%; color: #555; width: 24px; height: 24px; display: none; text-align: center; line-height: 22px; font-size: 12px; }
+        .dk-event:hover .dk-delete-btn { display: block; }
+        .dk-delete-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* =========================================================
+           모바일 뷰 (아이폰/안드로이드) 스타일 (화면 너비 768px 이하)
+        ========================================================= */
+        #mobile-view { display: none; flex-direction: column; height: 100vh; overflow: hidden; background-color: var(--bg-ios); }
+        
+        .mb-header { background-color: var(--card-bg); padding: env(safe-area-inset-top, 20px) 20px 15px 20px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); z-index: 10; }
+        .mb-header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .mb-header p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); }
+
+        .mb-tabs { display: flex; background: var(--card-bg); padding: 10px 15px; gap: 8px; overflow-x: auto; border-bottom: 1px solid var(--border-color); -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .mb-tabs::-webkit-scrollbar { display: none; }
+        
+        /* 토요일 탭 찌그러짐 방지 */
+        .mb-tab-btn { flex: 1; flex-shrink: 0; min-width: 45px; height: 36px; border: none; border-radius: 18px; background-color: transparent; color: var(--text-sub); font-size: 15px; font-weight: 600; transition: 0.2s ease; }
+        .mb-tab-btn.active { background-color: var(--primary); color: white; box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3); }
+
+        .mb-timeline { flex: 1; overflow-y: auto; position: relative; padding-bottom: 100px; background: var(--card-bg); -webkit-overflow-scrolling: touch; }
+        .mb-timeline-bg { position: absolute; top: 0; left: 0; width: 100%; z-index: 1; }
+        .mb-time-row { height: 75px; border-bottom: 1px solid var(--border-color); display: flex; position: relative; }
+        .mb-time-label { width: 55px; flex-shrink: 0; text-align: center; padding-top: 5px; font-size: 12px; font-weight: 500; color: var(--text-sub); border-right: 1px solid var(--border-color); background: #FAFAFC; }
+        .mb-time-grid { flex: 1; position: relative; }
+
+        .mb-events-layer { position: absolute; top: 0; left: 55px; right: 0; height: 100%; z-index: 5; pointer-events: none; }
+        .mb-event { position: absolute; left: 10px; right: 15px; border-radius: 10px; padding: 10px 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); pointer-events: auto; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.1s; }
+        .mb-event:active { transform: scale(0.97); }
+        .mb-ev-time { font-size: 11px; font-weight: 800; opacity: 0.8; margin-bottom: 4px; }
+        .mb-ev-name { font-size: 15px; font-weight: 700; line-height: 1.2; word-break: keep-all; margin-bottom: 4px; }
+        .mb-ev-memo { font-size: 12px; opacity: 0.85; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 28px; background-color: var(--primary); color: white; border: none; font-size: 28px; line-height: 1; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .fab:active { transform: scale(0.9); }
+
+        /* =========================================================
+           통합 모달 (PC: 중앙 팝업 / Mobile: 바텀 시트)
+        ========================================================= */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); z-index: 1000; 
+            opacity: 0; visibility: hidden; transition: 0.3s ease; backdrop-filter: blur(3px);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: var(--card-bg); width: 100%; position: relative;
+            transition: all 0.3s cubic-bezier(0.1, 0.8, 0.2, 1);
+            display: flex; flex-direction: column;
         }
         
-        /* 왼쪽 시간 축 */
-        .time-axis {
-            width: 75px;
-            flex-shrink: 0;
-            background: #fafafa;
-            border-right: 1px solid #ddd;
-            position: relative;
-        }
-        .time-label {
-            position: relative;
-            box-sizing: border-box;
-            border-bottom: 1px solid transparent; 
-        }
-        .time-label span {
-            position: absolute;
-            top: 0; right: 10px;
-            transform: translateY(-50%);
-            background: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            font-size: 11px;
-            color: #555;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            user-select: none;
-            z-index: 10;
-        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { margin: 0; font-size: 20px; color: #333; }
+        .btn-close { background: none; border: none; font-size: 24px; color: #999; padding: 0; line-height: 1; }
 
-        /* 요일별 영역 */
-        .days-wrapper { flex: 1; display: flex; flex-direction: column; }
-        .days-header { display: flex; height: 40px; border-bottom: 1px solid #ddd; background: #f8f9fa; }
-        .day-title { flex: 1; text-align: center; font-weight: bold; line-height: 40px; color: #444; border-right: 1px solid #eee; }
-        .day-title:last-child { border-right: none; }
-        
-        .days-body-container {
-            position: relative;
-            flex: 1;
-        }
-
-        /* 가로선 (배경 격자) */
-        .bg-rows { width: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
-        .bg-row {
-            box-sizing: border-box;
-            border-top: 1px solid #eee;
-            position: relative;
-        }
-        .half-line {
-            position: absolute; top: 50%; width: 100%; border-top: 1px dashed #f0f0f0;
-        }
-
-        /* 세로선 및 이벤트 영역 (전경 격자) */
-        .fg-cols {
-            display: flex; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 2;
-        }
-        .day-col { flex: 1; border-right: 1px solid #eee; position: relative; }
-        .day-col:last-child { border-right: none; }
-
-        /* 개별 일정 블록 */
-        .event { 
-            position: absolute; left: 3%; width: 94%;
-            border-radius: 6px; padding: 6px 8px; box-sizing: border-box;
-            font-size: 12px; transition: transform 0.2s;
-            overflow: hidden; border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 5;
-            cursor: pointer;
-        }
-        .event:hover { transform: scale(1.02); z-index: 15; box-shadow: 0 5px 12px rgba(0,0,0,0.15); }
-        .event-time { font-size: 11px; opacity: 0.8; margin-bottom: 3px; font-weight: bold; }
-        .event-name { font-weight: 700; color: #222; line-height: 1.2; word-break: keep-all; }
-        .event-memo-indicator { margin-top: 3px; font-size: 10px; color: #555; display: inline-block; background: rgba(255,255,255,0.6); padding: 2px 4px; border-radius: 4px;}
-        
-        .delete-btn { 
-            position: absolute; top: 4px; right: 4px; background: rgba(255,255,255,0.9); 
-            border: 1px solid #ddd; border-radius: 50%; color: #555; cursor: pointer; 
-            font-size: 10px; width: 22px; height: 22px; display: none;
-            text-align: center; line-height: 20px; padding: 0;
-        }
-        .event:hover .delete-btn { display: block; }
-        .delete-btn:hover { color: white; background: #ff5252; border-color: #ff5252; }
-
-        /* 레이어 팝업(모달) 스타일 */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;
-            backdrop-filter: blur(3px);
-        }
-        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .modal-content h2 { margin-top: 0; margin-bottom: 20px; font-size: 20px; color: #333; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #999; cursor: pointer; border: none; background: none; }
+        /* 입력 폼 스타일 */
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #555; }
-        .modal-content input[type="text"], .modal-content input[type="time"], .modal-content select, .modal-content textarea {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box;
-            font-family: inherit;
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 13px; color: #555; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; font-family: inherit; background: #fafafa; }
+        .form-control:focus { outline: none; border-color: var(--primary); background: #fff; }
+        textarea.form-control { resize: vertical; min-height: 80px; }
+        
+        .time-wrap { display: flex; align-items: center; gap: 10px; }
+        .time-wrap span { font-weight: bold; color: #666; }
+        input[type="color"].form-control { padding: 0; height: 45px; cursor: pointer; }
+
+        .btn-submit { width: 100%; padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+        .btn-submit:hover { background-color: var(--primary-hover); }
+        .btn-delete-mobile { width: 100%; padding: 15px; background: transparent; color: var(--danger); border: 1px solid var(--danger); border-radius: 8px; font-size: 15px; font-weight: bold; margin-top: 10px; display: none; }
+
+        /* --- 반응형 분기 --- */
+        @media (min-width: 769px) {
+            body { background-color: var(--bg-light); }
+            #desktop-view { display: block; }
+            #mobile-view { display: none; }
+            
+            .modal-content { max-width: 400px; border-radius: 16px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.9); opacity: 0; }
+            .modal-overlay.show .modal-content { transform: scale(1); opacity: 1; }
+            .btn-close:hover { color: var(--danger); }
         }
-        .modal-content textarea { resize: vertical; }
-        .time-group, .color-group { display: flex; align-items: center; gap: 10px; }
-        .color-group input[type="color"] { padding: 0; width: 50px; height: 40px; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; }
-        .submit-btn { width: 100%; padding: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: bold; margin-top: 10px; transition: 0.2s; }
-        .submit-btn:hover { background-color: #45a049; }
+
+        @media (max-width: 768px) {
+            body { background-color: var(--bg-ios); }
+            #desktop-view { display: none; }
+            #mobile-view { display: flex; }
+            
+            .modal-overlay { align-items: flex-end; }
+            .modal-content { max-width: none; border-radius: 24px 24px 0 0; padding: 25px 20px env(safe-area-inset-bottom, 30px) 20px; transform: translateY(100%); }
+            .modal-overlay.show .modal-content { transform: translateY(0); }
+            .modal-header h2 { font-size: 18px; }
+            .btn-close { font-size: 15px; color: var(--primary); font-weight: bold; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📅 윤하의 스마트 학원 시간표</h1>
-            <div class="header-controls">
-                <span class="info-text">💡 일정을 클릭하면 내용/메모를 수정할 수 있어요!</span>
-                <button id="openModalBtn" onclick="openModal()">+ 새 일정 추가</button>
-            </div>
-        </div>
 
-        <div class="timetable-wrapper">
-            <!-- 시간축 -->
-            <div class="time-axis" id="timeAxis"></div>
-            
-            <div class="days-wrapper">
-                <!-- 요일 헤더 -->
-                <div class="days-header">
-                    <div class="day-title">월요일</div>
-                    <div class="day-title">화요일</div>
-                    <div class="day-title">수요일</div>
-                    <div class="day-title">목요일</div>
-                    <div class="day-title">금요일</div>
-                    <div class="day-title">토요일</div>
+    <!-- ==========================================
+         [1] 데스크톱 (PC/태블릿) 뷰
+    =========================================== -->
+    <div id="desktop-view">
+        <div class="desktop-container">
+            <div class="dk-header">
+                <h1>📅 윤하의 스마트 학원 시간표</h1>
+                <div class="dk-controls">
+                    <span class="dk-info">💡 일정을 클릭하면 메모 수정 가능!</span>
+                    <button class="dk-btn-add" onclick="openModal()">+ 새 일정 추가</button>
                 </div>
-                
-                <!-- 본문 영역 -->
-                <div class="days-body-container" id="daysBodyContainer">
-                    <!-- 배경 그리드 (가로선) -->
-                    <div class="bg-rows" id="bgRows"></div>
-                    
-                    <!-- 전경 그리드 및 일정 데이터 -->
-                    <div class="fg-cols" id="fgCols">
-                        <div class="day-col" id="col-월"></div>
-                        <div class="day-col" id="col-화"></div>
-                        <div class="day-col" id="col-수"></div>
-                        <div class="day-col" id="col-목"></div>
-                        <div class="day-col" id="col-금"></div>
-                        <div class="day-col" id="col-토"></div>
+            </div>
+
+            <div class="dk-timetable">
+                <div class="dk-time-axis" id="dkTimeAxis"></div>
+                <div class="dk-days-wrap">
+                    <div class="dk-days-header">
+                        <div class="dk-day-title">월요일</div><div class="dk-day-title">화요일</div>
+                        <div class="dk-day-title">수요일</div><div class="dk-day-title">목요일</div>
+                        <div class="dk-day-title">금요일</div><div class="dk-day-title">토요일</div>
+                    </div>
+                    <div class="dk-body-container" id="dkBodyContainer">
+                        <div class="dk-bg-rows" id="dkBgRows"></div>
+                        <div class="dk-fg-cols">
+                            <div class="dk-day-col" id="dk-col-월"></div><div class="dk-day-col" id="dk-col-화"></div>
+                            <div class="dk-day-col" id="dk-col-수"></div><div class="dk-day-col" id="dk-col-목"></div>
+                            <div class="dk-day-col" id="dk-col-금"></div><div class="dk-day-col" id="dk-col-토"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 레이어 팝업 -->
-    <div class="modal-overlay" id="scheduleModal">
+    <!-- ==========================================
+         [2] 모바일 (아이폰) 뷰
+    =========================================== -->
+    <div id="mobile-view">
+        <header class="mb-header">
+            <h1>📅 윤하의 시간표</h1>
+            <p>오늘의 일정을 확인하고 관리해보세요!</p>
+        </header>
+
+        <nav class="mb-tabs" id="mbTabs">
+            <button class="mb-tab-btn" data-day="월">월</button>
+            <button class="mb-tab-btn" data-day="화">화</button>
+            <button class="mb-tab-btn" data-day="수">수</button>
+            <button class="mb-tab-btn" data-day="목">목</button>
+            <button class="mb-tab-btn" data-day="금">금</button>
+            <button class="mb-tab-btn" data-day="토">토</button>
+        </nav>
+
+        <main class="mb-timeline" id="mbTimeline">
+            <div class="mb-timeline-bg" id="mbTimelineBg"></div>
+            <div class="mb-events-layer" id="mbEventsLayer"></div>
+        </main>
+
+        <button class="fab" onclick="openModal()">+</button>
+    </div>
+
+    <!-- ==========================================
+         [3] 통합 입력 모달 (PC: 팝업 / Mobile: 바텀시트)
+    =========================================== -->
+    <div class="modal-overlay" id="unifiedModal" onclick="handleOverlayClick(event)">
         <div class="modal-content">
-            <button class="close-btn" id="closeModalBtn" onclick="closeModal()">&times;</button>
-            <h2 id="modalTitle">새 일정 추가하기</h2>
-            
-            <div class="form-group">
-                <label>요일</label>
-                <select id="daySelect">
-                    <option value="월">월요일</option>
-                    <option value="화">화요일</option>
-                    <option value="수">수요일</option>
-                    <option value="목">목요일</option>
-                    <option value="금">금요일</option>
-                    <option value="토">토요일</option>
-                </select>
+            <div class="modal-header">
+                <h2 id="modalTitle">새 일정 추가</h2>
+                <button class="btn-close" onclick="closeModal()">✕</button>
             </div>
             
             <div class="form-group">
-                <label>시간 (09:00 ~ 20:00)</label>
-                <div class="time-group">
-                    <input type="time" id="startTime" required>
+                <label>요일</label>
+                <select id="inpDay" class="form-control">
+                    <option value="월">월요일</option><option value="화">화요일</option>
+                    <option value="수">수요일</option><option value="목">목요일</option>
+                    <option value="금">금요일</option><option value="토">토요일</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>시간 (09:00 ~ 21:00)</label>
+                <div class="time-wrap">
+                    <input type="time" id="inpStart" class="form-control" required>
                     <span>~</span>
-                    <input type="time" id="endTime" required>
+                    <input type="time" id="inpEnd" class="form-control" required>
                 </div>
             </div>
             <div class="form-group">
                 <label>일정 이름</label>
-                <input type="text" id="eventName" placeholder="예) 피아노 학원" required>
+                <input type="text" id="inpName" class="form-control" placeholder="예) 피아노 학원" required>
             </div>
             <div class="form-group">
                 <label>메모 (선택사항)</label>
-                <textarea id="eventMemo" rows="3" placeholder="준비물이나 간단한 메모를 남겨보세요!"></textarea>
+                <textarea id="inpMemo" class="form-control" placeholder="준비물이나 간단한 메모를 남겨보세요!"></textarea>
             </div>
             <div class="form-group">
                 <label>테마 색상</label>
-                <div class="color-group">
-                    <input type="color" id="eventColor" value="#ff9800">
-                </div>
+                <input type="color" id="inpColor" class="form-control" value="#007AFF">
             </div>
-            <button class="submit-btn" id="saveEventBtn" onclick="saveEvent()">등록 완료</button>
+            
+            <button class="btn-submit" id="btnSubmit" onclick="saveEvent()">저장 완료</button>
+            <button class="btn-delete-mobile" id="btnDeleteMobile" onclick="deleteEventFromModal()">일정 삭제하기</button>
         </div>
     </div>
 
+    <!-- ==========================================
+         스크립트: 로직 통합 관리
+    =========================================== -->
     <script>
-        // 전역 상태 변수
-        const NORMAL_HEIGHT = 80;   // 1시간당 픽셀 높이
-        let editingIndex = null;    // 현재 수정 중인 일정의 인덱스
-        
-        // 기본 데이터 (로컬 스토리지에 없을 경우 사용)
+        const START_HOUR = 9;
+        const END_HOUR = 21;
+        const DK_HOUR_HEIGHT = 80;  
+        const MB_HOUR_HEIGHT = 75;  
+
+        let events = [];
+        let editingId = null;       
+        let currentMobileDay = '월'; 
+
         const defaultEvents = [
-            { day: '월', start: '14:55', end: '16:45', name: '코스모스 영어학원', color: '#2b6cb0', memo: '단어장 챙기기' },
-            { day: '월', start: '17:00', end: '18:00', name: '논술학원', color: '#b7791f', memo: '' },
-            { day: '화', start: '14:55', end: '16:45', name: '코스모스 영어학원', color: '#2b6cb0', memo: '' },
-            { day: '화', start: '17:00', end: '18:40', name: '프라임 수학학원', color: '#2f855a', memo: '오답노트 필수' },
-            { day: '수', start: '14:30', end: '17:00', name: '프라임 수학학원', color: '#2f855a', memo: '' },
-            { day: '수', start: '17:30', end: '19:30', name: '연기학원', color: '#9b2c2c', memo: '' },
-            { day: '목', start: '14:55', end: '16:45', name: '코스모스 영어학원', color: '#2b6cb0', memo: '' },
-            { day: '목', start: '17:00', end: '18:00', name: '미술학원', color: '#553c9a', memo: '스케치북, 4B연필' },
-            { day: '금', start: '14:30', end: '17:00', name: '프라임 수학학원', color: '#2f855a', memo: '' },
-            { day: '금', start: '17:00', end: '18:00', name: '논술학원', color: '#b7791f', memo: '' },
-            { day: '토', start: '10:00', end: '11:00', name: '미술학원', color: '#553c9a', memo: '' }
+            { id: 1, day: '월', start: '14:55', end: '16:45', name: '코스모스 영어학원', color: '#007AFF', memo: '단어장 챙기기' },
+            { id: 2, day: '월', start: '17:00', end: '18:00', name: '논술학원', color: '#FF9500', memo: '' },
+            { id: 3, day: '화', start: '14:55', end: '16:45', name: '코스모스 영어학원', color: '#007AFF', memo: '' },
+            { id: 4, day: '화', start: '17:00', end: '18:40', name: '프라임 수학학원', color: '#34C759', memo: '오답노트 필수' },
+            { id: 5, day: '수', start: '14:30', end: '17:00', name: '프라임 수학학원', color: '#34C759', memo: '' },
+            { id: 6, day: '수', start: '17:30', end: '19:30', name: '연기학원', color: '#FF3B30', memo: '대본 리딩' },
+            { id: 7, day: '목', start: '14:55', end: '16:45', name: '코스모스 영어학원', color: '#007AFF', memo: '' },
+            { id: 8, day: '목', start: '17:00', end: '18:00', name: '미술학원', color: '#AF52DE', memo: '스케치북, 4B연필' },
+            { id: 9, day: '금', start: '14:30', end: '17:00', name: '프라임 수학학원', color: '#34C759', memo: '' },
+            { id: 10, day: '토', start: '10:00', end: '11:00', name: '미술학원', color: '#AF52DE', memo: '' }
         ];
 
-        // 로컬 스토리지에서 데이터 불러오기
-        let events = [];
-        try {
-            const savedData = localStorage.getItem('academyEvents_younha');
-            if (savedData) {
-                events = JSON.parse(savedData);
-            } else {
-                events = [...defaultEvents];
-            }
-        } catch (e) {
-            events = [...defaultEvents];
-        }
+        window.onload = () => {
+            loadData();
+            
+            // 앱 로드 시 오늘 요일 세팅
+            let todayStr = ['일', '월', '화', '수', '목', '금', '토'][new Date().getDay()];
+            if (todayStr === '일') todayStr = '월';
+            currentMobileDay = todayStr;
+            
+            document.querySelectorAll('.mb-tab-btn').forEach(btn => {
+                if(btn.dataset.day === currentMobileDay) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
 
-        // 로컬 스토리지에 데이터 저장
-        function saveToStorage() {
-            localStorage.setItem('academyEvents_younha', JSON.stringify(events));
-        }
+            initDesktopBackground();
+            initMobileBackground();
+            setupMobileTabs();
+            renderAll();
+            
+            // 로딩 후 해당 요일의 "가장 첫 번째 일정"으로 스크롤 이동!
+            setTimeout(scrollToFirstEvent, 150);
+        };
 
-        // Hex -> RGBA 변환 (배경색 투명도 처리용)
-        function hexToRgba(hex, alpha) {
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('younha_hybrid_timetable');
+                events = saved ? JSON.parse(saved) : [...defaultEvents];
+            } catch(e) { events = [...defaultEvents]; }
+        }
+        function saveData() { localStorage.setItem('younha_hybrid_timetable', JSON.stringify(events)); }
+
+        function getRgba(hex, alpha) {
+            if(hex.length === 4) hex = '#' + hex[1]+hex[1]+hex[2]+hex[2]+hex[3]+hex[3];
             let r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
-        // 특정 시간(H:M)의 세로 픽셀(Y 좌표) 계산 함수
-        function getY(timeStr) {
-            let [h, m] = timeStr.split(':').map(Number);
-            let y = (h - 9) * NORMAL_HEIGHT;
-            y += (m / 60) * NORMAL_HEIGHT;
-            return y;
+        function renderAll() {
+            renderDesktopEvents();
+            renderMobileEvents();
         }
 
-        // 화면 렌더링 통합 함수
-        function renderAll() {
-            const timeAxis = document.getElementById('timeAxis');
-            const bgRows = document.getElementById('bgRows');
-            
-            timeAxis.innerHTML = '';
-            bgRows.innerHTML = '';
-            
+        // --- 데스크톱 로직 ---
+        function initDesktopBackground() {
+            const axis = document.getElementById('dkTimeAxis');
+            const bgRows = document.getElementById('dkBgRows');
             let totalHeight = 0;
-            
-            // 1. 배경 그리드 및 시간축 생성 (09:00 ~ 19:00)
-            for (let i = 9; i <= 19; i++) {
-                let hHeight = NORMAL_HEIGHT;
-                totalHeight += hHeight;
-                
-                // 시간축 레이블
-                let tDiv = document.createElement('div');
-                tDiv.className = 'time-label';
-                tDiv.style.height = hHeight + 'px';
-                tDiv.innerHTML = `<span>${String(i).padStart(2,'0')}:00</span>`;
-                timeAxis.appendChild(tDiv);
-                
-                // 배경 가로줄
-                let rDiv = document.createElement('div');
-                rDiv.className = 'bg-row';
-                rDiv.style.height = hHeight + 'px';
-                rDiv.innerHTML = `<div class="half-line"></div>`;
-                bgRows.appendChild(rDiv);
+            for (let i = START_HOUR; i < END_HOUR; i++) {
+                totalHeight += DK_HOUR_HEIGHT;
+                axis.innerHTML += `<div class="dk-time-label" style="height:${DK_HOUR_HEIGHT}px"><span>${String(i).padStart(2,'0')}:00</span></div>`;
+                bgRows.innerHTML += `<div class="dk-bg-row" style="height:${DK_HOUR_HEIGHT}px"><div class="dk-half-line"></div></div>`;
             }
-            
-            // 마지막 20:00 라벨 닫기 처리
-            let endLabel = document.createElement('div');
-            endLabel.className = 'time-label';
-            endLabel.innerHTML = `<span>20:00</span>`;
-            timeAxis.appendChild(endLabel);
+            axis.innerHTML += `<div class="dk-time-label"><span>${END_HOUR}:00</span></div>`;
+            document.getElementById('dkBodyContainer').style.height = totalHeight + 'px';
+        }
 
-            // 전체 컨테이너 높이 세팅
-            document.getElementById('daysBodyContainer').style.height = totalHeight + 'px';
-            
-            // 2. 일정 데이터 렌더링
-            document.querySelectorAll('.day-col .event').forEach(el => el.remove());
-            
-            events.forEach((ev, idx) => {
-                const col = document.getElementById(`col-${ev.day}`);
+        function getDesktopY(timeStr) {
+            let [h, m] = timeStr.split(':').map(Number);
+            return (h - START_HOUR) * DK_HOUR_HEIGHT + (m / 60) * DK_HOUR_HEIGHT;
+        }
+
+        function renderDesktopEvents() {
+            document.querySelectorAll('.dk-day-col').forEach(col => col.innerHTML = '');
+            events.forEach(ev => {
+                const col = document.getElementById(`dk-col-${ev.day}`);
                 if (!col) return;
-                
-                const startY = getY(ev.start);
-                const endY = getY(ev.end);
-                const height = endY - startY;
-                
-                const eventDiv = document.createElement('div');
-                eventDiv.className = 'event';
-                eventDiv.style.borderLeft = `5px solid ${ev.color}`;
-                eventDiv.style.backgroundColor = hexToRgba(ev.color, 0.15);
-                eventDiv.style.top = `${startY}px`;
-                eventDiv.style.height = `${height}px`;
-                
-                // 클릭하면 모달 띄우기 (수정 모드)
-                eventDiv.onclick = () => openModal(idx);
+                const startY = getDesktopY(ev.start);
+                const height = getDesktopY(ev.end) - startY;
+                const div = document.createElement('div');
+                div.className = 'dk-event';
+                div.style.top = `${startY}px`;
+                div.style.height = `${height}px`;
+                div.style.backgroundColor = getRgba(ev.color, 0.15);
+                div.style.borderLeft = `5px solid ${ev.color}`;
+                div.onclick = () => openModal(ev.id);
 
-                // 공간이 너무 작아지면 텍스트를 한 줄로 숨김 처리
+                let memoHtml = (ev.memo && height >= 50) ? `<div class="dk-ev-memo">📝 ${ev.memo}</div>` : '';
                 let nameStyle = height < 35 ? 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' : '';
-                
-                // 메모가 있으면 표시
-                let memoHtml = (ev.memo && ev.memo.trim() !== '' && height >= 50) 
-                                ? `<div class="event-memo-indicator">📝 ${ev.memo}</div>` : '';
-                
-                eventDiv.innerHTML = `
-                    <button class="delete-btn" onclick="deleteEvent(${idx}, event)" title="일정 삭제">✖</button>
-                    <div class="event-time" style="color: ${ev.color}">${ev.start} ~ ${ev.end}</div>
-                    <div class="event-name" style="${nameStyle}">${ev.name}</div>
+                div.innerHTML = `
+                    <button class="dk-delete-btn" onclick="deleteEventDesktop(${ev.id}, event)" title="삭제">✖</button>
+                    <div class="dk-ev-time" style="color:${ev.color}">${ev.start} ~ ${ev.end}</div>
+                    <div class="dk-ev-name" style="${nameStyle}">${ev.name}</div>
                     ${memoHtml}
                 `;
-                col.appendChild(eventDiv);
+                col.appendChild(div);
             });
         }
 
-        // 일정 삭제 함수
-        window.deleteEvent = function(idx, e) {
-            e.stopPropagation(); // 삭제 버튼 클릭 시 일정(부모) 클릭 이벤트 막기
-            if(confirm('정말로 이 일정을 삭제하시겠습니까?')) {
-                events.splice(idx, 1);
-                saveToStorage();
-                renderAll();
+        function deleteEventDesktop(id, e) {
+            e.stopPropagation();
+            if(confirm('이 일정을 삭제하시겠습니까?')) {
+                events = events.filter(ev => ev.id !== id);
+                saveData(); renderAll();
             }
         }
 
-        // 모달 열기 (추가/수정 모드 겸용)
-        window.openModal = function(idx = null) {
-            const modal = document.getElementById('scheduleModal');
+        // --- 모바일 로직 ---
+        function initMobileBackground() {
+            const bg = document.getElementById('mbTimelineBg');
+            let html = '';
+            for(let i = START_HOUR; i <= END_HOUR; i++) {
+                html += `
+                    <div class="mb-time-row">
+                        <div class="mb-time-label">${String(i).padStart(2,'0')}:00</div>
+                        <div class="mb-time-grid"></div>
+                    </div>`;
+            }
+            bg.innerHTML = html;
+        }
+
+        function setupMobileTabs() {
+            const tabs = document.querySelectorAll('.mb-tab-btn');
+            tabs.forEach(tab => {
+                tab.onclick = () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentMobileDay = tab.dataset.day;
+                    renderMobileEvents();
+                    
+                    // 요일 탭 클릭 시 해당 요일의 첫 일정으로 스크롤!
+                    setTimeout(scrollToFirstEvent, 50); 
+                };
+            });
+        }
+
+        // 🌟 수정된 부분: "현재 시간"이 아닌 해당 요일의 "가장 빠른 일정"으로 스크롤
+        function scrollToFirstEvent() {
+            const container = document.getElementById('mbTimeline');
+            if (!container) return;
+            
+            const dayEvents = events.filter(ev => ev.day === currentMobileDay);
+            let scrollY = 0;
+
+            if (dayEvents.length > 0) {
+                // 시작 시간 기준으로 오름차순 정렬하여 가장 첫 번째 일정 찾기
+                dayEvents.sort((a, b) => a.start.localeCompare(b.start));
+                const firstEvent = dayEvents[0];
+                let [h, m] = firstEvent.start.split(':').map(Number);
+                
+                if (h >= START_HOUR) {
+                    // 첫 일정의 Y좌표 계산
+                    scrollY = (h - START_HOUR) * MB_HOUR_HEIGHT + (m / 60) * MB_HOUR_HEIGHT;
+                    // 일정이 살짝 아래에 보이도록 여백(30px)을 빼줌
+                    scrollY -= 30; 
+                }
+            } else {
+                // 일정이 아예 없으면 화면 맨 위로
+                scrollY = 0;
+            }
+
+            if(scrollY < 0) scrollY = 0;
+
+            try {
+                container.scrollTo({ top: scrollY, behavior: 'smooth' });
+            } catch (e) {
+                container.scrollTop = scrollY;
+            }
+        }
+
+        function getMobileY(timeStr) {
+            let [h, m] = timeStr.split(':').map(Number);
+            return (h - START_HOUR) * MB_HOUR_HEIGHT + (m / 60) * MB_HOUR_HEIGHT;
+        }
+
+        function renderMobileEvents() {
+            const layer = document.getElementById('mbEventsLayer');
+            layer.innerHTML = '';
+            const dayEvents = events.filter(ev => ev.day === currentMobileDay);
+            
+            dayEvents.forEach(ev => {
+                const top = getMobileY(ev.start);
+                const height = getMobileY(ev.end) - top;
+                const card = document.createElement('div');
+                card.className = 'mb-event';
+                card.style.top = top + 'px';
+                card.style.height = height + 'px';
+                card.style.backgroundColor = getRgba(ev.color, 0.12);
+                card.style.borderLeft = `4px solid ${ev.color}`;
+                card.onclick = () => openModal(ev.id);
+
+                let memoHtml = (ev.memo && height >= 60) ? `<div class="mb-ev-memo" style="margin-top:auto;">✏️ ${ev.memo}</div>` : '';
+                card.innerHTML = `
+                    <div class="mb-ev-time" style="color: ${ev.color}">${ev.start} - ${ev.end}</div>
+                    <div class="mb-ev-name">${ev.name}</div>
+                    ${memoHtml}
+                `;
+                layer.appendChild(card);
+            });
+        }
+
+        // --- 통합 모달 제어 ---
+        const modal = document.getElementById('unifiedModal');
+
+        function openModal(id = null) {
+            editingId = id;
             const title = document.getElementById('modalTitle');
-            const btn = document.getElementById('saveEventBtn');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnDelMobile = document.getElementById('btnDeleteMobile');
+            const isMobileView = window.innerWidth <= 768;
 
-            if (idx !== null) {
-                // 수정 모드
-                editingIndex = idx;
-                const ev = events[idx];
-                document.getElementById('daySelect').value = ev.day;
-                document.getElementById('startTime').value = ev.start;
-                document.getElementById('endTime').value = ev.end;
-                document.getElementById('eventName').value = ev.name;
-                document.getElementById('eventMemo').value = ev.memo || '';
-                document.getElementById('eventColor').value = ev.color;
+            if (id !== null) {
+                const ev = events.find(e => e.id === id);
+                document.getElementById('inpDay').value = ev.day;
+                document.getElementById('inpStart').value = ev.start;
+                document.getElementById('inpEnd').value = ev.end;
+                document.getElementById('inpName').value = ev.name;
+                document.getElementById('inpMemo').value = ev.memo || '';
+                document.getElementById('inpColor').value = ev.color;
                 
-                title.innerText = '일정 수정 / 메모 보기';
-                btn.innerText = '수정 완료';
+                title.innerText = '일정 수정';
+                btnSubmit.innerText = '수정 완료';
+                btnDelMobile.style.display = isMobileView ? 'block' : 'none';
             } else {
-                // 추가 모드
-                editingIndex = null;
-                document.getElementById('daySelect').value = '월';
-                document.getElementById('startTime').value = '';
-                document.getElementById('endTime').value = '';
-                document.getElementById('eventName').value = '';
-                document.getElementById('eventMemo').value = '';
-                document.getElementById('eventColor').value = '#ff9800';
+                document.getElementById('inpDay').value = isMobileView ? currentMobileDay : '월';
+                document.getElementById('inpStart').value = '';
+                document.getElementById('inpEnd').value = '';
+                document.getElementById('inpName').value = '';
+                document.getElementById('inpMemo').value = '';
+                document.getElementById('inpColor').value = '#007AFF';
                 
-                title.innerText = '새 일정 추가하기';
-                btn.innerText = '등록 완료';
+                title.innerText = '새 일정 추가';
+                btnSubmit.innerText = '등록 완료';
+                btnDelMobile.style.display = 'none';
             }
-            
-            modal.style.display = 'flex';
+            modal.classList.add('show');
         }
 
-        // 모달 닫기
-        window.closeModal = function() {
-            document.getElementById('scheduleModal').style.display = 'none';
+        function closeModal() {
+            modal.classList.remove('show');
+            editingId = null;
         }
 
-        // 일정 저장 (추가 또는 수정 처리)
-        window.saveEvent = function() {
-            const day = document.getElementById('daySelect').value;
-            const start = document.getElementById('startTime').value;
-            const end = document.getElementById('endTime').value;
-            const name = document.getElementById('eventName').value;
-            const memo = document.getElementById('eventMemo').value;
-            const color = document.getElementById('eventColor').value;
+        function handleOverlayClick(e) {
+            if(e.target === modal) closeModal();
+        }
 
-            if (!start || !end || !name.trim()) return alert('시간과 일정 이름을 모두 입력해주세요!');
-            if (start >= end) return alert('종료 시간은 시작 시간보다 늦어야 합니다.');
+        function saveEvent() {
+            const day = document.getElementById('inpDay').value;
+            const start = document.getElementById('inpStart').value;
+            const end = document.getElementById('inpEnd').value;
+            const name = document.getElementById('inpName').value.trim();
+            const memo = document.getElementById('inpMemo').value.trim();
+            const color = document.getElementById('inpColor').value;
 
-            const eventObj = { day, start, end, name, color, memo };
+            if(!start || !end || !name) return alert('시간과 일정명을 모두 입력해주세요!');
+            if(start >= end) return alert('종료 시간은 시작 시간보다 뒤여야 합니다.');
 
-            if (editingIndex !== null) {
-                // 기존 일정 수정
-                events[editingIndex] = eventObj;
+            if (editingId !== null) {
+                const idx = events.findIndex(e => e.id === editingId);
+                events[idx] = { ...events[idx], day, start, end, name, memo, color };
             } else {
-                // 새 일정 추가
-                events.push(eventObj);
+                events.push({ id: Date.now(), day, start, end, name, memo, color });
             }
+
+            saveData();
             
-            saveToStorage();
+            if (window.innerWidth <= 768 && day !== currentMobileDay) {
+                document.querySelector(`.mb-tab-btn[data-day="${day}"]`).click();
+            } else {
+                renderAll();
+                setTimeout(scrollToFirstEvent, 50); // 저장 후에도 첫 일정으로 정렬되게 추가
+            }
+            closeModal();
+        }
+
+        function deleteEventFromModal() {
+            if(!confirm('이 일정을 삭제하시겠습니까?')) return;
+            events = events.filter(e => e.id !== editingId);
+            saveData();
             renderAll();
             closeModal();
         }
 
-        // 모달창 외부 클릭 시 닫기
-        const modal = document.getElementById('scheduleModal');
-        window.onclick = (e) => { if (e.target == modal) closeModal(); }
-
-        // 초기 로딩 시 렌더링
-        window.onload = function() {
-            renderAll();
-        };
+        window.addEventListener('resize', () => {
+            const isMobileView = window.innerWidth <= 768;
+            const btnDelMobile = document.getElementById('btnDeleteMobile');
+            if (editingId !== null && isMobileView) {
+                btnDelMobile.style.display = 'block';
+            } else {
+                btnDelMobile.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
