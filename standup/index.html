@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>윤하의 스마트 시간표 (동기화 기능 추가)</title>
+    <title>윤하의 스마트 시간표 (일요일 및 시간 확장판)</title>
     <style>
         /* =========================================================
            공통 및 기본 리셋 설정
@@ -46,7 +46,6 @@
         .dk-header h1 { margin: 0; font-size: 26px; color: #333; }
         .dk-controls { display: flex; gap: 10px; align-items: center; }
         
-        /* 추가된 동기화 버튼 스타일 (PC) */
         .dk-btn-sync { padding: 10px 15px; background-color: #eef2f3; color: #444; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; transition: 0.2s; }
         .dk-btn-sync:hover { background-color: #dde4e6; }
         
@@ -87,7 +86,6 @@
         .mb-header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
         .mb-header p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); }
         
-        /* 추가된 동기화 버튼 스타일 (모바일) */
         .mb-sync-group { display: flex; gap: 8px; }
         .mb-btn-sync { background: var(--bg-ios); border: none; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-weight: 600; color: #555; }
         .mb-btn-sync:active { background: #e0e0e0; }
@@ -195,6 +193,7 @@
                         <div class="dk-day-title">월요일</div><div class="dk-day-title">화요일</div>
                         <div class="dk-day-title">수요일</div><div class="dk-day-title">목요일</div>
                         <div class="dk-day-title">금요일</div><div class="dk-day-title">토요일</div>
+                        <div class="dk-day-title">일요일</div>
                     </div>
                     <div class="dk-body-container" id="dkBodyContainer">
                         <div class="dk-bg-rows" id="dkBgRows"></div>
@@ -202,6 +201,7 @@
                             <div class="dk-day-col" id="dk-col-월"></div><div class="dk-day-col" id="dk-col-화"></div>
                             <div class="dk-day-col" id="dk-col-수"></div><div class="dk-day-col" id="dk-col-목"></div>
                             <div class="dk-day-col" id="dk-col-금"></div><div class="dk-day-col" id="dk-col-토"></div>
+                            <div class="dk-day-col" id="dk-col-일"></div>
                         </div>
                     </div>
                 </div>
@@ -231,6 +231,7 @@
             <button class="mb-tab-btn" data-day="목">목</button>
             <button class="mb-tab-btn" data-day="금">금</button>
             <button class="mb-tab-btn" data-day="토">토</button>
+            <button class="mb-tab-btn" data-day="일">일</button>
         </nav>
 
         <main class="mb-timeline" id="mbTimeline">
@@ -257,10 +258,11 @@
                     <option value="월">월요일</option><option value="화">화요일</option>
                     <option value="수">수요일</option><option value="목">목요일</option>
                     <option value="금">금요일</option><option value="토">토요일</option>
+                    <option value="일">일요일</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>시간 (09:00 ~ 21:00)</label>
+                <label>시간 (08:00 ~ 22:00)</label>
                 <div class="time-wrap">
                     <input type="time" id="inpStart" class="form-control" required>
                     <span>~</span>
@@ -308,8 +310,9 @@
          스크립트: 로직 통합 관리
     =========================================== -->
     <script>
-        const START_HOUR = 9;
-        const END_HOUR = 21;
+        // 시간 설정 (08:00 ~ 22:00)
+        const START_HOUR = 8;
+        const END_HOUR = 22;
         const DK_HOUR_HEIGHT = 80;  
         const MB_HOUR_HEIGHT = 75;  
 
@@ -334,9 +337,8 @@
         window.onload = () => {
             loadData();
             
-            // 앱 로드 시 오늘 요일 세팅
+            // 앱 로드 시 오늘 요일 세팅 (일요일도 정상 처리)
             let todayStr = ['일', '월', '화', '수', '목', '금', '토'][new Date().getDay()];
-            if (todayStr === '일') todayStr = '월';
             currentMobileDay = todayStr;
             
             document.querySelectorAll('.mb-tab-btn').forEach(btn => {
