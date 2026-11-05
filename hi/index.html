@@ -91,6 +91,21 @@
         }
         /* 영어 문장을 보라색 굵은 글씨로 강조 */
         #scriptResult b { color: #6c5ce7; font-size: 16px; background-color: #f0f0ff; padding: 2px 6px; border-radius: 4px; }
+        /* 클릭할 수 있는 발음 듣기 버튼 디자인 */
+        .speak-btn {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            margin-left: 5px;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .speak-btn:hover { background-color: #bbdefb; transform: translateY(-1px); }
         #chatSection { display: none; margin-top: 30px; }
         .chat-box { 
             background-color: #f1f2f6;
@@ -281,12 +296,26 @@
             document.getElementById('chatSection').style.display = "none"; 
 
             const promptText = `다음은 11살 한국 아이가 화상영어 수업에서 원어민 선생님과 나눌 스몰토크 대본입니다. 
-※ 중요 규칙: 가독성을 위해 모든 '영어 문장(대사)'은 반드시 <b> 태그로 감싸서 작성해주세요. (예시: <b>How was your day?</b>)
+※ 규칙 1: '영어 문장'은 반드시 <b> 태그로 감싸주세요.
+※ 규칙 2: 문장 전체의 한국어 발음은 적지 마세요.
+※ 규칙 3: 문장에 11살이 읽기 어려운 단어가 있다면, 뜻 바로 밑에 '💡 단어 팁:'을 넣고 아래 HTML 버튼 양식으로 작성해주세요.
+(예시) 💡 단어 팁: 칭찬하다 - <span class="speak-btn" onclick="speakWord('compliment')">🔊 compliment</span>
 
-1. 선생님 첫 질문("How was~?")에 대한 아이의 대답 (영어 2문장, 뜻, 발음)
-2. 선생님의 예상 꼬리 질문 2가지 경우의 수 (영어 + 뜻)
-3. 꼬리 질문에 대한 아이 대답 2개 (영어 + 뜻)
-4. 선생님께 되묻기 1개 (영어 + 뜻)
+[작성 순서 및 양식]
+1. 선생님 첫 질문("How was~?")에 대한 아이의 대답
+- <b>영어 문장</b>
+- 한국어 뜻
+- 💡 단어 팁: (어려운 단어가 있을 경우에만 작성)
+
+2. 선생님의 예상 꼬리 질문 2가지
+(위와 동일한 양식)
+
+3. 꼬리 질문에 대한 아이 대답 2개
+(위와 동일한 양식)
+
+4. 선생님께 되묻기 1개
+(위와 동일한 양식)
+
 오늘 있었던 일: ${userInput}`;
             try {
                 const response = await fetch(getModelUrl(), {
@@ -464,6 +493,17 @@
                 addMessage(teacherReply, "teacher");
                 speakText(teacherReply); 
             } catch (error) { document.getElementById('status').innerText = "오류 발생! 다시 시도해주세요."; }
+        }
+        // 단어만 따로 읽어주는 전용 함수
+        function speakWord(word) {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            else utterance.lang = 'en-US'; 
+            utterance.rate = 0.8; // 단어니까 평소보다 조금 더 천천히 또박또박!
+            window.speechSynthesis.speak(utterance);
         }
     </script>
 </body>
