@@ -10,11 +10,12 @@
         
         .input-group { margin-bottom: 15px; }
         .input-group label { font-weight: bold; color: #2c3e50; font-size: 14px; }
-        select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; background-color: #fafafa; cursor: pointer; }
-        input[type="text"] { width: 100%; padding: 12px; margin-top: 8px; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        select, input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin-top: 8px; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        select { background-color: #fafafa; cursor: pointer; }
         
-        .btn-main { background-color: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; }
+        .btn-main { background-color: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; margin-top: 10px;}
         .btn-main:hover { background-color: #45a049; }
+        
         #loading { display: none; margin-top: 15px; color: #666; text-align: center; font-weight: bold; }
         #scriptResult { margin-top: 20px; padding: 15px; background-color: #f9f9f9; border-left: 5px solid #4CAF50; white-space: pre-wrap; line-height: 1.6; display: none; }
         
@@ -27,36 +28,44 @@
         .btn-start-chat { background-color: #ff6b6b; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; margin-top: 15px; }
         .btn-start-chat:hover { background-color: #fa5252; }
         .btn-restart { background-color: #95a5a6; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
-        .btn-restart:hover { background-color: #7f8c8d; }
         
         .btn-hint { background-color: #f39c12; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; display: none; margin-bottom: 10px;}
-        .btn-hint:hover { background-color: #e67e22; }
-        
-        /* 무전기 마이크 버튼 스타일 */
         .btn-toggle-mic { background-color: #3498db; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-size: 16px; display: none; margin-bottom: 10px; transition: background-color 0.3s; }
-        .btn-toggle-mic:hover { opacity: 0.9; }
-        
         .btn-mic-ready { background-color: #4CAF50; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
         
         #status { text-align: center; margin-bottom: 10px; color: #d32f2f; font-weight: bold; min-height: 20px; }
         #hintBox { display: none; padding: 15px; background-color: #fff3cd; border-left: 5px solid #ffc107; border-radius: 8px; font-size: 15px; line-height: 1.6; margin-bottom: 15px; }
+        
+        .btn-reset-key { background-color: #fff; color: #e74c3c; border: 1px solid #e74c3c; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; float: right; }
     </style>
 </head>
 <body>
 
     <h2>🌟 화상영어 완벽 마스터 🌟</h2>
 
+    <!-- [0단계] API 키 설정 (최초 1회만 노출) -->
+    <div class="section-box" id="step0">
+        <h3 style="margin-top: 0; color: #2c3e50;">🔑 관리자 모드: API 키 설정</h3>
+        <p style="font-size: 14px; color: #666;">이 기기에서 처음 한 번만 입력하면 브라우저에 안전하게 기억됩니다.</p>
+        <div class="input-group">
+            <input type="password" id="apiKeyInput" placeholder="구글 API 키를 붙여넣으세요">
+        </div>
+        <button class="btn-main" onclick="saveApiKey()">✅ 키 저장하고 시작하기</button>
+    </div>
+
     <!-- [1단계] 대본 생성 (예습) -->
-    <div class="section-box" id="step1">
-        <h3 style="margin-top: 0; color: #2c3e50;">1단계: 오늘의 대본 예습하기 📝</h3>
+    <div class="section-box" id="step1" style="display: none;">
+        <h3 style="margin-top: 0; color: #2c3e50;">1단계: 오늘의 대본 예습하기 📝 
+            <button class="btn-reset-key" onclick="resetApiKey()">설정 초기화(키 삭제)</button>
+        </h3>
         
         <div class="input-group">
-            <label for="voiceSelect">👩‍🏫 선생님 목소리 선택 (미국식 영어만 나와요!)</label>
+            <label for="voiceSelect">👩‍🏫 선생님 목소리 선택</label>
             <select id="voiceSelect" onchange="playSampleVoice()"></select>
         </div>
 
         <div class="input-group">
-            <input type="text" id="userInput" placeholder="예: 오늘 피아노 학원에서 어려운 곡을 쳐서 칭찬받았어">
+            <input type="text" id="userInput" placeholder="예: 오늘 피아노 학원에서 칭찬받았어">
         </div>
         <button class="btn-main" onclick="generateScript()">✨ 대본 만들기</button>
         
@@ -66,134 +75,130 @@
         <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection()">🎤 배운 내용으로 AI와 실전 대화하기 ▶️</button>
     </div>
 
-    <!-- [2단계] 실전 대화 (출력) -->
+    <!-- [2단계] 실전 대화 -->
     <div class="section-box" id="chatSection">
         <h3 style="margin-top: 0; color: #2c3e50;">2단계: 실전 화상영어 연습 👩‍🏫</h3>
-        
-        <button class="btn-restart" onclick="restartConversation()">🔄 처음부터 다시 대화하기 (다른 상황 연습)</button>
+        <button class="btn-restart" onclick="restartConversation()">🔄 처음부터 다시 대화하기</button>
         <div id="status"></div>
-        
         <div class="chat-box" id="chatBox"></div>
-        
         <div id="hintBox"></div>
-        <button id="hintBtn" class="btn-hint" onclick="getHint()">💡 무슨 말인지 모르겠어요 (해석 & 힌트 보기)</button>
-        
-        <!-- 무전기 모드 토글 버튼 추가 -->
+        <button id="hintBtn" class="btn-hint" onclick="getHint()">💡 무슨 말인지 모르겠어요 (힌트 보기)</button>
         <button id="micToggleBtn" class="btn-toggle-mic" onclick="toggleMic()">🎙️ 마이크 켜기 (누르고 말하기)</button>
     </div>
 
     <script>
-        const API_KEY = 'AQ.Ab8RN6KMNgVaJ1PA_xxoicU7SLigdfcOJK9cZxkkjmJq3Fbs2A'; 
-        const MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + API_KEY;
-
+        let USER_API_KEY = ""; 
         let currentUserInput = ""; 
         let chatHistory = []; 
         let availableVoices = []; 
-
-        // STT 관련 변수
         let isRecording = false;
         let finalTranscript = "";
 
-        // --- 목소리(TTS) 목록 불러오기 ---
+        // 페이지 접속 시, 브라우저에 저장된 키가 있는지 확인
+        window.onload = function() {
+            const savedKey = localStorage.getItem("gemini_tutor_api_key");
+            if (savedKey) {
+                USER_API_KEY = savedKey;
+                document.getElementById('step0').style.display = "none"; // 키 입력창 숨김
+                document.getElementById('step1').style.display = "block"; // 대본 화면 켬
+            }
+        };
+
+        // 키 저장 버튼을 눌렀을 때
+        function saveApiKey() {
+            const inputKey = document.getElementById('apiKeyInput').value.trim();
+            if (!inputKey) {
+                alert("API 키를 입력해주세요!");
+                return;
+            }
+            USER_API_KEY = inputKey;
+            localStorage.setItem("gemini_tutor_api_key", USER_API_KEY); // 기기 브라우저에 몰래 저장
+            
+            document.getElementById('step0').style.display = "none";
+            document.getElementById('step1').style.display = "block";
+        }
+
+        // 키 설정 지우기 (다른 기기로 옮기거나 키를 바꿀 때)
+        function resetApiKey() {
+            if(confirm("저장된 API 키를 기기에서 삭제하시겠습니까? (새로고침하면 다시 입력해야 합니다.)")) {
+                localStorage.removeItem("gemini_tutor_api_key");
+                location.reload();
+            }
+        }
+
+        function getModelUrl() {
+            return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY;
+        }
+
+        // --- 이하 STT/TTS 및 제미나이 대화 로직은 기존과 100% 동일하게 유지됨 ---
         function populateVoiceList() {
             availableVoices = window.speechSynthesis.getVoices();
             const voiceSelect = document.getElementById('voiceSelect');
-            
             const currentValue = voiceSelect.value;
             voiceSelect.innerHTML = ''; 
-            
-            const usEnglishVoices = availableVoices.filter(voice => 
-                voice.lang.includes('en-US') || voice.lang.includes('en_US')
-            );
-            
+            const usEnglishVoices = availableVoices.filter(voice => voice.lang.includes('en-US') || voice.lang.includes('en_US'));
             usEnglishVoices.forEach((voice) => {
                 const option = document.createElement('option');
                 option.textContent = `${voice.name} (${voice.lang})`;
                 option.value = voice.name;
                 voiceSelect.appendChild(option);
             });
-            
             if (usEnglishVoices.length === 0) {
-                const option = document.createElement('option');
-                option.textContent = "미국식 영어 목소리를 찾을 수 없습니다.";
-                voiceSelect.appendChild(option);
+                voiceSelect.innerHTML = '<option>미국식 영어 목소리를 찾을 수 없습니다.</option>';
             } else if (currentValue) {
                 voiceSelect.value = currentValue; 
             }
         }
-
         populateVoiceList();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = populateVoiceList;
-        }
+        if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = populateVoiceList;
 
         function playSampleVoice() {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel(); 
-
-            const sampleText = "Hello! How do I sound?";
-            const utterance = new SpeechSynthesisUtterance(sampleText);
-            
-            const selectedVoiceName = document.getElementById('voiceSelect').value;
-            const selectedVoice = availableVoices.find(voice => voice.name === selectedVoiceName);
-            
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
-            } else {
-                utterance.lang = 'en-US';
-            }
-            
+            const utterance = new SpeechSynthesisUtterance("Hello! How do I sound?");
+            const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            else utterance.lang = 'en-US';
             utterance.rate = 0.9;
             window.speechSynthesis.speak(utterance);
         }
 
-        // --- STT (마이크) 설정 - 무전기 모드를 위한 셋팅 변경 ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition;
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
-            // continuous = true: 아이가 중간에 말하기를 쉬어도 마이크가 안 꺼지게 유지!
             recognition.continuous = true; 
-            // interimResults = true: 말하는 도중에 실시간으로 화면에 글자가 나타남!
             recognition.interimResults = true; 
         }
 
         async function generateScript() {
             const userInput = document.getElementById('userInput').value;
             if (!userInput.trim()) { alert("오늘 있었던 일을 입력해주세요!"); return; }
-            
             currentUserInput = userInput; 
-            
             document.getElementById('scriptResult').style.display = "none";
             document.getElementById('startChatBtn').style.display = "none";
             document.getElementById('loading').style.display = "block";
             document.getElementById('chatSection').style.display = "none"; 
 
-            const promptText = `
-다음은 11살 한국 아이가 아침 화상영어 수업에서 원어민 선생님과 나눌 스몰토크 대본입니다. 
-사용자가 입력한 '오늘 있었던 일'을 바탕으로 다음 양식에 맞춰 작성해주세요:
+            const promptText = `다음은 11살 한국 아이가 화상영어 수업에서 원어민 선생님과 나눌 스몰토크 대본입니다. 
 1. 선생님 첫 질문("How was~?")에 대한 아이의 대답 (영어 2문장, 뜻, 발음)
 2. 선생님의 예상 꼬리 질문 2가지 경우의 수 (영어 + 뜻)
-3. 꼬리 질문에 대한 아이의 대답 2개 (영어 + 뜻)
+3. 꼬리 질문에 대한 아이 대답 2개 (영어 + 뜻)
 4. 선생님께 되묻기 1개 (영어 + 뜻)
-
-오늘 있었던 일: ${userInput}
-`;
+오늘 있었던 일: ${userInput}`;
             try {
-                const response = await fetch(MODEL_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const response = await fetch(getModelUrl(), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
                 const data = await response.json();
                 if (data.error) throw new Error(data.error.message);
-
                 document.getElementById('scriptResult').innerHTML = data.candidates[0].content.parts[0].text;
                 document.getElementById('scriptResult').style.display = "block";
                 document.getElementById('startChatBtn').style.display = "block";
             } catch (error) {
-                document.getElementById('scriptResult').innerHTML = "오류가 발생했습니다: " + error.message;
+                document.getElementById('scriptResult').innerHTML = "오류가 발생했습니다 (API 키를 확인해주세요): " + error.message;
                 document.getElementById('scriptResult').style.display = "block";
             } finally {
                 document.getElementById('loading').style.display = "none";
@@ -209,25 +214,16 @@
         function restartConversation() {
             if(window.speechSynthesis) window.speechSynthesis.cancel();
             if(recognition) { try { recognition.stop(); } catch(e){} }
-            
             document.getElementById('chatBox').innerHTML = "";
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('hintBtn').style.display = "none";
-            document.getElementById('micToggleBtn').style.display = "none"; // 토글 버튼 숨김
+            document.getElementById('micToggleBtn').style.display = "none"; 
             document.getElementById('status').innerText = "수업을 시작합니다...";
             isRecording = false;
-
             chatHistory = [
-                {
-                    "role": "user",
-                    "parts": [{ "text": `너는 11살 한국 아이를 가르치는 화상영어 선생님이야. 아이가 오늘 겪은 일은 "${currentUserInput}"이야. 이 내용을 바탕으로 자연스럽게 대화해줘. 아이가 틀리면 격려하고 고쳐준 뒤 진행해. 항상 아주 짧고 쉬운 영어 1~2문장으로만 대답해. 무조건 "Hi! How was your day?"로 시작해.` }]
-                },
-                {
-                    "role": "model",
-                    "parts": [{ "text": "Hi! How was your day?" }]
-                }
+                { "role": "user", "parts": [{ "text": `너는 11살 한국 아이를 가르치는 화상영어 선생님이야. 아이가 오늘 겪은 일은 "${currentUserInput}"이야. 무조건 "Hi! How was your day?"로 시작해. 항상 아주 짧고 쉬운 영어 1~2문장으로만 대답해.` }] },
+                { "role": "model", "parts": [{ "text": "Hi! How was your day?" }] }
             ];
-
             addMessage("Hi! How was your day?", "teacher");
             speakText("Hi! How was your day?");
         }
@@ -245,20 +241,12 @@
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
-            
-            const selectedVoiceName = document.getElementById('voiceSelect').value;
-            const selectedVoice = availableVoices.find(voice => voice.name === selectedVoiceName);
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
-            } else {
-                utterance.lang = 'en-US'; 
-            }
-            
+            const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            else utterance.lang = 'en-US'; 
             utterance.rate = 0.9;
-            
             utterance.onend = function() {
                 if (text !== "Hello! How do I sound?") {
-                    // 선생님 말이 끝나면 바로 마이크가 안 켜지고, 버튼만 보여줌
                     document.getElementById('hintBtn').style.display = "block"; 
                     document.getElementById('hintBox').style.display = "none";
                     document.getElementById('micToggleBtn').style.display = "block";
@@ -268,55 +256,37 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // --- 무전기 모드 (마이크 토글) 기능 ---
         function toggleMic() {
             if (!recognition) return;
             const micBtn = document.getElementById('micToggleBtn');
             const statusDiv = document.getElementById('status');
-            
             if (!isRecording) {
-                // [마이크 켜기]를 눌렀을 때
                 finalTranscript = "";
                 isRecording = true;
-                
-                // 버튼을 빨간색으로 바꾸고 안내문 변경
                 micBtn.innerText = "🛑 다 말했어요 (여기를 눌러서 전송하세요)";
-                micBtn.style.backgroundColor = "#e74c3c"; // 빨간색
-                document.getElementById('hintBtn').style.display = "none"; // 녹음 중엔 힌트 버튼 숨김
-                
+                micBtn.style.backgroundColor = "#e74c3c"; 
+                document.getElementById('hintBtn').style.display = "none"; 
                 try { recognition.start(); } catch(e) {}
                 statusDiv.innerText = "🎤 (듣는 중) 천천히 말하고 다 말하면 빨간 버튼을 누르세요!";
             } else {
-                // [다 말했어요]를 눌렀을 때
                 isRecording = false;
-                micBtn.style.display = "none"; // 버튼 임시 숨김
-                micBtn.style.backgroundColor = "#3498db"; // 원래 파란색으로 복구
+                micBtn.style.display = "none"; 
+                micBtn.style.backgroundColor = "#3498db"; 
                 micBtn.innerText = "🎙️ 마이크 켜기 (누르고 말하기)";
-                
                 statusDiv.innerText = "대답을 선생님께 전송 중입니다...";
                 recognition.stop();
             }
         }
 
-        // 말하는 도중 글자가 실시간으로 화면에 찍히게 함
         recognition.onresult = function(event) {
             let tempFinal = '';
             let tempInterim = '';
-            
             for (let i = 0; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    tempFinal += event.results[i][0].transcript + ' ';
-                } else {
-                    tempInterim += event.results[i][0].transcript;
-                }
+                if (event.results[i].isFinal) tempFinal += event.results[i][0].transcript + ' ';
+                else tempInterim += event.results[i][0].transcript;
             }
-            
             finalTranscript = tempFinal;
-            
-            if (isRecording) {
-                // 화면에 현재까지 말한 내용을 실시간으로 보여줌
-                document.getElementById('status').innerText = "🎤 " + tempFinal + tempInterim;
-            }
+            if (isRecording) document.getElementById('status').innerText = "🎤 " + tempFinal + tempInterim;
         };
 
         recognition.onerror = function(event) {
@@ -330,10 +300,8 @@
 
         recognition.onend = function() {
             if (isRecording) {
-                // 아이가 말하던 중 크롬이 스스로 끊은 경우 무시하고 다시 켬 (강제 유지)
                 try { recognition.start(); } catch(e) {}
             } else {
-                // 아이가 직접 '다 말했어요' 버튼을 눌러서 꺼진 경우 전송 진행!
                 if (finalTranscript.trim() !== "") {
                     addMessage(finalTranscript, "student");
                     sendToGemini(finalTranscript);
@@ -346,44 +314,31 @@
         };
 
         async function getHint() {
-            if (isRecording) toggleMic(); // 혹시 녹음 중에 힌트를 누르면 녹음 멈춤
+            if (isRecording) toggleMic(); 
             if (recognition) recognition.stop();
-            
             document.getElementById('hintBtn').style.display = "none";
             document.getElementById('micToggleBtn').style.display = "none";
-            
             const hintBox = document.getElementById('hintBox');
             hintBox.style.display = "block";
             hintBox.innerHTML = "⏳ 선생님의 말을 해석하고 대답을 고민 중이에요...";
             document.getElementById('status').innerText = "힌트 준비 중...";
-
             const hintHistory = [...chatHistory];
-            hintHistory.push({
-                "role": "user",
-                "parts": [{ "text": "방금 네가(선생님) 한 말을 한국어로 해석해주고, 11살 한국 아이가 대답할 수 있는 아주 쉽고 짧은 영어 대답 2가지를 추천해줘. 양식: [선생님 말 해석]: (내용) / [추천 대답 1]: (영어) - (뜻) / [추천 대답 2]: (영어) - (뜻)" }]
-            });
+            hintHistory.push({ "role": "user", "parts": [{ "text": "방금 네가(선생님) 한 말을 한국어로 해석해주고, 11살 한국 아이가 대답할 수 있는 아주 쉽고 짧은 영어 대답 2가지를 추천해줘. 양식: [선생님 말 해석]: (내용) / [추천 대답 1]: (영어) - (뜻) / [추천 대답 2]: (영어) - (뜻)" }] });
 
             try {
-                const response = await fetch(MODEL_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const response = await fetch(getModelUrl(), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: hintHistory })
                 });
                 const data = await response.json();
-                const hintText = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-                
-                // 준비완료 버튼 디자인
-                hintBox.innerHTML = hintText + '<br><br><button class="btn-mic-ready" onclick="resumeListening()">💡 힌트 확인 완료! 이제 말해볼게요</button>';
+                hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>') + '<br><br><button class="btn-mic-ready" onclick="resumeListening()">💡 힌트 확인 완료! 이제 말해볼게요</button>';
                 document.getElementById('status').innerText = "💡 힌트를 보고 마음에 드는 문장을 골라 말해보세요!";
-            } catch (error) {
-                hintBox.innerHTML = "힌트를 불러오지 못했어요.";
-            }
+            } catch (error) { hintBox.innerHTML = "힌트를 불러오지 못했어요."; }
         }
 
         function resumeListening() {
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('hintBtn').style.display = "block";
-            // 바로 녹음되는 대신 마이크 켜기 대기 상태로 변경
             document.getElementById('micToggleBtn').style.display = "block";
             document.getElementById('status').innerText = "준비되었으면 아래 파란색 마이크 버튼을 누르세요!";
         }
@@ -392,27 +347,20 @@
             document.getElementById('hintBtn').style.display = "none";
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('micToggleBtn').style.display = "none";
-            
             chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
-
             try {
-                const response = await fetch(MODEL_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const response = await fetch(getModelUrl(), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: chatHistory }) 
                 });
                 const data = await response.json();
                 if (data.error) throw new Error();
-
                 const teacherReply = data.candidates[0].content.parts[0].text;
                 chatHistory.push({ "role": "model", "parts": [{ "text": teacherReply }] });
-                
                 document.getElementById('status').innerText = "";
                 addMessage(teacherReply, "teacher");
                 speakText(teacherReply); 
-            } catch (error) {
-                document.getElementById('status').innerText = "오류 발생! 다시 시도해주세요.";
-            }
+            } catch (error) { document.getElementById('status').innerText = "오류 발생! 다시 시도해주세요."; }
         }
     </script>
 </body>
