@@ -2,89 +2,178 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>화상영어 완벽 마스터</title>
+    <!-- 구글 폰트 적용 (깔끔하고 동글동글한 느낌) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; max-width: 650px; margin: 30px auto; padding: 20px; background-color: #f0f8ff; }
-        h2 { color: #333; text-align: center; }
-        .section-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        body { 
+            font-family: 'Nunito', 'Noto Sans KR', sans-serif; 
+            background-color: #f4f7f6; 
+            margin: 0; 
+            padding: 20px 10px; 
+            color: #333; 
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h2 { 
+            text-align: center; 
+            color: #2d3436; 
+            font-weight: 700; 
+            font-size: 26px; 
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        .section-box { 
+            background: white; 
+            padding: 25px 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06); 
+            margin-bottom: 25px; 
+            transition: transform 0.2s;
+        }
+        h3 { margin-top: 0; color: #2c3e50; font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
         
-        .input-group { margin-bottom: 15px; }
-        .input-group label { font-weight: bold; color: #2c3e50; font-size: 14px; }
-        select, input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin-top: 8px; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        select { background-color: #fafafa; cursor: pointer; }
+        .input-group { margin-bottom: 18px; }
+        .input-group label { font-weight: 700; color: #4a4a4a; font-size: 14px; margin-bottom: 8px; display: block; }
+        select, input[type="text"], input[type="password"] { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #edf2f7; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            font-family: inherit;
+            transition: all 0.3s;
+            outline: none;
+            background-color: #f8fafc;
+        }
+        select:focus, input[type="text"]:focus, input[type="password"]:focus { 
+            border-color: #6c5ce7; 
+            background-color: #fff;
+        }
         
-        .btn-main { background-color: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; margin-top: 10px;}
-        .btn-main:hover { background-color: #45a049; }
+        /* 버튼 공통 스타일 */
+        button { 
+            font-family: inherit; 
+            border: none; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 700; 
+            width: 100%; 
+            transition: all 0.2s ease; 
+            box-sizing: border-box;
+        }
+        button:active { transform: scale(0.98); }
+
+        .btn-main { 
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe); 
+            color: white; 
+            padding: 16px; 
+            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.3); 
+        }
+        .btn-main:hover { box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4); transform: translateY(-2px); }
         
-        #loading { display: none; margin-top: 15px; color: #666; text-align: center; font-weight: bold; }
-        #scriptResult { margin-top: 20px; padding: 15px; background-color: #f9f9f9; border-left: 5px solid #4CAF50; white-space: pre-wrap; line-height: 1.6; display: none; }
+        #loading { display: none; margin-top: 20px; color: #6c5ce7; text-align: center; font-weight: 700; font-size: 15px; }
+        #scriptResult { 
+            margin-top: 20px; 
+            padding: 18px; 
+            background-color: #f8f9fa; 
+            border-radius: 12px;
+            border-left: 5px solid #6c5ce7; 
+            white-space: pre-wrap; 
+            line-height: 1.7; 
+            display: none; 
+            font-size: 15px;
+        }
         
-        #chatSection { display: none; margin-top: 30px; border-top: 3px dashed #ccc; padding-top: 20px; }
-        .chat-box { border: 2px solid #ccc; border-radius: 10px; padding: 15px; height: 350px; overflow-y: auto; background: #fff; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-        .msg { padding: 12px; border-radius: 10px; max-width: 80%; line-height: 1.4; font-size: 15px; }
-        .teacher-msg { background-color: #e3f2fd; align-self: flex-start; border-bottom-left-radius: 0; }
-        .student-msg { background-color: #fff9c4; align-self: flex-end; border-bottom-right-radius: 0; }
+        #chatSection { display: none; margin-top: 30px; }
+        .chat-box { 
+            background-color: #f1f2f6;
+            border-radius: 16px; 
+            padding: 20px 15px; 
+            height: 380px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .msg { padding: 12px 16px; border-radius: 18px; max-width: 75%; line-height: 1.5; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .teacher-msg { background-color: #ffffff; align-self: flex-start; border-bottom-left-radius: 4px; color: #2d3436; }
+        .student-msg { background-color: #ffeaa7; align-self: flex-end; border-bottom-right-radius: 4px; color: #2d3436; }
         
-        .btn-start-chat { background-color: #ff6b6b; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; margin-top: 15px; }
-        .btn-start-chat:hover { background-color: #fa5252; }
-        .btn-restart { background-color: #95a5a6; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
+        .btn-start-chat { background: linear-gradient(135deg, #ff7675, #d63031); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(214, 48, 49, 0.3); }
+        .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4); transform: translateY(-2px); }
         
-        .btn-hint { background-color: #f39c12; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; display: none; margin-bottom: 10px;}
-        .btn-toggle-mic { background-color: #3498db; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-size: 16px; display: none; margin-bottom: 10px; transition: background-color 0.3s; }
-        .btn-mic-ready { background-color: #4CAF50; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+        .btn-restart { background-color: #dfe6e9; color: #2d3436; padding: 12px; margin-bottom: 15px; font-size: 14px; }
         
-        #status { text-align: center; margin-bottom: 10px; color: #d32f2f; font-weight: bold; min-height: 20px; }
-        #hintBox { display: none; padding: 15px; background-color: #fff3cd; border-left: 5px solid #ffc107; border-radius: 8px; font-size: 15px; line-height: 1.6; margin-bottom: 15px; }
+        .btn-hint { background: linear-gradient(135deg, #f39c12, #f1c40f); color: white; padding: 14px; display: none; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3); }
         
-        .btn-reset-key { background-color: #fff; color: #e74c3c; border: 1px solid #e74c3c; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; float: right; }
+        .btn-toggle-mic { background: linear-gradient(135deg, #0984e3, #74b9ff); color: white; padding: 18px; font-size: 18px; display: none; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(9, 132, 227, 0.3); }
+        
+        .btn-mic-ready { background: linear-gradient(135deg, #00b894, #55efc4); color: white; padding: 14px; margin-top: 15px; }
+        
+        #status { text-align: center; margin-bottom: 15px; color: #e17055; font-weight: 700; font-size: 14px; min-height: 20px; }
+        #hintBox { display: none; padding: 18px; background-color: #fff3cd; border-radius: 12px; font-size: 15px; line-height: 1.7; margin-bottom: 20px; color: #856404; }
+        
+        .btn-reset-key { background-color: transparent; color: #b2bec3; border: 1px solid #b2bec3; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
+        .btn-reset-key:hover { background-color: #f5f6fa; color: #d63031; border-color: #d63031; }
     </style>
 </head>
 <body>
 
-    <h2>🌟 화상영어 완벽 마스터 🌟</h2>
+<div class="container">
+    <h2>🌟 화상영어 완벽 마스터</h2>
 
-    <!-- [0단계] API 키 설정 (최초 1회만 노출) -->
+    <!-- [0단계] API 키 설정 -->
     <div class="section-box" id="step0">
-        <h3 style="margin-top: 0; color: #2c3e50;">🔑 관리자 모드: API 키 설정</h3>
-        <p style="font-size: 14px; color: #666;">이 기기에서 처음 한 번만 입력하면 브라우저에 안전하게 기억됩니다.</p>
+        <h3 style="justify-content: flex-start;">🔑 처음 한 번만 설정해주세요</h3>
+        <p style="font-size: 13px; color: #636e72; margin-top: -5px; margin-bottom: 20px;">아이의 기기에 안전하게 저장됩니다. (서버 전송 X)</p>
         <div class="input-group">
             <input type="password" id="apiKeyInput" placeholder="구글 API 키를 붙여넣으세요">
         </div>
         <button class="btn-main" onclick="saveApiKey()">✅ 키 저장하고 시작하기</button>
     </div>
 
-    <!-- [1단계] 대본 생성 (예습) -->
+    <!-- [1단계] 대본 생성 -->
     <div class="section-box" id="step1" style="display: none;">
-        <h3 style="margin-top: 0; color: #2c3e50;">1단계: 오늘의 대본 예습하기 📝 
-            <button class="btn-reset-key" onclick="resetApiKey()">설정 초기화(키 삭제)</button>
+        <h3>1단계: 오늘의 대본 예습 📝 
+            <button class="btn-reset-key" onclick="resetApiKey()">설정 초기화</button>
         </h3>
         
-        <div class="input-group">
+        <div class="input-group" style="margin-top: 15px;">
             <label for="voiceSelect">👩‍🏫 선생님 목소리 선택</label>
             <select id="voiceSelect" onchange="playSampleVoice()"></select>
         </div>
 
         <div class="input-group">
+            <label for="userInput">👧 오늘 아이에게 있었던 일</label>
             <input type="text" id="userInput" placeholder="예: 오늘 피아노 학원에서 칭찬받았어">
         </div>
-        <button class="btn-main" onclick="generateScript()">✨ 대본 만들기</button>
+        <button class="btn-main" onclick="generateScript()">✨ 인공지능 대본 만들기</button>
         
-        <div id="loading">대본을 작성 중입니다. 잠시만 기다려주세요... ⏳</div>
+        <div id="loading">마법의 대본을 작성 중입니다... ⏳</div>
         <div id="scriptResult"></div>
         
-        <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection()">🎤 배운 내용으로 AI와 실전 대화하기 ▶️</button>
+        <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection()">🎤 AI 선생님과 실전 연습하기 ▶️</button>
     </div>
 
     <!-- [2단계] 실전 대화 -->
     <div class="section-box" id="chatSection">
-        <h3 style="margin-top: 0; color: #2c3e50;">2단계: 실전 화상영어 연습 👩‍🏫</h3>
-        <button class="btn-restart" onclick="restartConversation()">🔄 처음부터 다시 대화하기</button>
+        <h3>2단계: 실전 화상영어 연습 👩‍🏫</h3>
+        <button class="btn-restart" onclick="restartConversation()">🔄 대화 처음부터 다시 시작하기</button>
         <div id="status"></div>
         <div class="chat-box" id="chatBox"></div>
         <div id="hintBox"></div>
-        <button id="hintBtn" class="btn-hint" onclick="getHint()">💡 무슨 말인지 모르겠어요 (힌트 보기)</button>
+        <button id="hintBtn" class="btn-hint" onclick="getHint()">💡 힌트 보기 (무슨 말인지 모르겠어요)</button>
         <button id="micToggleBtn" class="btn-toggle-mic" onclick="toggleMic()">🎙️ 마이크 켜기 (누르고 말하기)</button>
     </div>
+</div>
 
     <script>
         let USER_API_KEY = ""; 
@@ -94,17 +183,15 @@
         let isRecording = false;
         let finalTranscript = "";
 
-        // 페이지 접속 시, 브라우저에 저장된 키가 있는지 확인
         window.onload = function() {
             const savedKey = localStorage.getItem("gemini_tutor_api_key");
             if (savedKey) {
                 USER_API_KEY = savedKey;
-                document.getElementById('step0').style.display = "none"; // 키 입력창 숨김
-                document.getElementById('step1').style.display = "block"; // 대본 화면 켬
+                document.getElementById('step0').style.display = "none"; 
+                document.getElementById('step1').style.display = "block"; 
             }
         };
 
-        // 키 저장 버튼을 눌렀을 때
         function saveApiKey() {
             const inputKey = document.getElementById('apiKeyInput').value.trim();
             if (!inputKey) {
@@ -112,15 +199,14 @@
                 return;
             }
             USER_API_KEY = inputKey;
-            localStorage.setItem("gemini_tutor_api_key", USER_API_KEY); // 기기 브라우저에 몰래 저장
+            localStorage.setItem("gemini_tutor_api_key", USER_API_KEY); 
             
             document.getElementById('step0').style.display = "none";
             document.getElementById('step1').style.display = "block";
         }
 
-        // 키 설정 지우기 (다른 기기로 옮기거나 키를 바꿀 때)
         function resetApiKey() {
-            if(confirm("저장된 API 키를 기기에서 삭제하시겠습니까? (새로고침하면 다시 입력해야 합니다.)")) {
+            if(confirm("저장된 API 키를 삭제하시겠습니까?")) {
                 localStorage.removeItem("gemini_tutor_api_key");
                 location.reload();
             }
@@ -130,7 +216,6 @@
             return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY;
         }
 
-        // --- 이하 STT/TTS 및 제미나이 대화 로직은 기존과 100% 동일하게 유지됨 ---
         function populateVoiceList() {
             availableVoices = window.speechSynthesis.getVoices();
             const voiceSelect = document.getElementById('voiceSelect');
@@ -139,7 +224,7 @@
             const usEnglishVoices = availableVoices.filter(voice => voice.lang.includes('en-US') || voice.lang.includes('en_US'));
             usEnglishVoices.forEach((voice) => {
                 const option = document.createElement('option');
-                option.textContent = `${voice.name} (${voice.lang})`;
+                option.textContent = `${voice.name.replace('Microsoft ', '').replace('Google ', '')} (${voice.lang})`;
                 option.value = voice.name;
                 voiceSelect.appendChild(option);
             });
@@ -207,7 +292,9 @@
 
         function openChatSection() {
             document.getElementById('chatSection').style.display = "block";
-            document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
             restartConversation(); 
         }
 
@@ -218,7 +305,7 @@
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('hintBtn').style.display = "none";
             document.getElementById('micToggleBtn').style.display = "none"; 
-            document.getElementById('status').innerText = "수업을 시작합니다...";
+            document.getElementById('status').innerText = "수업을 준비하고 있습니다...";
             isRecording = false;
             chatHistory = [
                 { "role": "user", "parts": [{ "text": `너는 11살 한국 아이를 가르치는 화상영어 선생님이야. 아이가 오늘 겪은 일은 "${currentUserInput}"이야. 무조건 "Hi! How was your day?"로 시작해. 항상 아주 짧고 쉬운 영어 1~2문장으로만 대답해.` }] },
@@ -263,17 +350,17 @@
             if (!isRecording) {
                 finalTranscript = "";
                 isRecording = true;
-                micBtn.innerText = "🛑 다 말했어요 (여기를 눌러서 전송하세요)";
-                micBtn.style.backgroundColor = "#e74c3c"; 
+                micBtn.innerText = "🛑 다 말했어요 (여기를 눌러 전송하세요)";
+                micBtn.style.background = "linear-gradient(135deg, #ff7675, #d63031)"; 
                 document.getElementById('hintBtn').style.display = "none"; 
                 try { recognition.start(); } catch(e) {}
-                statusDiv.innerText = "🎤 (듣는 중) 천천히 말하고 다 말하면 빨간 버튼을 누르세요!";
+                statusDiv.innerText = "🎤 (듣는 중) 천천히 말하고 버튼을 다시 누르세요!";
             } else {
                 isRecording = false;
                 micBtn.style.display = "none"; 
-                micBtn.style.backgroundColor = "#3498db"; 
+                micBtn.style.background = "linear-gradient(135deg, #0984e3, #74b9ff)"; 
                 micBtn.innerText = "🎙️ 마이크 켜기 (누르고 말하기)";
-                statusDiv.innerText = "대답을 선생님께 전송 중입니다...";
+                statusDiv.innerText = "대답을 선생님께 전송하고 있어요...";
                 recognition.stop();
             }
         }
@@ -294,7 +381,7 @@
                 document.getElementById('status').innerText = "오류가 생겼어요. 파란색 마이크 버튼을 다시 눌러주세요.";
                 isRecording = false;
                 document.getElementById('micToggleBtn').innerText = "🎙️ 마이크 켜기 (누르고 말하기)";
-                document.getElementById('micToggleBtn').style.backgroundColor = "#3498db";
+                document.getElementById('micToggleBtn').style.background = "linear-gradient(135deg, #0984e3, #74b9ff)";
             }
         };
 
