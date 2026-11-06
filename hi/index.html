@@ -223,7 +223,7 @@
     </div>
     <!-- [추가] 하단 버전 및 소유권 표시 -->
     <div class="footer-info">
-        v1.0.4 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.0.5 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
 </div> <!-- container 끝 -->
 
@@ -442,7 +442,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
         
-        // 아이 입력창 생성 (다시하기 버튼 추가)
+        // 아이 입력창 생성 (버튼 깨짐 방지: 두 줄 배치 및 크기 조절)
         function createStudentInputBubble() {
             if (document.getElementById('current-student-input')) return; 
         
@@ -463,38 +463,39 @@
             textSpan.style.color = "#7f8c8d";
             textSpan.style.lineHeight = "1.5";
             
-            // 버튼 2개를 나란히 담을 상자
+            // 💡 1. 버튼을 나란히(가로)가 아니라 세로(위아래 두 줄)로 배치합니다.
             const btnContainer = document.createElement('div');
             btnContainer.id = 'bubble-controls';
             btnContainer.style.display = 'flex';
+            btnContainer.style.flexDirection = 'column'; 
             btnContainer.style.gap = '8px';
             btnContainer.style.marginTop = '12px';
         
-            // 1. 다시 하기 버튼 (처음엔 숨김)
+            // 💡 2. 지우기 버튼을 살짝 작게 만듭니다.
             const retryBtn = document.createElement('button');
             retryBtn.id = 'bubbleRetryBtn';
             retryBtn.style.display = 'none';
-            retryBtn.style.padding = '12px';
-            retryBtn.style.flex = '1';
+            retryBtn.style.padding = '8px'; // 기존 12px -> 8px로 축소
+            retryBtn.style.fontSize = '13px'; // 글씨 크기 축소
             retryBtn.style.background = '#ffeaa7';
             retryBtn.style.color = '#d35400';
             retryBtn.style.border = '2px solid #fad390';
-            retryBtn.innerHTML = "🔄";
+            retryBtn.innerHTML = "🔄 지우고 다시 말하기";
             retryBtn.onclick = retryMic;
         
-            // 2. 마이크 켜기 / 전송 버튼
+            // 메인 마이크/전송 버튼 (크기 유지)
             const micBtn = document.createElement('button');
             micBtn.id = 'bubbleMicBtn';
             micBtn.className = 'btn-toggle-mic';
             micBtn.style.display = 'block';
             micBtn.style.margin = '0';
             micBtn.style.padding = '12px';
-            micBtn.style.flex = '2';
-            micBtn.innerHTML = "🎙️";
+            micBtn.innerHTML = "🎙️ 마이크 켜기";
             micBtn.onclick = toggleBubbleMic;
         
-            btnContainer.appendChild(retryBtn);
+            // 마이크 버튼을 위에, 지우기 버튼을 아래에 넣습니다.
             btnContainer.appendChild(micBtn);
+            btnContainer.appendChild(retryBtn);
         
             msgDiv.appendChild(header);
             msgDiv.appendChild(textSpan);
