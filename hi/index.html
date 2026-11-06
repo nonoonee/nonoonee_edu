@@ -233,13 +233,14 @@
         let chatHistory = []; 
         let availableVoices = []; 
         let isRecording = false;
+        let isWaitingToSend = false; // 💡 추가: 전송 대기 상태
         let finalTranscript = "";
         
         // 말풍선 및 재시도 제어 변수
         let currentStudentTextSpan = null;
         let currentStudentBubble = null;
-        let isRetrying = false; // 다시 말하기 상태인지 확인하는 변수
-        
+        let isRetrying = false; 
+    
         window.onload = function() {
             const savedKey = localStorage.getItem("gemini_tutor_api_key");
             if (savedKey) {
@@ -248,7 +249,7 @@
                 document.getElementById('step1').style.display = "block"; 
             }
         };
-        
+    
         function saveApiKey() {
             const inputKey = document.getElementById('apiKeyInput').value.trim();
             if (!inputKey) { alert("API 키를 입력해주세요!"); return; }
@@ -257,18 +258,18 @@
             document.getElementById('step0').style.display = "none";
             document.getElementById('step1').style.display = "block";
         }
-        
+    
         function resetApiKey() {
             if(confirm("저장된 API 키를 삭제하시겠습니까?")) {
                 localStorage.removeItem("gemini_tutor_api_key");
                 location.reload();
             }
         }
-        
+    
         function getModelUrl() {
             return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY;
         }
-        
+    
         function populateVoiceList() {
             availableVoices = window.speechSynthesis.getVoices();
             const voiceSelect = document.getElementById('voiceSelect');
@@ -278,7 +279,7 @@
             const weirdVoices = ["Albert", "Bad News", "Bahh", "Bells", "Boing", "Bubbles", "Cellos", "Deranged", "Good News", "Hysterical", "Pipe Organ", "Trinoids", "Whisper", "Zarvox", "Superstar", "Organ"];
             const maleNames = ["Alex", "David", "Mark", "Fred", "Arthur", "Bruce", "Aaron"];
             const femaleNames = ["Samantha", "Zira", "Victoria", "Karen", "Catherine", "Martha", "Moira", "Sandy", "Susan"];
-        
+    
             function getGender(name) {
                 const lowerName = name.toLowerCase();
                 if (lowerName.includes('female')) return " 👩(여성)";
@@ -287,13 +288,13 @@
                 if (femaleNames.some(f => name.includes(f))) return " 👩(여성)";
                 return ""; 
             }
-        
+    
             const usEnglishVoices = availableVoices.filter(voice => {
                 const isUS = voice.lang.includes('en-US') || voice.lang.includes('en_US');
                 const isNormal = !weirdVoices.some(weird => voice.name.includes(weird));
                 return isUS && isNormal;
             });
-        
+    
             usEnglishVoices.forEach((voice) => {
                 const option = document.createElement('option');
                 let cleanName = voice.name.replace('Microsoft ', '').replace('Google ', '');
@@ -302,13 +303,13 @@
                 option.value = voice.name;
                 voiceSelect.appendChild(option);
             });
-        
+    
             if (usEnglishVoices.length === 0) voiceSelect.innerHTML = '<option>미국식 영어 목소리를 찾을 수 없습니다.</option>';
             else if (currentValue) voiceSelect.value = currentValue; 
         }
         populateVoiceList();
         if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = populateVoiceList;
-        
+    
         function playSampleVoice() {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel(); 
@@ -319,7 +320,7 @@
             utterance.rate = 0.9;
             window.speechSynthesis.speak(utterance);
         }
-        
+    
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition;
         if (SpeechRecognition) {
@@ -328,7 +329,7 @@
             recognition.continuous = true; 
             recognition.interimResults = true; 
         }
-        
+    
         async function generateScript() {
             const userInput = document.getElementById('userInput').value;
             if (!userInput.trim()) { alert("오늘 있었던 일을 입력해주세요!"); return; }
@@ -337,24 +338,24 @@
             document.getElementById('startChatBtn').style.display = "none";
             document.getElementById('loading').style.display = "block";
             document.getElementById('chatSection').style.display = "none"; 
-        
+    
             const promptText = `다음은 11살 한국 아이가 화상영어 수업에서 원어민 선생님과 나눌 스몰토크 대본입니다. 
-        ※ 규칙 1: '영어 문장'은 반드시 <b> 태그로 감싸주세요.
-        ※ 규칙 2: 문장 전체의 한국어 발음은 적지 마세요.
-        ※ 규칙 3: 문장에 11살이 읽기 어려운 단어가 있다면, 뜻 바로 밑에 '💡 단어 팁:'을 넣고 아래 HTML 버튼 양식으로 작성해주세요.
-        (예시) 💡 단어 팁: 칭찬하다 - <span class="speak-btn" onclick="speakWord('compliment')">🔊 compliment</span>
-        
-        [작성 순서 및 양식]
-        1. 선생님 첫 질문("How was~?")에 대한 아이의 대답
-        - <b>영어 문장</b>
-        - 한국어 뜻
-        - 💡 단어 팁: (어려운 단어가 있을 경우에만 작성)
-        
-        2. 선생님의 예상 꼬리 질문 2가지
-        3. 꼬리 질문에 대한 아이 대답 2개
-        4. 선생님께 되묻기 1개
-        오늘 있었던 일: ${userInput}`;
-        
+    ※ 규칙 1: '영어 문장'은 반드시 <b> 태그로 감싸주세요.
+    ※ 규칙 2: 문장 전체의 한국어 발음은 적지 마세요.
+    ※ 규칙 3: 문장에 11살이 읽기 어려운 단어가 있다면, 뜻 바로 밑에 '💡 단어 팁:'을 넣고 아래 HTML 버튼 양식으로 작성해주세요.
+    (예시) 💡 단어 팁: 칭찬하다 - <span class="speak-btn" onclick="speakWord('compliment')">🔊 compliment</span>
+    
+    [작성 순서 및 양식]
+    1. 선생님 첫 질문("How was~?")에 대한 아이의 대답
+    - <b>영어 문장</b>
+    - 한국어 뜻
+    - 💡 단어 팁: (어려운 단어가 있을 경우에만 작성)
+    
+    2. 선생님의 예상 꼬리 질문 2가지
+    3. 꼬리 질문에 대한 아이 대답 2개
+    4. 선생님께 되묻기 1개
+    오늘 있었던 일: ${userInput}`;
+    
             try {
                 const response = await fetch(getModelUrl(), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -372,13 +373,13 @@
                 document.getElementById('loading').style.display = "none";
             }
         }
-        
+    
         function openChatSection() {
             document.getElementById('chatSection').style.display = "block";
             setTimeout(() => { document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
             restartConversation(); 
         }
-        
+    
         function restartConversation() {
             if(window.speechSynthesis) window.speechSynthesis.cancel();
             if(recognition) { try { recognition.stop(); } catch(e){} }
@@ -387,37 +388,39 @@
             document.getElementById('hintBtn').style.display = "none";
             isRecording = false;
             isRetrying = false;
+            isWaitingToSend = false;
             
+            // 💡 AI 프롬프트 업그레이드: "발음이 틀려도 찰떡같이 유추해라" 명령 추가
             chatHistory = [
-                { "role": "user", "parts": [{ "text": `너는 11살 한국 아이를 가르치는 화상영어 선생님이야. 아이가 오늘 겪은 일은 "${currentUserInput}"이야. 무조건 "Hi! How was your day?"로 시작해. 항상 아주 짧고 쉬운 영어 1~2문장으로만 대답해.` }] },
+                { "role": "user", "parts": [{ "text": `너는 11살 한국 아이를 가르치는 화상영어 선생님이야. 아이가 오늘 겪은 일은 "${currentUserInput}"이야. 무조건 "Hi! How was your day?"로 시작해. 항상 아주 짧고 쉬운 영어 1~2문장으로만 대답해. [중요 규칙]: 사용자는 11살 아이라서 발음 인식 오류 때문에 문장에 오타가 있거나 엉뚱한 단어가 적혀있을 수 있어. 오류를 지적하지 말고, 문맥을 파악해서 원래 하려던 말이 무엇인지 찰떡같이 유추해서 친절하게 대화해줘.` }] },
                 { "role": "model", "parts": [{ "text": "Hi! How was your day?" }] }
             ];
             addMessage("Hi! How was your day?", "teacher");
             speakText("Hi! How was your day?");
         }
-        
+    
         function addMessage(text, sender) {
             const chatBox = document.getElementById('chatBox');
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('msg', 'teacher-msg'); 
-        
+    
             const header = document.createElement('div');
             header.innerText = "👩‍🏫 쌤:";
             header.style.fontWeight = "bold";
             header.style.marginBottom = "6px";
             header.style.color = "#2c3e50";
-        
+    
             const textDiv = document.createElement('div');
             textDiv.classList.add('blurred-text');
             textDiv.innerHTML = text; 
-        
+    
             const controls = document.createElement('div');
             controls.classList.add('msg-controls');
-        
+    
             const replayBtn = document.createElement('button');
             replayBtn.innerHTML = "🔊 다시 듣기";
             replayBtn.onclick = function() { replayText(text); };
-        
+    
             const showBtn = document.createElement('button');
             showBtn.innerHTML = "👁️ 텍스트 보기";
             let isBlurred = true;
@@ -432,7 +435,7 @@
                     isBlurred = true;
                 }
             };
-        
+    
             controls.appendChild(replayBtn);
             controls.appendChild(showBtn);
             msgDiv.appendChild(header);
@@ -441,11 +444,11 @@
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-        
-        // 아이 입력창 생성 (버튼 깨짐 방지: 두 줄 배치 및 크기 조절)
+    
+        // 아이 입력창 생성
         function createStudentInputBubble() {
             if (document.getElementById('current-student-input')) return; 
-        
+    
             const chatBox = document.getElementById('chatBox');
             const msgDiv = document.createElement('div');
             msgDiv.id = 'current-student-input';
@@ -456,34 +459,34 @@
             header.style.fontWeight = "bold";
             header.style.marginBottom = "6px";
             header.style.color = "#d35400";
-        
+    
             const textSpan = document.createElement('div');
             textSpan.id = 'student-live-text';
             textSpan.innerText = "마이크를 켜고 대답해 보세요!";
             textSpan.style.color = "#7f8c8d";
             textSpan.style.lineHeight = "1.5";
+            // 💡 텍스트를 직접 키보드로 수정할 수 있도록 허용!
+            textSpan.contentEditable = "true"; 
+            textSpan.style.outline = "none";
             
-            // 💡 1. 버튼을 나란히(가로)가 아니라 세로(위아래 두 줄)로 배치합니다.
             const btnContainer = document.createElement('div');
             btnContainer.id = 'bubble-controls';
             btnContainer.style.display = 'flex';
             btnContainer.style.flexDirection = 'column'; 
             btnContainer.style.gap = '8px';
             btnContainer.style.marginTop = '12px';
-        
-            // 💡 2. 지우기 버튼을 살짝 작게 만듭니다.
+    
             const retryBtn = document.createElement('button');
             retryBtn.id = 'bubbleRetryBtn';
             retryBtn.style.display = 'none';
-            retryBtn.style.padding = '8px'; // 기존 12px -> 8px로 축소
-            retryBtn.style.fontSize = '13px'; // 글씨 크기 축소
+            retryBtn.style.padding = '8px'; 
+            retryBtn.style.fontSize = '13px'; 
             retryBtn.style.background = '#ffeaa7';
             retryBtn.style.color = '#d35400';
             retryBtn.style.border = '2px solid #fad390';
             retryBtn.innerHTML = "🔄 지우고 다시 말하기";
             retryBtn.onclick = retryMic;
-        
-            // 메인 마이크/전송 버튼 (크기 유지)
+    
             const micBtn = document.createElement('button');
             micBtn.id = 'bubbleMicBtn';
             micBtn.className = 'btn-toggle-mic';
@@ -492,11 +495,10 @@
             micBtn.style.padding = '12px';
             micBtn.innerHTML = "🎙️ 마이크 켜기";
             micBtn.onclick = toggleBubbleMic;
-        
-            // 마이크 버튼을 위에, 지우기 버튼을 아래에 넣습니다.
+    
             btnContainer.appendChild(micBtn);
             btnContainer.appendChild(retryBtn);
-        
+    
             msgDiv.appendChild(header);
             msgDiv.appendChild(textSpan);
             msgDiv.appendChild(btnContainer);
@@ -506,7 +508,7 @@
             currentStudentTextSpan = textSpan;
             currentStudentBubble = msgDiv;
         }
-        
+    
         function replayText(text) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
@@ -518,7 +520,7 @@
             utterance.rate = 0.9;
             window.speechSynthesis.speak(utterance);
         }
-        
+    
         function speakText(text) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
@@ -536,46 +538,75 @@
             };
             window.speechSynthesis.speak(utterance);
         }
-        
-        // 마이크 켜고 끄기 로직
+    
+        // 💡 3단계로 분리된 완벽한 녹음/수정/전송 로직
         function toggleBubbleMic() {
             if (!recognition) return;
             const micBtn = document.getElementById('bubbleMicBtn');
             const retryBtn = document.getElementById('bubbleRetryBtn');
-        
-            if (!isRecording) {
+    
+            if (!isRecording && !isWaitingToSend) {
+                // [1단계] 녹음 시작
                 isRetrying = false;
                 finalTranscript = "";
                 currentStudentTextSpan.innerText = "🎤 (듣는 중...)";
                 currentStudentTextSpan.style.color = "#2d3436";
+                currentStudentTextSpan.style.borderBottom = "none";
                 isRecording = true;
                 
-                // 녹음 시작되면 '전송' 버튼과 '지우기' 버튼 두 개가 나타남
-                micBtn.innerHTML = "✈️ 전송하기";
+                micBtn.innerHTML = "🛑 녹음 완료 (다 말하면 누르세요)";
                 micBtn.style.background = "linear-gradient(135deg, #ff7675, #d63031)"; 
                 retryBtn.style.display = "block"; 
-        
                 document.getElementById('hintBtn').style.display = "none"; 
                 try { recognition.start(); } catch(e) {}
-            } else {
-                // 전송하기 버튼 누름
+    
+            } else if (isRecording) {
+                // [2단계] 녹음 중지 -> 직접 키보드 수정 가능 상태로 대기!
                 isRecording = false;
-                micBtn.style.display = "none"; 
-                retryBtn.style.display = "none";
-                currentStudentTextSpan.innerText = finalTranscript || "전송 중...";
-                recognition.stop();
+                isWaitingToSend = true;
+                recognition.stop(); // 자동 전송되지 않고 대기함
+                
+                micBtn.innerHTML = "✈️ 이대로 전송하기";
+                micBtn.style.background = "linear-gradient(135deg, #00b894, #55efc4)"; 
+                
+                if(!finalTranscript) {
+                    currentStudentTextSpan.innerText = "여기를 터치해서 키보드로 직접 입력해보세요!";
+                    currentStudentTextSpan.style.color = "#0984e3";
+                }
+                // 수정 가능함을 알려주는 밑줄 추가
+                currentStudentTextSpan.style.borderBottom = "2px dashed #0984e3"; 
+                currentStudentTextSpan.style.paddingBottom = "4px";
+    
+            } else if (isWaitingToSend) {
+                // [3단계] 수정 확인 후 진짜 전송
+                isWaitingToSend = false;
+                let finalTextToSend = currentStudentTextSpan.innerText.trim();
+                
+                if(finalTextToSend === "" || finalTextToSend.includes("직접 입력해보세요")) {
+                    alert("내용을 입력해주세요!");
+                    isWaitingToSend = true; // 다시 대기
+                    return;
+                }
+                
+                if (currentStudentBubble) {
+                    currentStudentBubble.removeAttribute('id');
+                    const controls = document.getElementById('bubble-controls');
+                    if (controls) controls.remove();
+                    currentStudentTextSpan.contentEditable = "false"; // 전송 후엔 수정 불가
+                    currentStudentTextSpan.style.borderBottom = "none";
+                }
+                sendToGemini(finalTextToSend);
             }
         }
-        
-        // 💡 새 기능: 다시 말하기(지우기) 함수
+    
         function retryMic() {
             if (!recognition) return;
-            isRetrying = true; // 전송하지 말라고 깃발 들기
+            isRetrying = true; 
             isRecording = false;
+            isWaitingToSend = false; // 대기 상태도 초기화
             finalTranscript = ""; 
             recognition.stop();
             
-            // 버튼을 처음 상태로 되돌리기
             const micBtn = document.getElementById('bubbleMicBtn');
             const retryBtn = document.getElementById('bubbleRetryBtn');
             if(micBtn) {
@@ -586,9 +617,10 @@
             
             currentStudentTextSpan.innerText = "글씨가 지워졌어요. 다시 말해볼까요?";
             currentStudentTextSpan.style.color = "#7f8c8d";
+            currentStudentTextSpan.style.borderBottom = "none";
             document.getElementById('hintBtn').style.display = "block";
         }
-        
+    
         recognition.onresult = function(event) {
             let tempFinal = '';
             let tempInterim = '';
@@ -602,11 +634,12 @@
                 document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
             }
         };
-        
+    
         recognition.onerror = function(event) {
             if (event.error !== 'aborted') {
-                if (currentStudentTextSpan) currentStudentTextSpan.innerText = "오류 발생! 버튼을 다시 눌러주세요.";
+                if (currentStudentTextSpan) currentStudentTextSpan.innerText = "오류 발생! 마이크를 다시 켜주세요.";
                 isRecording = false;
+                isWaitingToSend = false;
                 const micBtn = document.getElementById('bubbleMicBtn');
                 const retryBtn = document.getElementById('bubbleRetryBtn');
                 if (micBtn) {
@@ -616,44 +649,25 @@
                 if (retryBtn) retryBtn.style.display = "none";
             }
         };
-        
+    
+        // 💡 녹음이 끝나도 바로 안 보내고 기다리는 로직
         recognition.onend = function() {
             if (isRetrying) {
-                isRetrying = false; // 지우기 버튼을 눌렀을 때는 아무것도 전송하지 않고 조용히 끝냄
+                isRetrying = false; 
                 return;
             }
-        
             if (isRecording) {
+                // 안드로이드 등에서 녹음이 중간에 끊기면 다시 켬
                 try { recognition.start(); } catch(e) {}
-            } else {
-                if (finalTranscript.trim() !== "") {
-                    if (currentStudentBubble) {
-                        currentStudentBubble.removeAttribute('id');
-                        const controls = document.getElementById('bubble-controls');
-                        if (controls) controls.remove();
-                        currentStudentTextSpan.innerText = finalTranscript;
-                    }
-                    sendToGemini(finalTranscript);
-                } else {
-                    if (currentStudentTextSpan) currentStudentTextSpan.innerText = "아무 소리도 안 들렸어요. 마이크를 다시 켤까요?";
-                    const micBtn = document.getElementById('bubbleMicBtn');
-                    const retryBtn = document.getElementById('bubbleRetryBtn');
-                    if (micBtn) {
-                        micBtn.style.display = "block";
-                        micBtn.innerHTML = "🎙️ 다시 마이크 켜기";
-                        micBtn.style.background = "linear-gradient(135deg, #0984e3, #74b9ff)";
-                    }
-                    if (retryBtn) retryBtn.style.display = "none";
-                    document.getElementById('hintBtn').style.display = "block";
-                }
             }
+            // isWaitingToSend 상태일 때는 사용자가 '전송하기' 버튼을 누를 때까지 얌전히 기다립니다!
         };
-        
+    
         async function getHint() {
-            if (isRecording) retryMic(); // 힌트를 누르면 녹음하던 것도 취소!
+            if (isRecording || isWaitingToSend) retryMic(); // 힌트 누르면 녹음/대기 취소
             
             const controls = document.getElementById('bubble-controls');
-            if (controls) controls.style.display = "none"; // 힌트 볼 땐 마이크 숨김
+            if (controls) controls.style.display = "none"; 
             document.getElementById('hintBtn').style.display = "none";
             
             const hintBox = document.getElementById('hintBox');
@@ -661,7 +675,7 @@
             hintBox.innerHTML = "⏳ 선생님의 말을 해석하고 대답을 고민 중이에요...";
             const hintHistory = [...chatHistory];
             hintHistory.push({ "role": "user", "parts": [{ "text": "방금 네가(선생님) 한 말을 한국어로 해석해주고, 11살 한국 아이가 대답할 수 있는 아주 쉽고 짧은 영어 대답 2가지를 추천해줘. 양식: [선생님 말 해석]: (내용) / [추천 대답 1]: (영어) - (뜻) / [추천 대답 2]: (영어) - (뜻)" }] });
-        
+    
             try {
                 const response = await fetch(getModelUrl(), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -671,14 +685,14 @@
                 hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>') + '<br><br><button class="btn-mic-ready" onclick="resumeListening()">💡 힌트 확인 완료! 이제 말해볼게요</button>';
             } catch (error) { hintBox.innerHTML = "힌트를 불러오지 못했어요."; }
         }
-        
+    
         function resumeListening() {
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('hintBtn').style.display = "block";
             const controls = document.getElementById('bubble-controls');
-            if (controls) controls.style.display = "flex"; // 다시 마이크 보여주기
+            if (controls) controls.style.display = "flex"; 
         }
-        
+    
         async function sendToGemini(userText) {
             document.getElementById('hintBtn').style.display = "none";
             document.getElementById('hintBox').style.display = "none";
@@ -700,7 +714,7 @@
                 if (currentStudentTextSpan) currentStudentTextSpan.innerText = "오류 발생! 화면을 새로고침 해주세요."; 
             }
         }
-        
+    
         function speakWord(word) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
