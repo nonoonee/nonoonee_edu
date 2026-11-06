@@ -233,36 +233,53 @@
         }
 
         function populateVoiceList() {
-        availableVoices = window.speechSynthesis.getVoices();
-        const voiceSelect = document.getElementById('voiceSelect');
-        const currentValue = voiceSelect.value;
-        voiceSelect.innerHTML = ''; 
-        
-        // 🚫 제외할 이상한 효과음/장난감 목소리 목록 (블랙리스트)
-        const weirdVoices = ["Albert", "Bad News", "Bahh", "Bells", "Boing", "Bubbles", "Cellos", "Deranged", "Good News", "Hysterical", "Pipe Organ", "Trinoids", "Whisper", "Zarvox", "Superstar", "Organ"];
-
-        // 미국 영어이면서, 이상한 목소리가 아닌 것만 걸러내기
-        const usEnglishVoices = availableVoices.filter(voice => {
-            const isUS = voice.lang.includes('en-US') || voice.lang.includes('en_US');
-            const isNormal = !weirdVoices.some(weird => voice.name.includes(weird));
-            return isUS && isNormal;
-        });
-
-        usEnglishVoices.forEach((voice) => {
-            const option = document.createElement('option');
-            // 앞의 쓸데없는 회사 이름(Google, Microsoft)을 지워서 깔끔하게 표시
-            let cleanName = voice.name.replace('Microsoft ', '').replace('Google ', '');
-            option.textContent = `${cleanName} (${voice.lang})`;
-            option.value = voice.name;
-            voiceSelect.appendChild(option);
-        });
-
-        if (usEnglishVoices.length === 0) {
-            voiceSelect.innerHTML = '<option>미국식 영어 목소리를 찾을 수 없습니다.</option>';
-        } else if (currentValue) {
-            voiceSelect.value = currentValue; 
+            availableVoices = window.speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            const currentValue = voiceSelect.value;
+            voiceSelect.innerHTML = ''; 
+            
+            // 🚫 제외할 이상한 효과음/장난감 목소리 목록
+            const weirdVoices = ["Albert", "Bad News", "Bahh", "Bells", "Boing", "Bubbles", "Cellos", "Deranged", "Good News", "Hysterical", "Pipe Organ", "Trinoids", "Whisper", "Zarvox", "Superstar", "Organ"];
+    
+            // 👨‍🦰👩‍🦰 성별 판독을 위한 이름 사전
+            const maleNames = ["Alex", "David", "Mark", "Fred", "Arthur", "Bruce", "Aaron"];
+            const femaleNames = ["Samantha", "Zira", "Victoria", "Karen", "Catherine", "Martha", "Moira", "Sandy", "Susan"];
+    
+            function getGender(name) {
+                const lowerName = name.toLowerCase();
+                if (lowerName.includes('female')) return " 👩(여성)";
+                if (lowerName.includes('male')) return " 👨(남성)";
+                if (maleNames.some(m => name.includes(m))) return " 👨(남성)";
+                if (femaleNames.some(f => name.includes(f))) return " 👩(여성)";
+                return ""; // 구분이 모호한 목소리는 표시하지 않음
+            }
+    
+            // 미국 영어이면서 정상적인 사람 목소리만 필터링
+            const usEnglishVoices = availableVoices.filter(voice => {
+                const isUS = voice.lang.includes('en-US') || voice.lang.includes('en_US');
+                const isNormal = !weirdVoices.some(weird => voice.name.includes(weird));
+                return isUS && isNormal;
+            });
+    
+            usEnglishVoices.forEach((voice) => {
+                const option = document.createElement('option');
+                // 앞의 쓸데없는 회사 이름 지우기
+                let cleanName = voice.name.replace('Microsoft ', '').replace('Google ', '');
+                
+                // 이름에 따라 성별 꼬리표 붙이기
+                let genderMark = getGender(cleanName);
+                
+                option.textContent = `${cleanName}${genderMark}`;
+                option.value = voice.name;
+                voiceSelect.appendChild(option);
+            });
+    
+            if (usEnglishVoices.length === 0) {
+                voiceSelect.innerHTML = '<option>미국식 영어 목소리를 찾을 수 없습니다.</option>';
+            } else if (currentValue) {
+                voiceSelect.value = currentValue; 
+            }
         }
-    }
         populateVoiceList();
         if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = populateVoiceList;
 
