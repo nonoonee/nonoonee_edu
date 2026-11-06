@@ -206,6 +206,9 @@
             <input type="text" id="userInput" placeholder="예: 오늘 피아노 학원에서 칭찬받았어">
         </div>
         <button class="btn-main" onclick="generateScript()">✨ 인공지능 대본 만들기</button>
+        <!-- 💡 새롭게 추가하는 바로 대화하기 버튼 -->
+        <button class="btn-start-chat" style="display: block; margin-top: 10px;" onclick="skipScriptAndChat()">🚀 대본 없이 바로 대화하기 (프리토킹)</button>
+        
         
         <div id="loading">마법의 대본을 작성 중입니다... ⏳</div>
         <div id="scriptResult"></div>
@@ -223,7 +226,7 @@
     </div>
     <!-- [추가] 하단 버전 및 소유권 표시 -->
     <div class="footer-info">
-        v1.0.5 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.0.6 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
 </div> <!-- container 끝 -->
 
@@ -372,6 +375,21 @@
             } finally {
                 document.getElementById('loading').style.display = "none";
             }
+        }
+
+        // 💡 대본 생성 없이 바로 실전 대화로 넘어가는 전용 함수
+        function skipScriptAndChat() {
+            const userInput = document.getElementById('userInput').value;
+            if (!userInput.trim()) { 
+                alert("오늘 선생님과 이야기할 주제(오늘 있었던 일)를 간단히 적어주세요!"); 
+                return; 
+            }
+            currentUserInput = userInput; 
+            
+            // 대본 결과창은 숨기고 바로 채팅창 열기
+            document.getElementById('scriptResult').style.display = "none";
+            document.getElementById('startChatBtn').style.display = "none";
+            openChatSection();
         }
     
         function openChatSection() {
