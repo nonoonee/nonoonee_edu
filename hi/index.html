@@ -122,6 +122,31 @@
         .msg { padding: 12px 16px; border-radius: 18px; max-width: 75%; line-height: 1.5; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .teacher-msg { background-color: #ffffff; align-self: flex-start; border-bottom-left-radius: 4px; color: #2d3436; }
         .student-msg { background-color: #ffeaa7; align-self: flex-end; border-bottom-right-radius: 4px; color: #2d3436; }
+        /* 선생님 메시지 블러 처리 및 버튼 디자인 */
+        .blurred-text {
+            filter: blur(5px);
+            transition: filter 0.3s ease;
+            user-select: none;
+        }
+        .msg-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .msg-controls button {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 12px;
+            background-color: #f1f2f6;
+            color: #2d3436;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            width: auto;
+            border: 1px solid #dfe6e9;
+        }
+        .msg-controls button:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-1px);
+        }
         
         .btn-start-chat { background: linear-gradient(135deg, #ff7675, #d63031); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(214, 48, 49, 0.3); }
         .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4); transform: translateY(-2px); }
@@ -200,7 +225,7 @@
     </div>
     <!-- [추가] 하단 버전 및 소유권 표시 -->
     <div class="footer-info">
-        v1.0.0 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.0.1 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
 </div>
 
@@ -394,9 +419,62 @@
             const chatBox = document.getElementById('chatBox');
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('msg', sender === 'teacher' ? 'teacher-msg' : 'student-msg');
-            msgDiv.innerText = (sender === 'teacher' ? "👩‍🏫 쌤: " : "👧 나: ") + text;
+        
+            if (sender === 'teacher') {
+                // 선생님 이름표
+                const header = document.createElement('div');
+                header.innerText = "👩‍🏫 쌤:";
+                header.style.fontWeight = "bold";
+                header.style.marginBottom = "6px";
+                header.style.color = "#2c3e50";
+        
+                // 블러 처리된 텍스트
+                const textDiv = document.createElement('div');
+                textDiv.classList.add('blurred-text');
+                textDiv.innerText = text;
+        
+                // 버튼 2개 묶음
+                const controls = document.createElement('div');
+                controls.classList.add('msg-controls');
+        
+                // 1. 다시 듣기 버튼
+                const replayBtn = document.createElement('button');
+                replayBtn.innerHTML = "🔊 다시 듣기";
+                replayBtn.onclick = function() { replayText(text); };
+        
+                // 2. 텍스트 보기 버튼
+                const showBtn = document.createElement('button');
+                showBtn.innerHTML = "👁️ 텍스트 보기";
+                showBtn.onclick = function() {
+                    textDiv.classList.remove('blurred-text');
+                    showBtn.style.display = 'none'; // 한 번 누르면 버튼 숨기기
+                };
+        
+                controls.appendChild(replayBtn);
+                controls.appendChild(showBtn);
+        
+                msgDiv.appendChild(header);
+                msgDiv.appendChild(textDiv);
+                msgDiv.appendChild(controls);
+            } else {
+                // 아이 메시지는 그대로 출력
+                msgDiv.innerText = "👧 나: " + text;
+            }
+        
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        // 대화 흐름을 방해하지 않고 텍스트만 다시 읽어주는 전용 함수
+        function replayText(text) {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            else utterance.lang = 'en-US'; 
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
         }
 
         function speakText(text) {
