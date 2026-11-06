@@ -4,63 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회사소개 - (주)노느니 교육</title>
+    <!-- [추가] 가장 트렌디하고 가독성 높은 프리텐다드 웹 폰트 로드 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         /* 기본 설정 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif; color: #333; line-height: 1.6; background-color: #fcfcfc; }
+        /* 폰트를 프리텐다드로 변경하여 훨씬 세련된 느낌 부여 */
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #333; line-height: 1.6; background-color: #f8f9fa; }
         a { text-decoration: none; color: inherit; }
         ul, li { list-style: none; }
 
-        /* 상단 네비게이션 바 */
-        header { background-color: #fff; padding: 20px 40px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        /* 상단 네비게이션 바 (스크롤 시 상단 고정 및 유리 블러 효과 적용) */
+        header { 
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px 40px; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
         
-        /* 로고 이미지 스타일 추가 */
-        .logo img { height: 60px; width: auto; display: block; }
+        .logo img { height: 48px; width: auto; display: block; }
         
-        .nav-menu { display: flex; gap: 30px; font-weight: bold; color: #555; align-items: center; }
+        .nav-menu { display: flex; gap: 35px; font-weight: 600; color: #495057; align-items: center; font-size: 15px; }
+        .nav-menu a { transition: color 0.2s ease; }
         .nav-menu a:hover { color: #ff6b6b; }
 
-        /* 메인 히어로 섹션 (인사말) */
-        .hero-section { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 80px 20px; text-align: center; }
-        .hero-section h2 { font-size: 36px; font-weight: 800; color: #2d3436; margin-bottom: 15px; }
-        .hero-section p { font-size: 18px; color: #555; }
+        /* 메인 히어로 섹션 (요즘 유행하는 부드럽고 세련된 파스텔 그라데이션) */
+        .hero-section { 
+            background: linear-gradient(135deg, #fff0f0 0%, #ffe3e3 100%); 
+            padding: 100px 20px 90px; 
+            text-align: center; 
+        }
+        .hero-section h2 { font-size: 42px; font-weight: 800; color: #1e293b; margin-bottom: 20px; letter-spacing: -1px; }
+        .hero-section p { font-size: 19px; color: #475569; font-weight: 500; }
 
         /* 회사 비전 섹션 */
-        .vision-section { max-width: 1000px; margin: 60px auto; text-align: center; padding: 0 20px; }
-        .vision-section h3 { font-size: 28px; color: #333; margin-bottom: 20px; }
-        .vision-section p { font-size: 16px; color: #666; line-height: 1.8; word-break: keep-all; }
+        .vision-section { max-width: 800px; margin: 80px auto; text-align: center; padding: 0 20px; }
+        .vision-section h3 { font-size: 30px; font-weight: 800; color: #1e293b; margin-bottom: 24px; letter-spacing: -0.5px; }
+        .vision-section p { font-size: 17px; color: #64748b; line-height: 1.8; word-break: keep-all; font-weight: 400; }
 
-        /* 서비스 소개 섹션 (연산, 영어, 국어) */
-        .service-section { max-width: 1200px; margin: 0 auto 80px; padding: 0 20px; }
-        .service-title { text-align: center; font-size: 28px; margin-bottom: 40px; }
-        .card-container { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+        /* 서비스 소개 섹션 */
+        .service-section { max-width: 1100px; margin: 0 auto 100px; padding: 0 20px; }
+        .service-title { text-align: center; font-size: 30px; font-weight: 800; margin-bottom: 50px; color: #1e293b; letter-spacing: -0.5px; }
         
+        /* [핵심] 최신 CSS Grid 레이아웃으로 모바일/PC 완벽 대응 및 깔끔한 2열/4열 배치 */
+        .card-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 30px; 
+        }
+        
+        /* 카드 디자인 고도화 (애플/토스 스타일) */
         .service-card {
             background-color: #fff;
-            border-radius: 16px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            padding: 40px 30px;
-            width: 320px;
+            border-radius: 24px; /* 더 둥글고 세련된 모서리 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); /* 그림자를 훨씬 부드럽게 */
+            padding: 45px 30px;
             text-align: center;
-            transition: transform 0.3s ease;
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid rgba(0,0,0,0.02);
+            position: relative;
         }
-        .service-card:hover { transform: translateY(-10px); }
-        .card-icon { font-size: 48px; margin-bottom: 20px; }
-        .card-title { font-size: 22px; color: #333; margin-bottom: 15px; font-weight: bold; }
-        .card-desc { font-size: 15px; color: #777; line-height: 1.6; }
+        /* 마우스 오버 시 우아하게 떠오르는 효과 */
+        .service-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+        }
+        
+        .card-icon { font-size: 52px; margin-bottom: 24px; line-height: 1; }
+        .card-title { font-size: 22px; color: #1e293b; margin-bottom: 16px; font-weight: 700; letter-spacing: -0.5px; }
+        .card-desc { font-size: 15px; color: #64748b; line-height: 1.6; font-weight: 400; word-break: keep-all; }
 
-        /* 하단 푸터 (기존 코드 유지) */
-        footer { background-color: #fafafa; border-top: 1px solid #eaeaea; padding: 50px 20px; font-size: 13px; color: #666; }
-        .footer-inner { max-width: 1200px; margin: 0 auto; }
-        .footer-inner h1 { font-size: 18px; color: #333; margin-bottom: 20px; }
+        /* 화상영어 카드 전용 하이라이트 */
+        .highlight-card {
+            border: 2px solid #ff6b6b;
+            background: linear-gradient(to bottom, #ffffff, #fffafa);
+        }
+        .new-badge {
+            position: absolute; 
+            top: -14px; 
+            right: 24px; 
+            background: #ff6b6b; 
+            color: white; 
+            padding: 5px 14px; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        /* 하단 푸터 (깔끔하게 정돈) */
+        footer { background-color: #f1f5f9; border-top: 1px solid #e2e8f0; padding: 60px 20px; font-size: 13px; color: #64748b; }
+        .footer-inner { max-width: 1100px; margin: 0 auto; }
+        .footer-inner h1 { font-size: 20px; color: #334155; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
         .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
-        .company-info p { margin-bottom: 8px; }
-        .company-info span { margin-right: 15px; display: inline-block; }
-        .copyright { margin-top: 15px; color: #999; font-size: 12px; }
-        .footer-links { display: flex; gap: 15px; margin-bottom: 25px; font-weight: bold; }
-        .cert-info { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ddd; }
-        .cert-info div { background: #fff; border: 1px solid #ddd; padding: 10px 15px; border-radius: 4px; font-size: 11px; }
-        .cert-info strong { display: block; color: #333; font-size: 12px; margin-bottom: 3px; }
+        .company-info p { margin-bottom: 10px; line-height: 1.5; }
+        .company-info span { margin-right: 18px; display: inline-block; }
+        .copyright { margin-top: 20px; color: #94a3b8; font-size: 12px; font-weight: 500; }
+        .footer-links { display: flex; gap: 20px; margin-bottom: 30px; font-weight: 600; color: #475569; }
+        .footer-links a:hover { color: #1e293b; }
+        
+        .cert-info { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 30px; padding-top: 30px; border-top: 1px solid #cbd5e1; }
+        .cert-info div { background: #fff; border: 1px solid #e2e8f0; padding: 12px 18px; border-radius: 12px; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .cert-info strong { display: block; color: #334155; font-size: 12px; margin-bottom: 4px; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -68,13 +123,13 @@
     <!-- 상단 메뉴 -->
     <header>
         <div class="logo">
-            <a href="#"><img src="images/logo.png" alt="노느니 교육 실전 연산수학 로고"></a>
+            <a href="#"><img src="images/logo.png" alt="노느니 교육 로고"></a>
         </div>
         <ul class="nav-menu">
             <li><a href="#">회사소개</a></li>
             <li><a href="#">서비스 안내</a></li>
             <!-- 새로 추가된 AI 화상영어 링크 -->
-            <li><a href="https://nonoonee.com/hi/" style="color: #ff6b6b; font-weight: 900;">🚀 AI 화상영어 (New)</a></li>
+            <li><a href="https://nonoonee.com/hi/" style="color: #ff6b6b; font-weight: 800; background: #fff0f0; padding: 8px 16px; border-radius: 20px; transition: all 0.2s;">🚀 AI 화상영어 (New)</a></li>
             <li><a href="#">고객센터</a></li>
         </ul>
     </header>
@@ -95,10 +150,11 @@
         </p>
     </div>
 
-    <!-- 핵심 서비스 (연산, 영어, 국어 + 화상영어) -->
+    <!-- 핵심 서비스 -->
     <div class="service-section">
         <h3 class="service-title">주요 서비스</h3>
         <div class="card-container">
+            
             <!-- 서비스 1: 초등 연산 -->
             <div class="service-card">
                 <div class="card-icon">🧮</div>
@@ -127,10 +183,9 @@
             </div>
             
             <!-- 서비스 4: AI 화상영어 (신규 런칭) -->
-            <a href="https://nonoonee.com/hi/" target="_blank" style="text-decoration: none; color: inherit; display: block;">
-                <div class="service-card" style="border: 2px solid #ff6b6b; position: relative;">
-                    <!-- New 뱃지 달아주기 -->
-                    <div style="position: absolute; top: -15px; right: 20px; background: #ff6b6b; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 6px rgba(255, 107, 107, 0.3);">NEW</div>
+            <a href="https://nonoonee.com/hi/" target="_blank" style="display: block;">
+                <div class="service-card highlight-card">
+                    <div class="new-badge">NEW</div>
                     <div class="card-icon">👩‍🏫</div>
                     <div class="card-title">AI 원어민 화상영어</div>
                     <div class="card-desc">
@@ -138,10 +193,11 @@
                     </div>
                 </div>
             </a>
+
         </div>
     </div>
 
-    <!-- 하단 회사 정보 (기존 푸터) -->
+    <!-- 하단 회사 정보 -->
     <footer>
         <div class="footer-inner">
             <section>
