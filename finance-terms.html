@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전자금융거래이용약관 - (주)노느니 교육</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        /* 공통 기본 설정 */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #333; line-height: 1.6; background-color: #f8f9fa; }
+        a { text-decoration: none; color: inherit; }
+        ul, li { list-style: none; }
 
+        /* 상단 네비게이션 바 */
+        header { 
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px 40px; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo img { height: 48px; width: auto; display: block; }
+        .nav-menu { display: flex; gap: 35px; font-weight: 600; color: #495057; align-items: center; font-size: 15px; }
+        .nav-menu a { transition: color 0.2s ease; }
+        .nav-menu a:hover { color: #ff6b6b; }
+
+        /* 이용약관 전용 레이아웃 */
+        .page-header {
+            background: linear-gradient(135deg, #fff0f0 0%, #ffe3e3 100%);
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 32px; font-weight: 800; color: #1e293b; letter-spacing: -1px; margin-bottom: 10px; }
+        .page-header p { font-size: 16px; color: #475569; }
+
+        .terms-container {
+            max-width: 900px;
+            margin: 50px auto 100px;
+            background-color: #fff;
+            padding: 50px 60px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .terms-content {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.8;
+        }
+        .terms-content h2 {
+            font-size: 20px;
+            color: #1e293b;
+            font-weight: 700;
+            margin: 40px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .terms-content h2:first-child { margin-top: 0; }
+        .terms-content p { margin-bottom: 15px; word-break: keep-all; }
+        .terms-content ul { margin-bottom: 15px; padding-left: 20px; }
+        .terms-content li { list-style-type: decimal; margin-bottom: 8px; }
+
+        /* 하단 푸터 */
+        footer { background-color: #f1f5f9; border-top: 1px solid #e2e8f0; padding: 60px 20px; font-size: 13px; color: #64748b; }
+        .footer-inner { max-width: 1100px; margin: 0 auto; }
+        .footer-inner h1 { font-size: 20px; color: #334155; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
+        .company-info p { margin-bottom: 10px; line-height: 1.5; }
+        .company-info span { margin-right: 18px; display: inline-block; }
+        .copyright { margin-top: 20px; color: #94a3b8; font-size: 12px; font-weight: 500; }
+        .footer-links { display: flex; gap: 20px; margin-bottom: 30px; font-weight: 600; color: #475569; }
+        .footer-links a:hover { color: #1e293b; }
+        .cert-info { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 30px; padding-top: 30px; border-top: 1px solid #cbd5e1; }
+        .cert-info div { background: #fff; border: 1px solid #e2e8f0; padding: 12px 18px; border-radius: 12px; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .cert-info strong { display: block; color: #334155; font-size: 12px; margin-bottom: 4px; font-weight: 700; }
+
+        /* 모바일 반응형 처리 */
+        @media (max-width: 768px) {
+            .terms-container { margin: 30px 20px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 메뉴 -->
+    <header>
+        <div class="logo">
+            <a href="/"><img src="images/logo.png" alt="노느니 교육 로고"></a>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="/">회사소개</a></li>
+            <li><a href="/">교육 프로그램 안내</a></li>
+            <li><a href="/vibe/index.html">바이브코딩</a></li>
+            <li><a href="https://nonoonee.com/hi/">🚀 AI 화상영어 (New)</a></li>
+            <li><a href="#">고객센터</a></li>
+        </ul>
+    </header>
+
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+        <h1>전자금융거래이용약관</h1>
+        <p>안전하고 투명한 교육 서비스 결제를 위한 전자금융거래 기준입니다.</p>
+    </div>
+
+    <!-- 약관 본문 -->
+    <main class="terms-container">
+        <div class="terms-content">
+            <h2>제1조 (목적)</h2>
+            <p>본 약관은 (주)노느니 교육(이하 "회사")이 제공하는 교육 서비스 및 교구의 결제와 관련하여, 회사와 이용자 간의 전자금융거래에 대한 기본적인 권리와 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+
+            <h2>제2조 (용어의 정의)</h2>
+            <ul>
+                <li><strong>"전자금융거래"</strong>란 회사가 전자적 장치를 통하여 제공하는 금융상품 및 서비스를 이용자가 전자적 장치를 통하여 비대면·자동화된 방식으로 직접 이용하는 거래를 말합니다.</li>
+                <li><strong>"이용자"</strong>란 본 약관에 동의하고 회사가 제공하는 전자금융거래 서비스를 이용하는 자를 말합니다. 법정대리인의 동의를 받아 결제를 진행하는 보호자를 포함합니다.</li>
+                <li><strong>"접근매체"</strong>란 전자금융거래에 있어서 거래지시를 하거나 이용자 및 거래내용의 진실성과 정확성을 확보하기 위하여 사용되는 비밀번호, 결제 정보 등을 말합니다.</li>
+            </ul>
+
+            <h2>제3조 (거래내용의 확인)</h2>
+            <p>회사는 이용자가 언제든지 자신의 전자금융거래 내역(결제 일시, 결제 금액, 결제 수단 등)을 서비스 내 '결제 내역' 또는 '마이페이지' 화면을 통하여 확인할 수 있도록 합니다. 이용자가 서면으로 거래내용의 교부를 요청하는 경우, 회사는 요청을 받은 날로부터 2주 이내에 이를 교부합니다.</p>
+
+            <h2>제4조 (오류의 정정)</h2>
+            <p>이용자는 전자금융거래 서비스를 이용함에 있어 오류가 있음을 안 때에는 회사에 대하여 그 정정을 요구할 수 있습니다. 회사는 오류 정정 요구를 받은 즉시 이를 조사하여 오류가 확인된 경우, 정정 조치를 취하고 그 결과를 이용자에게 통보합니다.</p>
+
+            <h2>제5조 (접근매체의 관리)</h2>
+            <p>이용자는 전자금융거래에 필요한 접근매체를 제3자에게 대여하거나 사용을 위임하여서는 아니 되며, 양도 또는 담보의 목적으로 제공할 수 없습니다. 이용자는 본인의 결제 정보 및 비밀번호가 유출되지 않도록 선량한 관리자로서의 주의를 다하여야 합니다.</p>
+
+            <h2>제6조 (거래지시의 철회)</h2>
+            <p>이용자는 전자금융거래에 의한 결제가 완료되기 전까지(결제 승인 전) 해당 거래지시를 철회할 수 있습니다. 결제가 완료된 이후의 청약 철회 및 환불은 회사의 '이용약관' 및 전자상거래 등에서의 소비자보호에 관한 법률 등 관련 법령에 따릅니다.</p>
+
+            <h2>제7조 (분쟁처리 및 조정)</h2>
+            <p>이용자는 회사의 홈페이지에 게시된 고객센터(070-7604-1984)를 통하여 전자금융거래와 관련된 불만 처리 및 피해 구제를 요구할 수 있습니다. 회사는 불만 접수 후 15일 이내에 이에 대한 조사 또는 처리 결과를 이용자에게 안내합니다.</p>
+
+            <h2>제8조 (회사의 안전성 확보 의무)</h2>
+            <p>회사는 전자금융거래의 안전성과 신뢰성을 확보할 수 있도록 전자금융거래의 종류별로 전자적 전송이나 처리를 위한 인력, 시설, 전자적 장치 등의 정보기술부문 및 전자금융업무에 관하여 금융위원회가 정하는 기준을 준수합니다.</p>
+
+            <h2>부칙</h2>
+            <p>본 약관은 2026년 11월 7일부터 적용됩니다.</p>
+        </div>
+    </main>
+
+    <!-- 하단 회사 정보 -->
+    <footer>
+        <div class="footer-inner">
+            <section>
+                <h1>(주)노느니 교육</h1>
+                <div class="footer-content">
+                    <div class="company-info">
+                        <div class="footer-links">
+                            <a href="/">회사소개</a>
+                            <a href="/terms.html">이용약관</a>
+                            <a href="/finance-terms.html" style="color: #1e293b; font-weight: 800;">전자금융거래이용약관</a>
+                            <a href="#">개인정보처리방침</a>
+                            <a href="#">제휴문의</a>
+                        </div>
+                        <p>
+                            <span>상호명 : (주)노느니교육</span>
+                            <span>대표자 : 정성옥</span>
+                            <span>개인정보관리책임자 : 정성옥</span>
+                            <span>사업자등록번호 : 864-16-01893</span>
+                        </p>
+                        <p>
+                            <span>고객센터 : 070-7604-1984</span>
+                            <span>팩스 : 02-6716-1984</span>
+                            <span><a href="mailto:ceo@nonoonee.com">이메일 : ceo@nonoonee.com</a></span>
+                        </p>
+                        <p>주소 : [32216] 충청남도 홍성군 홍성읍 소향길 30-17</p>
+                        <p class="copyright">COPYRIGHT © 2012 NONOONEE Edu Inc. All rights reserved. Inspired by J</p>
+                    </div>
+                </div>
+                <div class="cert-info">
+                    <div><strong>PG</strong><span>전자지급결제대행업 00-000-00000</span></div>
+                    <div><strong>ESCROW</strong><span>결제대금예치업 00-000-0000</span></div>
+                    <div><strong>통신과금서비스제공업</strong><span>등록번호 000</span></div>
+                    <div><strong>ISMS</strong><span>정보보호 관리체계 인증 00-00</span></div>
+                </div>
+            </section>
+        </div>
+    </footer>
+
+</body>
+</html>
