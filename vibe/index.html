@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* 기존 스타일 아래에 추가 */
+        #mermaid-container svg {
+            max-width: none !important;
+            height: auto;
+        }
         @import url('https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@400;700&display=swap');
         body { font-family: 'Nunito', 'Jua', sans-serif; }
         
@@ -111,17 +116,26 @@
 
         <!-- 우측: 결과 확인 영역 -->
         <section class="flex-1 flex flex-col bg-white">
-            <!-- 탭 헤더 -->
-            <div class="flex border-b border-gray-200 bg-gray-50 pt-2 px-2">
-                <button onclick="switchTab('preview')" id="tab-preview" class="tab-btn active px-5 py-2.5 text-sm font-bold text-indigo-700 bg-white border-t border-l border-r border-gray-200 rounded-t-lg -mb-px">
-                    <i class="fa-solid fa-display mr-2 text-indigo-500"></i>화면보기
-                </button>
-                <button onclick="switchTab('code')" id="tab-code" class="tab-btn px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-indigo-600 border-t border-l border-r border-transparent rounded-t-lg">
-                    <i class="fa-solid fa-code mr-2 text-indigo-500"></i>소스보기
-                </button>
-                <button onclick="switchTab('logic')" id="tab-logic" class="tab-btn px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-indigo-600 border-t border-l border-r border-transparent rounded-t-lg">
-                    <i class="fa-solid fa-diagram-project mr-2 text-indigo-500"></i>생각순서도
-                </button>
+            <!-- 탭 헤더 수정 (다운로드 버튼 포함) -->
+            <div class="flex justify-between items-end border-b border-gray-200 bg-gray-50 pt-2 px-2">
+                <div class="flex">
+                    <button onclick="switchTab('preview')" id="tab-preview" class="tab-btn active px-5 py-2.5 text-sm font-bold text-indigo-700 bg-white border-t border-l border-r border-gray-200 rounded-t-lg -mb-px">
+                        <i class="fa-solid fa-display mr-2 text-indigo-500"></i>화면보기
+                    </button>
+                    <button onclick="switchTab('code')" id="tab-code" class="tab-btn px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-indigo-600 border-t border-l border-r border-transparent rounded-t-lg">
+                        <i class="fa-solid fa-code mr-2 text-indigo-500"></i>소스보기
+                    </button>
+                    <button onclick="switchTab('logic')" id="tab-logic" class="tab-btn px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-indigo-600 border-t border-l border-r border-transparent rounded-t-lg">
+                        <i class="fa-solid fa-diagram-project mr-2 text-indigo-500"></i>생각순서도
+                    </button>
+                </div>
+                
+                <!-- 다운로드 버튼 (초기엔 숨김) -->
+                <div id="download-tools" class="hidden pb-2 pr-2">
+                    <button onclick="downloadCurrentTab()" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1.5 rounded-full transition-colors flex items-center font-bold shadow-sm">
+                        <i class="fa-solid fa-download mr-1"></i>다운로드
+                    </button>
+                </div>
             </div>
 
             <!-- 탭 컨텐츠 -->
@@ -142,9 +156,11 @@
                     <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
                 </div>
 
-                <!-- 3. 생각순서도 (Mermaid) -->
-                <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-indigo-50 flex items-center justify-center">
-                    <div id="mermaid-container" class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 max-w-full text-center">
+                <!-- 3. 생각순서도 (Mermaid) 부분 수정 -->
+                <!-- flex, items-center, justify-center를 빼고 단순 스크롤 영역으로 변경 -->
+                <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-indigo-50 text-center">
+                    <!-- min-w-min, inline-block을 추가해 내용물 크기만큼 늘어나게 함 -->
+                    <div id="mermaid-container" class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 min-w-min inline-block text-center">
                         <p class="text-gray-400"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
                     </div>
                 </div>
@@ -538,6 +554,75 @@ ${text}
                 container.innerHTML = `<p class="text-red-500"><i class="fa-solid fa-triangle-exclamation mb-2"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400">${e.message}</span></p>`;
             }
         }
+
+        // 현재 열려있는 탭을 추적하기 위한 변수 추가 (상단 변수 선언부에 넣어도 됩니다)
+        let currentTabName = 'preview';
+        
+        // 기존 switchTab 함수를 덮어쓰거나 안의 내용을 이 코드로 교체해 주세요.
+        function switchTab(tabName) {
+            currentTabName = tabName;
+            // 버튼 스타일
+            ['preview', 'code', 'logic'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabName) {
+                    btn.classList.replace('text-gray-500', 'text-indigo-700');
+                    btn.classList.replace('bg-transparent', 'bg-white');
+                    btn.classList.add('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
+                    btn.classList.remove('border-transparent');
+                } else {
+                    btn.classList.replace('text-indigo-700', 'text-gray-500');
+                    btn.classList.replace('bg-white', 'bg-transparent');
+                    btn.classList.remove('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
+                    btn.classList.add('border-transparent');
+                }
+            });
+        
+            // 컨텐츠 보이기/숨기기
+            document.getElementById('content-preview').classList.toggle('hidden', tabName !== 'preview');
+            document.getElementById('content-code').classList.toggle('hidden', tabName !== 'code');
+            document.getElementById('content-logic').classList.toggle('hidden', tabName !== 'logic');
+            
+            // 코드나 순서도 탭일 때만 다운로드 버튼 보이기
+            document.getElementById('download-tools').classList.toggle('hidden', tabName === 'preview');
+        }
+        
+        // 다운로드 실행 함수
+        function downloadCurrentTab() {
+            const lessonTitle = document.getElementById('current-lesson-title').innerText || '바이브코딩';
+            
+            if (currentTabName === 'code') {
+                const code = document.getElementById('code-block').innerText;
+                if (!code || code.includes('아직 생성된 코드가 없습니다')) return alert('다운로드할 코드가 없습니다.');
+                
+                // HTML 파일로 다운로드
+                downloadFile(code, `${lessonTitle}.html`, 'text/html');
+                
+            } else if (currentTabName === 'logic') {
+                const svgElement = document.querySelector('#mermaid-container svg');
+                if (!svgElement) return alert('다운로드할 순서도가 없습니다.');
+                
+                // SVG 이미지를 문자열로 변환하여 다운로드
+                const svgData = new XMLSerializer().serializeToString(svgElement);
+                downloadFile(svgData, `${lessonTitle}_순서도.svg`, 'image/svg+xml;charset=utf-8');
+            }
+        }
+        
+        // 파일 다운로드 헬퍼 함수
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 초기화 함수(init) 안에 전역 변수 등록 추가
+        // (기존 전역 등록 코드 아래에 이어서 작성)
+        window.downloadCurrentTab = downloadCurrentTab;
 
         // 실행
         window.onload = init;
