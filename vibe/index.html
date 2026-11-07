@@ -29,25 +29,22 @@
             50% { transform: translateY(-4px); }
         }
 
-        /* 💡 순서도(Mermaid) 강제 확대 및 축소 방지 CSS */
+        /* 순서도(Mermaid) CSS */
         #content-logic {
-            /* 부드러운 스크롤 */
             scroll-behavior: smooth;
         }
         #mermaid-container {
-            /* 컨테이너가 화면보다 작아도 중앙 정렬, 크면 내용물에 맞춤 */
             min-width: max-content; 
             min-height: max-content;
             margin: 0 auto;
         }
         #mermaid-container svg {
-            /* 강제 크기 지정 (아무리 많아도 안 쪼그라들게) */
-            min-width: 800px !important;
+            min-width: 600px !important;
             max-width: none !important;
             height: auto !important;
-            /* 기본적으로 20% 더 크게 줌(Zoom) 효과 */
-            transform: scale(1.2); 
             transform-origin: top center;
+            /* 💡 크기 조절 시 부드럽게 변하는 애니메이션 */
+            transition: transform 0.2s ease;
             margin: 40px;
         }
     </style>
@@ -86,14 +83,12 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-key text-gray-400 text-xs"></i>
-                    <!-- API 키 입력 시 자동 저장되도록 onchange 이벤트 추가 -->
                     <input type="password" id="api-key" placeholder="Gemini API Key" class="text-xs px-2 py-1.5 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-gray-50" onchange="saveApiKey(this.value)">
                 </div>
             </div>
 
             <!-- 채팅 기록 -->
             <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <!-- 웰컴 메시지 -->
                 <div class="flex items-start">
                     <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Felix&backgroundColor=c0aede" class="w-8 h-8 rounded-full mr-2">
                     <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 max-w-[85%]">
@@ -102,7 +97,7 @@
                 </div>
             </div>
 
-            <!-- 로딩 인디케이터 (숨김) -->
+            <!-- 로딩 인디케이터 -->
             <div id="loading-indicator" class="hidden p-4">
                 <div class="flex items-start">
                     <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Felix&backgroundColor=c0aede" class="w-8 h-8 rounded-full mr-2">
@@ -120,7 +115,6 @@
             <div class="bg-white p-4 border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                 <!-- 추천 프롬프트 칩 -->
                 <div id="hint-chips" class="flex overflow-x-auto space-x-2 mb-3 pb-1 hide-scrollbar">
-                    <!-- JS로 렌더링 됨 -->
                 </div>
                 
                 <div class="flex relative">
@@ -134,7 +128,7 @@
 
         <!-- 우측: 결과 확인 영역 -->
         <section class="flex-1 flex flex-col bg-white">
-            <!-- 탭 헤더 및 다운로드 버튼 -->
+            <!-- 탭 헤더 및 도구 모음 -->
             <div class="flex justify-between items-end border-b border-gray-200 bg-gray-50 pt-2 px-2">
                 <div class="flex">
                     <button onclick="switchTab('preview')" id="tab-preview" class="tab-btn active px-5 py-2.5 text-sm font-bold text-indigo-700 bg-white border-t border-l border-r border-gray-200 rounded-t-lg -mb-px">
@@ -148,9 +142,24 @@
                     </button>
                 </div>
                 
-                <!-- 다운로드 버튼 (초기엔 숨김) -->
-                <div id="download-tools" class="hidden pb-2 pr-2">
-                    <button onclick="downloadCurrentTab()" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1.5 rounded-full transition-colors flex items-center font-bold shadow-sm">
+                <!-- 💡 우측 도구 모음 (다운로드 및 줌 컨트롤) -->
+                <div id="tab-tools" class="hidden pb-2 pr-2 flex space-x-2 items-center">
+                    
+                    <!-- 확대/축소 도구 (생각순서도 탭에서만 보임) -->
+                    <div id="zoom-tools" class="hidden flex space-x-1 mr-2 border-r border-gray-300 pr-3">
+                        <button onclick="zoomMermaid('out')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm transition-colors" title="축소">
+                            <i class="fa-solid fa-minus text-xs"></i>
+                        </button>
+                        <button onclick="zoomMermaid('reset')" class="px-2 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 text-xs font-bold rounded-md shadow-sm transition-colors" title="원래 크기">
+                            100%
+                        </button>
+                        <button onclick="zoomMermaid('in')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm transition-colors" title="확대">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- 다운로드 버튼 -->
+                    <button onclick="downloadCurrentTab()" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1.5 rounded-md transition-colors flex items-center font-bold shadow-sm">
                         <i class="fa-solid fa-download mr-1"></i>다운로드
                     </button>
                 </div>
@@ -174,7 +183,7 @@
                     <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
                 </div>
 
-                <!-- 3. 생각순서도 (Mermaid) - 자유롭게 상하좌우 스크롤 됨 -->
+                <!-- 3. 생각순서도 (Mermaid) -->
                 <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-indigo-50">
                     <div id="mermaid-container" class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 text-center">
                         <p class="text-gray-400 mt-10"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
@@ -202,7 +211,6 @@
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
         mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
 
-        // --- 데이터 상태 관리 ---
         const DEFAULT_CURRICULUM = [
             { id: 1, title: "[그림판] 기초 (선 긋기)", hints: ["마우스로 드래그하면 까만 선이 그려지는 그림판을 꽉 차게 만들어줘"] },
             { id: 2, title: "[그림판] 발전 (색깔 버튼)", hints: ["화면 위에 빨강, 파랑, 노랑색으로 펜 색을 바꾸는 버튼 3개를 추가해줘"] },
@@ -214,9 +222,9 @@
 
         let curriculum = [];
         let currentLessonId = null;
-        let currentTabName = 'preview'; // 현재 탭 상태 추적용
+        let currentTabName = 'preview'; 
+        let currentZoom = 1.0; // 💡 줌 상태 변수 추가
 
-        // --- 상태 스냅샷 (State Snapshot) 관리 ---
         function getLessonState(id) {
             const saved = localStorage.getItem(`vibe_lesson_${id}_state`);
             return saved ? JSON.parse(saved) : { html: '', mermaid: '' };
@@ -226,9 +234,7 @@
             localStorage.setItem(`vibe_lesson_${id}_state`, JSON.stringify({ html, mermaid }));
         }
 
-        // --- 초기화 ---
         function init() {
-            // 커리큘럼 불러오기
             const savedData = localStorage.getItem('vibeCurriculum');
             if (savedData) {
                 curriculum = JSON.parse(savedData);
@@ -238,13 +244,11 @@
             }
             renderCurriculum();
             
-            // 💡 API 키 불러오기 (자동 로드)
             const savedApiKey = localStorage.getItem('vibeApiKey');
             if (savedApiKey) {
                 document.getElementById('api-key').value = savedApiKey;
             }
             
-            // 전역으로 노출해야 HTML onclick 속성에서 호출 가능
             window.switchTab = switchTab;
             window.sendMessage = sendMessage;
             window.handleKeyPress = handleKeyPress;
@@ -253,16 +257,15 @@
             window.deleteLesson = deleteLesson;
             window.openModal = openModal;
             window.closeModal = closeModal;
-            window.downloadCurrentTab = downloadCurrentTab; // 다운로드 함수
-            window.saveApiKey = saveApiKey; // API 키 저장 함수
+            window.downloadCurrentTab = downloadCurrentTab; 
+            window.saveApiKey = saveApiKey;
+            window.zoomMermaid = zoomMermaid; // 💡 줌 컨트롤 등록
         }
 
-        // API 키 저장 함수
         function saveApiKey(val) {
             localStorage.setItem('vibeApiKey', val.trim());
         }
 
-        // --- 목차 (커리큘럼) 관리 ---
         function saveCurriculum() {
             localStorage.setItem('vibeCurriculum', JSON.stringify(curriculum));
         }
@@ -299,9 +302,8 @@
             if (!lesson) return;
             
             document.getElementById('current-lesson-title').innerText = lesson.title;
-            renderCurriculum(); // 엑티브 상태 업데이트
+            renderCurriculum(); 
             
-            // 힌트 칩 렌더링
             const hintContainer = document.getElementById('hint-chips');
             hintContainer.innerHTML = '';
             if (lesson.hints && lesson.hints.length > 0) {
@@ -314,12 +316,10 @@
                 });
             }
 
-            // 채팅 리셋 및 환영인사
             const chatHistory = document.getElementById('chat-history');
             chatHistory.innerHTML = '';
             appendMessage('ai', `안녕! <b>${lesson.title}</b> 수업을 시작할게. 아래 마법 주문 버튼을 누르거나 직접 입력해 봐!`);
             
-            // 결과창 리셋 또는 불러오기 (State Snapshot 복 복원)
             const state = getLessonState(id);
             
             if (state.html) {
@@ -349,7 +349,7 @@
             renderCurriculum();
         }
 
-        // --- 모달 관리 (alert/prompt 대체) ---
+        // --- 모달 관리 ---
         let modalAction = null;
         let editTargetId = null;
 
@@ -374,7 +374,6 @@
                 input.value = lesson ? lesson.title : '';
                 btn.onclick = () => handleModalConfirm();
             }
-            // Add message modal mode
             else if (action === 'msg') {
                 title.innerText = "알림";
                 input.classList.add('hidden');
@@ -411,11 +410,23 @@
             openModal('msg');
         }
 
-        // --- UI 인터랙션 (탭 및 다운로드) ---
+        // 💡 줌(Zoom) 기능 로직
+        function zoomMermaid(action) {
+            if (action === 'in') currentZoom += 0.2;
+            else if (action === 'out') currentZoom = Math.max(0.4, currentZoom - 0.2); // 너무 작아지지 않게 방지
+            else if (action === 'reset') currentZoom = 1.0;
+            // 'keep'은 현재 줌 유지
+
+            const svg = document.querySelector('#mermaid-container svg');
+            if (svg) {
+                svg.style.transform = `scale(${currentZoom})`;
+            }
+        }
+
+        // --- UI 인터랙션 (탭 및 도구) ---
         function switchTab(tabName) {
             currentTabName = tabName;
             
-            // 버튼 스타일
             ['preview', 'code', 'logic'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tabName) {
@@ -431,16 +442,15 @@
                 }
             });
 
-            // 컨텐츠 보이기/숨기기
             document.getElementById('content-preview').classList.toggle('hidden', tabName !== 'preview');
             document.getElementById('content-code').classList.toggle('hidden', tabName !== 'code');
             document.getElementById('content-logic').classList.toggle('hidden', tabName !== 'logic');
             
-            // 다운로드 버튼 보이기/숨기기 (코드, 생각순서도 탭일 때만 표시)
-            document.getElementById('download-tools').classList.toggle('hidden', tabName === 'preview');
+            // 💡 탭에 따른 툴바 표시 제어
+            document.getElementById('tab-tools').classList.toggle('hidden', tabName === 'preview');
+            document.getElementById('zoom-tools').classList.toggle('hidden', tabName !== 'logic');
         }
 
-        // 다운로드 실행
         function downloadCurrentTab() {
             const lessonTitle = document.getElementById('current-lesson-title').innerText || '바이브코딩';
             
@@ -459,7 +469,6 @@
             }
         }
 
-        // 파일 다운로드 헬퍼
         function downloadFile(content, fileName, contentType) {
             const blob = new Blob([content], { type: contentType });
             const url = URL.createObjectURL(blob);
@@ -514,16 +523,13 @@
                 return;
             }
 
-            // 사용자 메시지 추가
             appendMessage('user', text);
             input.value = '';
             
-            // 로딩 표시
             document.getElementById('loading-indicator').classList.remove('hidden');
             const chatHistoryContainer = document.getElementById('chat-history');
             chatHistoryContainer.scrollTop = chatHistoryContainer.scrollHeight;
 
-            // API 호출 준비 (상태 스냅샷 프롬프트 구성)
             const state = getLessonState(currentLessonId);
             const currentHtml = state.html || "";
             const currentMermaid = state.mermaid || "";
@@ -574,17 +580,14 @@ ${text}
                 let jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
                 
                 if (jsonText) {
-                    // 💡 JSON 파싱 에러 방지를 위해 마크다운 백틱 제거
                     jsonText = jsonText.replace(/```json\n?/g, '').replace(/```/g, '').trim();
                     const parsed = JSON.parse(jsonText);
                     
-                    // 1. 채팅 응답
                     appendMessage('ai', parsed.chat.replace(/\n/g, '<br>'));
                     
                     let updatedHtml = currentHtml;
                     let updatedMermaid = currentMermaid;
 
-                    // 2. 화면 및 소스 업데이트
                     if (parsed.html) {
                         updatedHtml = parsed.html;
                         document.getElementById('iframe-placeholder').classList.add('hidden');
@@ -592,13 +595,11 @@ ${text}
                         document.getElementById('code-block').innerText = parsed.html;
                     }
                     
-                    // 3. 순서도 업데이트
                     if (parsed.mermaid) {
                         updatedMermaid = parsed.mermaid;
                         renderMermaid(parsed.mermaid);
                     }
 
-                    // 4. 상태 저장 (State Snapshot)
                     saveLessonState(currentLessonId, updatedHtml, updatedMermaid);
 
                 } else {
@@ -619,12 +620,13 @@ ${text}
             try {
                 const { svg } = await mermaid.render('graphDiv-' + Date.now(), cleanDef);
                 container.innerHTML = svg;
+                // 💡 렌더링 완료 후 현재 설정된 줌 배율을 유지
+                zoomMermaid('keep'); 
             } catch (e) {
                 container.innerHTML = `<p class="text-red-500 mt-10"><i class="fa-solid fa-triangle-exclamation mb-2"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400">${e.message}</span></p>`;
             }
         }
 
-        // 실행
         window.onload = init;
     </script>
 </body>
