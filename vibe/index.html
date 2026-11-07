@@ -43,7 +43,6 @@
             max-width: none !important;
             height: auto !important;
             transform-origin: top center;
-            /* 💡 크기 조절 시 부드럽게 변하는 애니메이션 */
             transition: transform 0.2s ease;
             margin: 40px;
         }
@@ -113,7 +112,6 @@
 
             <!-- 입력 영역 -->
             <div class="bg-white p-4 border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                <!-- 추천 프롬프트 칩 -->
                 <div id="hint-chips" class="flex overflow-x-auto space-x-2 mb-3 pb-1 hide-scrollbar">
                 </div>
                 
@@ -142,10 +140,8 @@
                     </button>
                 </div>
                 
-                <!-- 💡 우측 도구 모음 (다운로드 및 줌 컨트롤) -->
                 <div id="tab-tools" class="hidden pb-2 pr-2 flex space-x-2 items-center">
-                    
-                    <!-- 확대/축소 도구 (생각순서도 탭에서만 보임) -->
+                    <!-- 확대/축소 도구 -->
                     <div id="zoom-tools" class="hidden flex space-x-1 mr-2 border-r border-gray-300 pr-3">
                         <button onclick="zoomMermaid('out')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm transition-colors" title="축소">
                             <i class="fa-solid fa-minus text-xs"></i>
@@ -158,7 +154,6 @@
                         </button>
                     </div>
 
-                    <!-- 다운로드 버튼 -->
                     <button onclick="downloadCurrentTab()" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1.5 rounded-md transition-colors flex items-center font-bold shadow-sm">
                         <i class="fa-solid fa-download mr-1"></i>다운로드
                     </button>
@@ -183,9 +178,10 @@
                     <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
                 </div>
 
-                <!-- 3. 생각순서도 (Mermaid) -->
-                <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-indigo-50">
-                    <div id="mermaid-container" class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 text-center">
+                <!-- 3. 생각순서도 (Mermaid) - 전체 흰 바탕으로 변경 -->
+                <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-white">
+                    <!-- 박스 디자인(bg-white, shadow 등) 제거 -->
+                    <div id="mermaid-container" class="text-center">
                         <p class="text-gray-400 mt-10"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
                     </div>
                 </div>
@@ -223,7 +219,7 @@
         let curriculum = [];
         let currentLessonId = null;
         let currentTabName = 'preview'; 
-        let currentZoom = 1.0; // 💡 줌 상태 변수 추가
+        let currentZoom = 1.0;
 
         function getLessonState(id) {
             const saved = localStorage.getItem(`vibe_lesson_${id}_state`);
@@ -259,7 +255,7 @@
             window.closeModal = closeModal;
             window.downloadCurrentTab = downloadCurrentTab; 
             window.saveApiKey = saveApiKey;
-            window.zoomMermaid = zoomMermaid; // 💡 줌 컨트롤 등록
+            window.zoomMermaid = zoomMermaid;
         }
 
         function saveApiKey(val) {
@@ -410,12 +406,10 @@
             openModal('msg');
         }
 
-        // 💡 줌(Zoom) 기능 로직
         function zoomMermaid(action) {
             if (action === 'in') currentZoom += 0.2;
-            else if (action === 'out') currentZoom = Math.max(0.4, currentZoom - 0.2); // 너무 작아지지 않게 방지
+            else if (action === 'out') currentZoom = Math.max(0.4, currentZoom - 0.2);
             else if (action === 'reset') currentZoom = 1.0;
-            // 'keep'은 현재 줌 유지
 
             const svg = document.querySelector('#mermaid-container svg');
             if (svg) {
@@ -446,7 +440,6 @@
             document.getElementById('content-code').classList.toggle('hidden', tabName !== 'code');
             document.getElementById('content-logic').classList.toggle('hidden', tabName !== 'logic');
             
-            // 💡 탭에 따른 툴바 표시 제어
             document.getElementById('tab-tools').classList.toggle('hidden', tabName === 'preview');
             document.getElementById('zoom-tools').classList.toggle('hidden', tabName !== 'logic');
         }
@@ -620,7 +613,6 @@ ${text}
             try {
                 const { svg } = await mermaid.render('graphDiv-' + Date.now(), cleanDef);
                 container.innerHTML = svg;
-                // 💡 렌더링 완료 후 현재 설정된 줌 배율을 유지
                 zoomMermaid('keep'); 
             } catch (e) {
                 container.innerHTML = `<p class="text-red-500 mt-10"><i class="fa-solid fa-triangle-exclamation mb-2"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400">${e.message}</span></p>`;
