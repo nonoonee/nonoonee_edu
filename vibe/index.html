@@ -11,9 +11,9 @@
         body { font-family: 'Nunito', 'Jua', sans-serif; }
         
         /* 스크롤바 커스텀 */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; border: 2px solid #f1f1f1; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* 로딩 애니메이션 */
@@ -29,10 +29,26 @@
             50% { transform: translateY(-4px); }
         }
 
-        /* 순서도(Mermaid) 축소 방지 CSS */
+        /* 💡 순서도(Mermaid) 강제 확대 및 축소 방지 CSS */
+        #content-logic {
+            /* 부드러운 스크롤 */
+            scroll-behavior: smooth;
+        }
+        #mermaid-container {
+            /* 컨테이너가 화면보다 작아도 중앙 정렬, 크면 내용물에 맞춤 */
+            min-width: max-content; 
+            min-height: max-content;
+            margin: 0 auto;
+        }
         #mermaid-container svg {
+            /* 강제 크기 지정 (아무리 많아도 안 쪼그라들게) */
+            min-width: 800px !important;
             max-width: none !important;
-            height: auto;
+            height: auto !important;
+            /* 기본적으로 20% 더 크게 줌(Zoom) 효과 */
+            transform: scale(1.2); 
+            transform-origin: top center;
+            margin: 40px;
         }
     </style>
 </head>
@@ -70,7 +86,8 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-key text-gray-400 text-xs"></i>
-                    <input type="password" id="api-key" placeholder="Gemini API Key" class="text-xs px-2 py-1.5 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-gray-50">
+                    <!-- API 키 입력 시 자동 저장되도록 onchange 이벤트 추가 -->
+                    <input type="password" id="api-key" placeholder="Gemini API Key" class="text-xs px-2 py-1.5 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-gray-50" onchange="saveApiKey(this.value)">
                 </div>
             </div>
 
@@ -157,17 +174,17 @@
                     <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
                 </div>
 
-                <!-- 3. 생각순서도 (Mermaid) - 스크롤 가능하도록 수정됨 -->
-                <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-indigo-50 text-center">
-                    <div id="mermaid-container" class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 min-w-min inline-block text-center">
-                        <p class="text-gray-400"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
+                <!-- 3. 생각순서도 (Mermaid) - 자유롭게 상하좌우 스크롤 됨 -->
+                <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-indigo-50">
+                    <div id="mermaid-container" class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 text-center">
+                        <p class="text-gray-400 mt-10"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- 사용자 정의 모달창 (alert, prompt 대체) -->
+    <!-- 사용자 정의 모달창 -->
     <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-2xl p-6 w-96 shadow-2xl transform transition-all">
             <h3 id="modal-title" class="text-lg font-bold text-gray-800 mb-2">목차 추가</h3>
@@ -211,6 +228,7 @@
 
         // --- 초기화 ---
         function init() {
+            // 커리큘럼 불러오기
             const savedData = localStorage.getItem('vibeCurriculum');
             if (savedData) {
                 curriculum = JSON.parse(savedData);
@@ -219,6 +237,12 @@
                 saveCurriculum();
             }
             renderCurriculum();
+            
+            // 💡 API 키 불러오기 (자동 로드)
+            const savedApiKey = localStorage.getItem('vibeApiKey');
+            if (savedApiKey) {
+                document.getElementById('api-key').value = savedApiKey;
+            }
             
             // 전역으로 노출해야 HTML onclick 속성에서 호출 가능
             window.switchTab = switchTab;
@@ -229,7 +253,13 @@
             window.deleteLesson = deleteLesson;
             window.openModal = openModal;
             window.closeModal = closeModal;
-            window.downloadCurrentTab = downloadCurrentTab; // 다운로드 함수 전역 등록
+            window.downloadCurrentTab = downloadCurrentTab; // 다운로드 함수
+            window.saveApiKey = saveApiKey; // API 키 저장 함수
+        }
+
+        // API 키 저장 함수
+        function saveApiKey(val) {
+            localStorage.setItem('vibeApiKey', val.trim());
         }
 
         // --- 목차 (커리큘럼) 관리 ---
@@ -289,7 +319,7 @@
             chatHistory.innerHTML = '';
             appendMessage('ai', `안녕! <b>${lesson.title}</b> 수업을 시작할게. 아래 마법 주문 버튼을 누르거나 직접 입력해 봐!`);
             
-            // 결과창 리셋 또는 불러오기 (State Snapshot 복원)
+            // 결과창 리셋 또는 불러오기 (State Snapshot 복 복원)
             const state = getLessonState(id);
             
             if (state.html) {
@@ -305,7 +335,7 @@
             if (state.mermaid) {
                 renderMermaid(state.mermaid);
             } else {
-                document.getElementById('mermaid-container').innerHTML = '<p class="text-gray-400"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>';
+                document.getElementById('mermaid-container').innerHTML = '<p class="text-gray-400 mt-10"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>';
             }
             
             switchTab('preview');
@@ -544,7 +574,7 @@ ${text}
                 let jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
                 
                 if (jsonText) {
-                    // JSON 파싱 에러 방지를 위해 마크다운 백틱 제거
+                    // 💡 JSON 파싱 에러 방지를 위해 마크다운 백틱 제거
                     jsonText = jsonText.replace(/```json\n?/g, '').replace(/```/g, '').trim();
                     const parsed = JSON.parse(jsonText);
                     
@@ -590,7 +620,7 @@ ${text}
                 const { svg } = await mermaid.render('graphDiv-' + Date.now(), cleanDef);
                 container.innerHTML = svg;
             } catch (e) {
-                container.innerHTML = `<p class="text-red-500"><i class="fa-solid fa-triangle-exclamation mb-2"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400">${e.message}</span></p>`;
+                container.innerHTML = `<p class="text-red-500 mt-10"><i class="fa-solid fa-triangle-exclamation mb-2"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400">${e.message}</span></p>`;
             }
         }
 
