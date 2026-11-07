@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회사소개 - (주)노느니 교육</title>
-    <!-- [추가] 가장 트렌디하고 가독성 높은 프리텐다드 웹 폰트 로드 -->
+    <!-- 가장 트렌디하고 가독성 높은 프리텐다드 웹 폰트 로드 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         /* 기본 설정 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        /* 폰트를 프리텐다드로 변경하여 훨씬 세련된 느낌 부여 */
         body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #333; line-height: 1.6; background-color: #f8f9fa; }
         a { text-decoration: none; color: inherit; }
         ul, li { list-style: none; }
 
-        /* 상단 네비게이션 바 (스크롤 시 상단 고정 및 유리 블러 효과 적용) */
+        /* 상단 네비게이션 바 */
         header { 
             background-color: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(12px);
@@ -36,7 +35,7 @@
         .nav-menu a { transition: color 0.2s ease; }
         .nav-menu a:hover { color: #ff6b6b; }
 
-        /* 메인 히어로 섹션 (요즘 유행하는 부드럽고 세련된 파스텔 그라데이션) */
+        /* 메인 히어로 섹션 */
         .hero-section { 
             background: linear-gradient(135deg, #fff0f0 0%, #ffe3e3 100%); 
             padding: 100px 20px 90px; 
@@ -54,18 +53,18 @@
         .service-section { max-width: 1100px; margin: 0 auto 100px; padding: 0 20px; }
         .service-title { text-align: center; font-size: 30px; font-weight: 800; margin-bottom: 50px; color: #1e293b; letter-spacing: -0.5px; }
         
-        /* [핵심] 최신 CSS Grid 레이아웃으로 모바일/PC 완벽 대응 및 깔끔한 2열/4열/5열 배치 */
+        /* CSS Grid 레이아웃 */
         .card-container { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
             gap: 30px; 
         }
         
-        /* 카드 디자인 고도화 (애플/토스 스타일) */
+        /* 카드 디자인 */
         .service-card {
             background-color: #fff;
-            border-radius: 24px; /* 더 둥글고 세련된 모서리 */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03); /* 그림자를 훨씬 부드럽게 */
+            border-radius: 24px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); 
             padding: 45px 30px;
             text-align: center;
             height: 100%;
@@ -73,7 +72,6 @@
             border: 1px solid rgba(0,0,0,0.02);
             position: relative;
         }
-        /* 마우스 오버 시 우아하게 떠오르는 효과 */
         .service-card:hover { 
             transform: translateY(-8px); 
             box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
@@ -83,7 +81,7 @@
         .card-title { font-size: 22px; color: #1e293b; margin-bottom: 16px; font-weight: 700; letter-spacing: -0.5px; }
         .card-desc { font-size: 15px; color: #64748b; line-height: 1.6; font-weight: 400; word-break: keep-all; }
 
-        /* 화상영어/바이브코딩 하이라이트 */
+        /* 하이라이트 카드 스타일 */
         .highlight-card {
             border: 2px solid #ff6b6b;
             background: linear-gradient(to bottom, #ffffff, #fffafa);
@@ -110,7 +108,7 @@
             box-shadow: 0 4px 10px rgba(107, 140, 255, 0.3);
         }
 
-        /* 하단 푸터 (깔끔하게 정돈) */
+        /* 하단 푸터 */
         footer { background-color: #f1f5f9; border-top: 1px solid #e2e8f0; padding: 60px 20px; font-size: 13px; color: #64748b; }
         .footer-inner { max-width: 1100px; margin: 0 auto; }
         .footer-inner h1 { font-size: 20px; color: #334155; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
@@ -135,8 +133,7 @@
         </div>
         <ul class="nav-menu">
             <li><a href="#">회사소개</a></li>
-            <li><a href="#">서비스 안내</a></li>
-            <!-- 새로 추가된 바이브코딩 링크 -->
+            <li><a href="#">교육 프로그램 안내</a></li>
             <li><a href="/vibe/index.html">바이브코딩</a></li>
             <li><a href="https://nonoonee.com/hi/" style="color: #ff6b6b; font-weight: 800; background: #fff0f0; padding: 8px 16px; border-radius: 20px; transition: all 0.2s;">🚀 AI 화상영어 (New)</a></li>
             <li><a href="#">고객센터</a></li>
@@ -145,49 +142,49 @@
 
     <!-- 메인 타이틀 -->
     <div class="hero-section">
-        <h2>"노는 것이 곧 배우는 것입니다"</h2>
-        <p>우리 아이들의 첫 스마트 학습, 노느니 교육이 함께합니다.</p>
+        <h2>"스스로 깨우치는 즐거운 배움"</h2>
+        <p>우리 아이들의 올바른 성장을 이끄는 스마트 교육 도구, 노느니 교육이 함께합니다.</p>
     </div>
 
     <!-- 비전 소개 -->
     <div class="vision-section">
         <h3>(주)노느니 교육 소개</h3>
         <p>
-            노느니 교육은 억지로 하는 지루한 공부가 아닌, 스스로 즐기며 깨우치는 에듀테크(EdTech) 기업입니다.<br>
-            스마트 기기와 친숙한 초등학생들이 언제 어디서나 앱을 통해 재미있게 학습할 수 있도록,<br>
-            초등 교육 전문가들과 IT 개발자들이 모여 가장 최적화된 맞춤형 교육 서비스를 제공하고 있습니다.
+            노느니 교육은 아이들이 주도적으로 참여하며 원리를 습득할 수 있도록 돕는 에듀테크(EdTech) 기업입니다.<br>
+            초등 교육 전문가들과 IT 개발자들이 모여, 단순한 흥미를 넘어 아이들의 실질적인 학습 능력을 키워주는<br>
+            가장 최적화된 스마트 학습 도구와 교육 프로그램을 연구하고 개발합니다.
         </p>
     </div>
 
     <!-- 핵심 서비스 -->
     <div class="service-section">
-        <h3 class="service-title">주요 서비스</h3>
+        <h3 class="service-title">주요 교육 프로그램 및 교구</h3>
         <div class="card-container">
             
             <!-- 서비스 1: 초등 연산 -->
             <div class="service-card">
                 <div class="card-icon">🧮</div>
-                <div class="card-title">초등 연산 앱</div>
+                <div class="card-title">초등 연산 도구</div>
                 <div class="card-desc">
-                    지루하고 반복적인 수학은 그만! 게임처럼 스테이지를 클리어하며 자연스럽게 사칙연산의 원리를 깨우치고 계산 속도와 정확도를 높여줍니다.
+                    수학 교과 과정과 연계된 체계적인 연산 학습 앱입니다. 게임형 학습 설계를 통해 아이들이 스스로 사칙연산의 원리를 터득하고 정확한 계산 능력을 기르도록 지도합니다.
                 </div>
             </div>
 
             <!-- 서비스 2: 초등 영어 -->
             <div class="service-card">
                 <div class="card-icon">🔤</div>
-                <div class="card-title">초등 영어 앱</div>
+                <div class="card-title">초등 어학 도구</div>
                 <div class="card-desc">
-                    원어민 발음 듣기부터 재미있는 스토리 읽기까지. 단어 암기가 아닌 상황 속에서 자연스럽게 영어를 입에 착 붙게 만들어주는 자기주도 영어 학습입니다.
+                    초등 영어 교육 과정에 맞춘 스마트 어학 프로그램입니다. 파닉스부터 실전 표현까지 상황별 반복 훈련을 제공하여, 올바른 언어 습관과 자기주도적 어학 능력을 길러줍니다.
                 </div>
             </div>
 
             <!-- 서비스 3: 초등 국어 -->
             <div class="service-card">
                 <div class="card-icon">📖</div>
-                <div class="card-title">초등 국어 앱</div>
+                <div class="card-title">초등 문해력 도구</div>
                 <div class="card-desc">
-                    모든 과목의 기초는 문해력! 교과서 필수 어휘력 다지기부터 재미있는 지문 독해 훈련까지, 아이들의 생각하는 힘과 읽기 능력을 탄탄하게 키워줍니다.
+                    모든 교과 학습의 기초가 되는 국어 이해력을 높이는 교육 도구입니다. 교과서 필수 어휘와 단계별 지문 독해 훈련을 통해 아이들의 논리적 사고력을 탄탄하게 키워줍니다.
                 </div>
             </div>
             
@@ -196,9 +193,9 @@
                 <div class="service-card vibe-card">
                     <div class="new-badge vibe-badge">HOT</div>
                     <div class="card-icon">🪄</div>
-                    <div class="card-title">바이브코딩</div>
+                    <div class="card-title">바이브코딩 교육</div>
                     <div class="card-desc">
-                        복잡한 코딩 문법은 몰라도 괜찮아요! 내 상상력을 일상적인 언어(프롬프트)로 표현하면 AI가 알아서 앱과 게임으로 뚝딱 만들어주는 최신 놀이형 코딩입니다.
+                        생성형 AI 시대에 맞춘 새로운 코딩 교육 도구입니다. 아이들이 일상 언어(프롬프트)로 논리를 전개하면 코드로 구현되는 과정을 직접 체험하며, 컴퓨팅 사고력과 문제 해결력을 체계적으로 배울 수 있습니다.
                     </div>
                 </div>
             </a>
@@ -208,9 +205,9 @@
                 <div class="service-card highlight-card">
                     <div class="new-badge">NEW</div>
                     <div class="card-icon">👩‍🏫</div>
-                    <div class="card-title">AI 원어민 화상영어</div>
+                    <div class="card-title">AI 원어민 화상 교구</div>
                     <div class="card-desc">
-                        직접 만든 대본으로 AI 선생님과 실전 대화! 틀려도 눈치 보지 않고 마음껏 말하며 영어 자신감을 키워보세요.
+                        아이들의 눈높이에 맞춘 AI 기반 화상 영어 교구입니다. 학습자가 직접 구성한 대본으로 AI 원어민 튜터와 발화 연습을 진행하며, 실전 회화 감각을 안전하고 효과적으로 익히도록 돕습니다.
                     </div>
                 </div>
             </a>
