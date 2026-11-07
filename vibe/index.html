@@ -7,11 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* 기존 스타일 아래에 추가 */
-        #mermaid-container svg {
-            max-width: none !important;
-            height: auto;
-        }
         @import url('https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@400;700&display=swap');
         body { font-family: 'Nunito', 'Jua', sans-serif; }
         
@@ -32,6 +27,12 @@
         @keyframes typing {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
+        }
+
+        /* 순서도(Mermaid) 축소 방지 CSS */
+        #mermaid-container svg {
+            max-width: none !important;
+            height: auto;
         }
     </style>
 </head>
@@ -116,7 +117,7 @@
 
         <!-- 우측: 결과 확인 영역 -->
         <section class="flex-1 flex flex-col bg-white">
-            <!-- 탭 헤더 수정 (다운로드 버튼 포함) -->
+            <!-- 탭 헤더 및 다운로드 버튼 -->
             <div class="flex justify-between items-end border-b border-gray-200 bg-gray-50 pt-2 px-2">
                 <div class="flex">
                     <button onclick="switchTab('preview')" id="tab-preview" class="tab-btn active px-5 py-2.5 text-sm font-bold text-indigo-700 bg-white border-t border-l border-r border-gray-200 rounded-t-lg -mb-px">
@@ -156,10 +157,8 @@
                     <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
                 </div>
 
-                <!-- 3. 생각순서도 (Mermaid) 부분 수정 -->
-                <!-- flex, items-center, justify-center를 빼고 단순 스크롤 영역으로 변경 -->
+                <!-- 3. 생각순서도 (Mermaid) - 스크롤 가능하도록 수정됨 -->
                 <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-indigo-50 text-center">
-                    <!-- min-w-min, inline-block을 추가해 내용물 크기만큼 늘어나게 함 -->
                     <div id="mermaid-container" class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 min-w-min inline-block text-center">
                         <p class="text-gray-400"><i class="fa-solid fa-project-diagram mb-2 text-2xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
                     </div>
@@ -198,6 +197,7 @@
 
         let curriculum = [];
         let currentLessonId = null;
+        let currentTabName = 'preview'; // 현재 탭 상태 추적용
 
         // --- 상태 스냅샷 (State Snapshot) 관리 ---
         function getLessonState(id) {
@@ -229,6 +229,7 @@
             window.deleteLesson = deleteLesson;
             window.openModal = openModal;
             window.closeModal = closeModal;
+            window.downloadCurrentTab = downloadCurrentTab; // 다운로드 함수 전역 등록
         }
 
         // --- 목차 (커리큘럼) 관리 ---
@@ -380,20 +381,22 @@
             openModal('msg');
         }
 
-        // --- UI 인터랙션 ---
+        // --- UI 인터랙션 (탭 및 다운로드) ---
         function switchTab(tabName) {
+            currentTabName = tabName;
+            
             // 버튼 스타일
             ['preview', 'code', 'logic'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tabName) {
                     btn.classList.replace('text-gray-500', 'text-indigo-700');
                     btn.classList.replace('bg-transparent', 'bg-white');
-                    btn.classList.add('border-t', 'border-l', 'border-r', 'border-gray-200');
+                    btn.classList.add('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
                     btn.classList.remove('border-transparent');
                 } else {
                     btn.classList.replace('text-indigo-700', 'text-gray-500');
                     btn.classList.replace('bg-white', 'bg-transparent');
-                    btn.classList.remove('border-t', 'border-l', 'border-r', 'border-gray-200');
+                    btn.classList.remove('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
                     btn.classList.add('border-transparent');
                 }
             });
@@ -402,6 +405,41 @@
             document.getElementById('content-preview').classList.toggle('hidden', tabName !== 'preview');
             document.getElementById('content-code').classList.toggle('hidden', tabName !== 'code');
             document.getElementById('content-logic').classList.toggle('hidden', tabName !== 'logic');
+            
+            // 다운로드 버튼 보이기/숨기기 (코드, 생각순서도 탭일 때만 표시)
+            document.getElementById('download-tools').classList.toggle('hidden', tabName === 'preview');
+        }
+
+        // 다운로드 실행
+        function downloadCurrentTab() {
+            const lessonTitle = document.getElementById('current-lesson-title').innerText || '바이브코딩';
+            
+            if (currentTabName === 'code') {
+                const code = document.getElementById('code-block').innerText;
+                if (!code || code.includes('아직 생성된 코드가 없습니다')) return alert('다운로드할 코드가 없습니다.');
+                
+                downloadFile(code, `${lessonTitle}.html`, 'text/html');
+                
+            } else if (currentTabName === 'logic') {
+                const svgElement = document.querySelector('#mermaid-container svg');
+                if (!svgElement) return alert('다운로드할 순서도가 없습니다.');
+                
+                const svgData = new XMLSerializer().serializeToString(svgElement);
+                downloadFile(svgData, `${lessonTitle}_순서도.svg`, 'image/svg+xml;charset=utf-8');
+            }
+        }
+
+        // 파일 다운로드 헬퍼
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function useHint(text) {
@@ -503,9 +541,11 @@ ${text}
                 if (!response.ok) throw new Error(`API 오류: ${response.status}`);
                 
                 const result = await response.json();
-                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                let jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
                 
                 if (jsonText) {
+                    // JSON 파싱 에러 방지를 위해 마크다운 백틱 제거
+                    jsonText = jsonText.replace(/```json\n?/g, '').replace(/```/g, '').trim();
                     const parsed = JSON.parse(jsonText);
                     
                     // 1. 채팅 응답
@@ -544,7 +584,6 @@ ${text}
 
         async function renderMermaid(graphDefinition) {
             const container = document.getElementById('mermaid-container');
-            // Clean up backticks if model generated them inside JSON by mistake
             const cleanDef = graphDefinition.replace(/```mermaid\n?/g, '').replace(/```/g, '');
             
             try {
@@ -554,75 +593,6 @@ ${text}
                 container.innerHTML = `<p class="text-red-500"><i class="fa-solid fa-triangle-exclamation mb-2"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400">${e.message}</span></p>`;
             }
         }
-
-        // 현재 열려있는 탭을 추적하기 위한 변수 추가 (상단 변수 선언부에 넣어도 됩니다)
-        let currentTabName = 'preview';
-        
-        // 기존 switchTab 함수를 덮어쓰거나 안의 내용을 이 코드로 교체해 주세요.
-        function switchTab(tabName) {
-            currentTabName = tabName;
-            // 버튼 스타일
-            ['preview', 'code', 'logic'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                if (t === tabName) {
-                    btn.classList.replace('text-gray-500', 'text-indigo-700');
-                    btn.classList.replace('bg-transparent', 'bg-white');
-                    btn.classList.add('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
-                    btn.classList.remove('border-transparent');
-                } else {
-                    btn.classList.replace('text-indigo-700', 'text-gray-500');
-                    btn.classList.replace('bg-white', 'bg-transparent');
-                    btn.classList.remove('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
-                    btn.classList.add('border-transparent');
-                }
-            });
-        
-            // 컨텐츠 보이기/숨기기
-            document.getElementById('content-preview').classList.toggle('hidden', tabName !== 'preview');
-            document.getElementById('content-code').classList.toggle('hidden', tabName !== 'code');
-            document.getElementById('content-logic').classList.toggle('hidden', tabName !== 'logic');
-            
-            // 코드나 순서도 탭일 때만 다운로드 버튼 보이기
-            document.getElementById('download-tools').classList.toggle('hidden', tabName === 'preview');
-        }
-        
-        // 다운로드 실행 함수
-        function downloadCurrentTab() {
-            const lessonTitle = document.getElementById('current-lesson-title').innerText || '바이브코딩';
-            
-            if (currentTabName === 'code') {
-                const code = document.getElementById('code-block').innerText;
-                if (!code || code.includes('아직 생성된 코드가 없습니다')) return alert('다운로드할 코드가 없습니다.');
-                
-                // HTML 파일로 다운로드
-                downloadFile(code, `${lessonTitle}.html`, 'text/html');
-                
-            } else if (currentTabName === 'logic') {
-                const svgElement = document.querySelector('#mermaid-container svg');
-                if (!svgElement) return alert('다운로드할 순서도가 없습니다.');
-                
-                // SVG 이미지를 문자열로 변환하여 다운로드
-                const svgData = new XMLSerializer().serializeToString(svgElement);
-                downloadFile(svgData, `${lessonTitle}_순서도.svg`, 'image/svg+xml;charset=utf-8');
-            }
-        }
-        
-        // 파일 다운로드 헬퍼 함수
-        function downloadFile(content, fileName, contentType) {
-            const blob = new Blob([content], { type: contentType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
-        // 초기화 함수(init) 안에 전역 변수 등록 추가
-        // (기존 전역 등록 코드 아래에 이어서 작성)
-        window.downloadCurrentTab = downloadCurrentTab;
 
         // 실행
         window.onload = init;
