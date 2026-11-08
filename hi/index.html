@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI쌤과의 스몰토크</title>
+    <title>AI쌤과의 스몰토크 (채팅 버전)</title>
     <!-- 구글 폰트 적용 (깔끔하고 동글동글한 느낌) --> 
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -89,9 +89,7 @@
             display: none; 
             font-size: 15px;
         }
-        /* 영어 문장을 보라색 굵은 글씨로 강조 */
         #scriptResult b { color: #6c5ce7; font-size: 16px; background-color: #f0f0ff; padding: 2px 6px; border-radius: 4px; }
-        /* 클릭할 수 있는 발음 듣기 버튼 디자인 */
         .speak-btn {
             display: inline-block;
             background-color: #e3f2fd;
@@ -106,33 +104,26 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .speak-btn:hover { background-color: #bbdefb; transform: translateY(-1px); }
+        
         #chatSection { display: none; margin-top: 30px; }
         .chat-box { 
             background-color: #f1f2f6;
             border-radius: 16px; 
             padding: 20px 15px; 
-            height: 380px; 
+            height: 400px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
             gap: 12px; 
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
         }
         .msg { padding: 12px 16px; border-radius: 18px; max-width: 75%; line-height: 1.5; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .teacher-msg { background-color: #ffffff; align-self: flex-start; border-bottom-left-radius: 4px; color: #2d3436; }
         .student-msg { background-color: #ffeaa7; align-self: flex-end; border-bottom-right-radius: 4px; color: #2d3436; }
-        /* 선생님 메시지 블러 처리 및 버튼 디자인 */
-        .blurred-text {
-            filter: blur(5px);
-            transition: filter 0.3s ease;
-            user-select: none;
-        }
-        .msg-controls {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
+        
+        .blurred-text { filter: blur(5px); transition: filter 0.3s ease; user-select: none; }
+        .msg-controls { display: flex; gap: 8px; margin-top: 10px; }
         .msg-controls button {
             padding: 6px 12px;
             font-size: 13px;
@@ -143,36 +134,79 @@
             width: auto;
             border: 1px solid #dfe6e9;
         }
-        .msg-controls button:hover {
-            background-color: #e2e8f0;
-            transform: translateY(-1px);
-        }
+        .msg-controls button:hover { background-color: #e2e8f0; transform: translateY(-1px); }
         
         .btn-start-chat { background: linear-gradient(135deg, #ff7675, #d63031); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(214, 48, 49, 0.3); }
         .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4); transform: translateY(-2px); }
-        
         .btn-restart { background-color: #dfe6e9; color: #2d3436; padding: 12px; margin-bottom: 15px; font-size: 14px; }
-        
         .btn-hint { background: linear-gradient(135deg, #f39c12, #f1c40f); color: white; padding: 14px; display: none; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3); }
-        
-        .btn-toggle-mic { background: linear-gradient(135deg, #0984e3, #74b9ff); color: white; padding: 18px; font-size: 18px; display: none; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(9, 132, 227, 0.3); }
-        
-        .btn-mic-ready { background: linear-gradient(135deg, #00b894, #55efc4); color: white; padding: 14px; margin-top: 15px; }
-        
-        #status { text-align: center; margin-bottom: 15px; color: #e17055; font-weight: 700; font-size: 14px; min-height: 20px; }
         #hintBox { display: none; padding: 18px; background-color: #fff3cd; border-radius: 12px; font-size: 15px; line-height: 1.7; margin-bottom: 20px; color: #856404; }
-        
         .btn-reset-key { background-color: transparent; color: #b2bec3; border: 1px solid #b2bec3; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
         .btn-reset-key:hover { background-color: #f5f6fa; color: #d63031; border-color: #d63031; }
-        /* 하단 저작권 표시 디자인 */
-        .footer-info {
-            text-align: center;
-            font-size: 12px;
-            color: #b2bec3;
-            margin-top: 40px;
-            margin-bottom: 10px;
-            font-family: 'Nunito', sans-serif;
+        
+        /* 💡 새 기능: 메신저형 하단 채팅 입력창 스타일 */
+        .chat-input-area {
+            background-color: white;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
         }
+        .grammar-feedback {
+            display: none;
+            background-color: #e3f2fd;
+            color: #1565c0;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            border-left: 4px solid #1976d2;
+        }
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .input-row input[type="text"] {
+            flex-grow: 1;
+            padding: 14px;
+            border: 1px solid #dfe6e9;
+            border-radius: 20px;
+            background-color: #f8fafc;
+            margin: 0;
+            width: auto;
+        }
+        .btn-check-grammar {
+            background-color: #ffeaa7;
+            color: #d35400;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .btn-send-msg {
+            background-color: #74b9ff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .btn-check-grammar:hover { background-color: #fdcb6e; transform: translateY(-2px); }
+        .btn-send-msg:hover { background-color: #0984e3; transform: translateY(-2px); }
+
+        .footer-info { text-align: center; font-size: 12px; color: #b2bec3; margin-top: 40px; margin-bottom: 10px; font-family: 'Nunito', sans-serif; }
     </style>
 </head>
 <body>
@@ -185,7 +219,6 @@
         <h3 style="justify-content: flex-start;">🔑 처음 한 번만 설정해주세요</h3>
         <p style="font-size: 13px; color: #636e72; margin-top: -5px; margin-bottom: 20px;">아이의 기기에 안전하게 저장됩니다. (서버 전송 X)</p>
         
-        <!-- 💡 새 기능: 아이 이름 입력칸 추가 -->
         <div class="input-group">
             <input type="text" id="studentNameInput" placeholder="아이의 영어 이름 (예: Jimin)">
         </div>
@@ -207,49 +240,54 @@
         </div>
     
         <div class="input-group">
-            <!-- 💡 문구 변경: 주제 또는 있었던 일 -->
             <label for="userInput">👧 대화 주제 (또는 오늘 있었던 일)</label>
             <input type="text" id="userInput" placeholder="예: 오늘 피아노 학원에 갔어 / 마인크래프트">
         </div>
         <button class="btn-main" onclick="generateScript()">✨ 인공지능 대본 만들기</button>
         
-        <!-- 💡 새 기능: 대본 없이 바로 대화하기 버튼 -->
         <button class="btn-start-chat" style="display: block; margin-top: 12px; background: linear-gradient(135deg, #0984e3, #74b9ff); box-shadow: 0 6px 15px rgba(9, 132, 227, 0.3);" onclick="skipScriptAndChat()">🚀 대본 없이 바로 대화하기 (프리토킹)</button>
         
         <div id="loading">마법의 대본을 작성 중입니다... ⏳</div>
         <div id="scriptResult"></div>
         
-        <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection('script')">🎤 AI 선생님과 실전 연습하기 ▶️</button>
+        <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection('script')">🎤 AI 선생님과 실전 채팅하기 ▶️</button>
     </div>
 
-    <!-- [2단계] 실전 대화 -->
+    <!-- [2단계] 실전 대화 (채팅형) -->
     <div class="section-box" id="chatSection">
         <h3>2단계: 실전 화상영어 연습 👩‍🏫</h3>
         <button class="btn-restart" onclick="restartConversation()">🔄 대화 처음부터 다시 시작하기</button>
+        
+        <!-- 대화가 표시되는 영역 -->
         <div class="chat-box" id="chatBox"></div>
+        
+        <!-- 힌트 상자 -->
         <div id="hintBox"></div>
         <button id="hintBtn" class="btn-hint" onclick="getHint()">💡 힌트 보기 (무슨 말인지 모르겠어요)</button>
+        
+        <!-- 💡 새 기능: 메신저형 하단 채팅 입력창 -->
+        <div class="chat-input-area">
+            <div id="grammarFeedback" class="grammar-feedback"></div>
+            <div class="input-row">
+                <input type="text" id="studentChatInput" placeholder="여기에 대답을 영어(또는 한국어)로 써주세요!" onkeypress="handleEnter(event)">
+                <button class="btn-check-grammar" onclick="checkGrammar()" title="문법 체크 및 추천 표현">🔍</button>
+                <button class="btn-send-msg" onclick="sendChatMessage()" title="선생님께 전송">✈️</button>
+            </div>
+        </div>
     </div>
-    <!-- [추가] 하단 버전 및 소유권 표시 -->
+    
     <div class="footer-info">
-        v1.0.8 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.1.0 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
-</div> <!-- container 끝 -->
+</div> 
 
     <script>
         let USER_API_KEY = ""; 
-        let STUDENT_NAME = ""; // 💡 아이 이름 변수 추가
+        let STUDENT_NAME = ""; 
         let currentUserInput = ""; 
         let chatHistory = []; 
         let availableVoices = []; 
-        let isRecording = false;
-        let isWaitingToSend = false; 
-        let finalTranscript = "";
-        
-        let currentStudentTextSpan = null;
-        let currentStudentBubble = null;
-        let isRetrying = false; 
-        let currentChatMode = 'script'; // 💡 프리토킹인지 대본모드인지 구분
+        let currentChatMode = 'script'; 
         
         window.onload = function() {
             const savedKey = localStorage.getItem("gemini_tutor_api_key");
@@ -340,15 +378,6 @@
             window.speechSynthesis.speak(utterance);
         }
         
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition;
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.lang = 'en-US';
-            recognition.continuous = true; 
-            recognition.interimResults = true; 
-        }
-        
         async function generateScript() {
             const userInput = document.getElementById('userInput').value;
             if (!userInput.trim()) { alert("대화 주제나 오늘 있었던 일을 입력해주세요!"); return; }
@@ -388,9 +417,8 @@
             }
         }
         
-        // 💡 새 기능: 대본 안 만들고 바로 넘어가기
         function skipScriptAndChat() {
-            currentUserInput = document.getElementById('userInput').value.trim(); // 비어있어도 허용
+            currentUserInput = document.getElementById('userInput').value.trim();
             document.getElementById('scriptResult').style.display = "none";
             document.getElementById('startChatBtn').style.display = "none";
             openChatSection('free');
@@ -403,38 +431,32 @@
             restartConversation(mode); 
         }
         
-        // 💡 상황(주제 유무)에 따라 선생님의 첫인사가 바뀌는 똑똑한 로직
         async function restartConversation(mode = currentChatMode) {
             if(window.speechSynthesis) window.speechSynthesis.cancel();
-            if(recognition) { try { recognition.stop(); } catch(e){} }
             
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = "<div id='chatLoading' style='text-align:center; color:#6c5ce7; margin:30px 0; font-weight:bold;'>👩‍🏫 선생님이 인사를 준비하고 있어요... ⏳</div>";
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('hintBtn').style.display = "none";
-            isRecording = false;
-            isRetrying = false;
-            isWaitingToSend = false;
+            document.getElementById('grammarFeedback').style.display = "none";
+            document.getElementById('studentChatInput').value = "";
         
             let systemPrompt = "";
         
             if (mode === 'script') {
-                // [대본 모드] 고정 인사
-                systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 주제는 "${currentUserInput}"이야. 첫 인사로 무조건 "Hi ${STUDENT_NAME}! How was your day?"라고 말해. 항상 쉬운 영어 1~2문장으로 대답해. [중요 규칙]: 발음 오타를 지적하지 말고 찰떡같이 유추해.`;
+                systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 주제는 "${currentUserInput}"이야. 첫 인사로 무조건 "Hi ${STUDENT_NAME}! How was your day?"라고 말해. 항상 쉬운 영어 1~2문장으로 대답해.`;
                 chatHistory = [
                     { "role": "user", "parts": [{ "text": systemPrompt }] },
                     { "role": "model", "parts": [{ "text": `Hi ${STUDENT_NAME}! How was your day?` }] }
                 ];
                 document.getElementById('chatLoading').remove();
-                addMessage(`Hi ${STUDENT_NAME}! How was your day?`, "teacher");
+                addTeacherMessage(`Hi ${STUDENT_NAME}! How was your day?`);
                 speakText(`Hi ${STUDENT_NAME}! How was your day?`);
-            
             } else {
-                // [프리토킹 모드] 제미나이가 첫인사를 직접 생성
                 if (currentUserInput !== "") {
-                    systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 대화할 주제는 "${currentUserInput}"이야. 이 주제에 대해 먼저 친근하게 질문하면서 대화를 시작해. (예: "Hi ${STUDENT_NAME}! ~"). 항상 짧고 쉬운 1~2문장으로 대답해. [중요 규칙]: 발음 오타를 지적하지 말고 찰떡같이 유추해. 지금 바로 첫 인사를 건네봐.`;
+                    systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 대화할 주제는 "${currentUserInput}"이야. 이 주제에 대해 먼저 친근하게 질문하면서 대화를 시작해. (예: "Hi ${STUDENT_NAME}! ~"). 항상 짧고 쉬운 1~2문장으로 대답해. 지금 바로 첫 인사를 건네봐.`;
                 } else {
-                    systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 정해진 주제는 없어. 네가 초등학생이 흥미로워할 만한 일상적인 주제(좋아하는 음식, 게임, 동물, 방학 계획 등)를 무작위로 하나 골라서 먼저 친근하게 질문하며 대화를 시작해. (예: "Hi ${STUDENT_NAME}! Do you like ~?"). 항상 짧고 쉬운 1~2문장으로 대답해. [중요 규칙]: 발음 오타를 지적하지 말고 찰떡같이 유추해. 지금 바로 첫 인사를 건네봐.`;
+                    systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 정해진 주제는 없어. 네가 초등학생이 흥미로워할 만한 일상적인 주제(좋아하는 음식, 게임, 동물, 방학 계획 등)를 무작위로 하나 골라서 먼저 친근하게 질문하며 대화를 시작해. 항상 짧고 쉬운 1~2문장으로 대답해. 지금 바로 첫 인사를 건네봐.`;
                 }
         
                 chatHistory = [];
@@ -452,7 +474,7 @@
                         { "role": "model", "parts": [{ "text": teacherGreeting }] }
                     ];
                     document.getElementById('chatLoading').remove();
-                    addMessage(teacherGreeting, "teacher");
+                    addTeacherMessage(teacherGreeting);
                     speakText(teacherGreeting);
                 } catch (error) { 
                     document.getElementById('chatLoading').innerText = "오류가 발생했습니다. 새로고침을 해주세요."; 
@@ -460,7 +482,7 @@
             }
         }
         
-        function addMessage(text, sender) {
+        function addTeacherMessage(text) {
             const chatBox = document.getElementById('chatBox');
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('msg', 'teacher-msg'); 
@@ -504,14 +526,15 @@
             msgDiv.appendChild(controls);
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
+            
+            document.getElementById('hintBtn').style.display = "block";
+            document.getElementById('studentChatInput').focus();
         }
-        
-        function createStudentInputBubble() {
-            if (document.getElementById('current-student-input')) return; 
-        
+
+        // 💡 새 기능: 학생 말풍선 추가 함수
+        function addStudentMessage(text) {
             const chatBox = document.getElementById('chatBox');
             const msgDiv = document.createElement('div');
-            msgDiv.id = 'current-student-input';
             msgDiv.classList.add('msg', 'student-msg');
             
             const header = document.createElement('div');
@@ -519,53 +542,14 @@
             header.style.fontWeight = "bold";
             header.style.marginBottom = "6px";
             header.style.color = "#d35400";
-        
-            const textSpan = document.createElement('div');
-            textSpan.id = 'student-live-text';
-            textSpan.innerText = "마이크를 켜고 대답해 보세요!";
-            textSpan.style.color = "#7f8c8d";
-            textSpan.style.lineHeight = "1.5";
-            textSpan.contentEditable = "true"; 
-            textSpan.style.outline = "none";
+
+            const textDiv = document.createElement('div');
+            textDiv.innerText = text;
             
-            const btnContainer = document.createElement('div');
-            btnContainer.id = 'bubble-controls';
-            btnContainer.style.display = 'flex';
-            btnContainer.style.flexDirection = 'column'; 
-            btnContainer.style.gap = '8px';
-            btnContainer.style.marginTop = '12px';
-        
-            const retryBtn = document.createElement('button');
-            retryBtn.id = 'bubbleRetryBtn';
-            retryBtn.style.display = 'none';
-            retryBtn.style.padding = '8px'; 
-            retryBtn.style.fontSize = '13px'; 
-            retryBtn.style.background = '#ffeaa7';
-            retryBtn.style.color = '#d35400';
-            retryBtn.style.border = '2px solid #fad390';
-            retryBtn.innerHTML = "🔄 지우고 다시 말하기";
-            retryBtn.onclick = retryMic;
-        
-            const micBtn = document.createElement('button');
-            micBtn.id = 'bubbleMicBtn';
-            micBtn.className = 'btn-toggle-mic';
-            micBtn.style.display = 'block';
-            micBtn.style.margin = '0';
-            micBtn.style.padding = '12px';
-            micBtn.innerHTML = "🎙️ 마이크 켜기";
-            micBtn.onclick = toggleBubbleMic;
-        
-            btnContainer.appendChild(micBtn);
-            btnContainer.appendChild(retryBtn);
-        
             msgDiv.appendChild(header);
-            msgDiv.appendChild(textSpan);
-            msgDiv.appendChild(btnContainer);
+            msgDiv.appendChild(textDiv);
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
-            
-            currentStudentTextSpan = textSpan;
-            currentStudentBubble = msgDiv;
         }
         
         function replayText(text) {
@@ -589,135 +573,16 @@
             if (selectedVoice) utterance.voice = selectedVoice;
             else utterance.lang = 'en-US'; 
             utterance.rate = 0.9;
-            utterance.onend = function() {
-                // 첫인사 또는 대화 중에 항상 마이크 입력창 띄우기
-                document.getElementById('hintBtn').style.display = "block"; 
-                createStudentInputBubble(); 
-            };
             window.speechSynthesis.speak(utterance);
         }
         
-        function toggleBubbleMic() {
-            if (!recognition) return;
-            const micBtn = document.getElementById('bubbleMicBtn');
-            const retryBtn = document.getElementById('bubbleRetryBtn');
-        
-            if (!isRecording && !isWaitingToSend) {
-                isRetrying = false;
-                finalTranscript = "";
-                currentStudentTextSpan.innerText = "🎤 (듣는 중...)";
-                currentStudentTextSpan.style.color = "#2d3436";
-                currentStudentTextSpan.style.borderBottom = "none";
-                isRecording = true;
-                
-                micBtn.innerHTML = "🛑 녹음 완료 (다 말하면 누르세요)";
-                micBtn.style.background = "linear-gradient(135deg, #ff7675, #d63031)"; 
-                retryBtn.style.display = "block"; 
-                document.getElementById('hintBtn').style.display = "none"; 
-                try { recognition.start(); } catch(e) {}
-        
-            } else if (isRecording) {
-                isRecording = false;
-                isWaitingToSend = true;
-                recognition.stop(); 
-                
-                micBtn.innerHTML = "✈️ 이대로 전송하기";
-                micBtn.style.background = "linear-gradient(135deg, #00b894, #55efc4)"; 
-                
-                if(!finalTranscript) {
-                    currentStudentTextSpan.innerText = "여기를 터치해서 키보드로 직접 입력해보세요!";
-                    currentStudentTextSpan.style.color = "#0984e3";
-                }
-                currentStudentTextSpan.style.borderBottom = "2px dashed #0984e3"; 
-                currentStudentTextSpan.style.paddingBottom = "4px";
-        
-            } else if (isWaitingToSend) {
-                isWaitingToSend = false;
-                let finalTextToSend = currentStudentTextSpan.innerText.trim();
-                
-                if(finalTextToSend === "" || finalTextToSend.includes("직접 입력해보세요")) {
-                    alert("내용을 입력해주세요!");
-                    isWaitingToSend = true; 
-                    return;
-                }
-                
-                if (currentStudentBubble) {
-                    currentStudentBubble.removeAttribute('id');
-                    const controls = document.getElementById('bubble-controls');
-                    if (controls) controls.remove();
-                    currentStudentTextSpan.contentEditable = "false"; 
-                    currentStudentTextSpan.style.borderBottom = "none";
-                }
-                sendToGemini(finalTextToSend);
-            }
-        }
-        
-        function retryMic() {
-            if (!recognition) return;
-            isRetrying = true; 
-            isRecording = false;
-            isWaitingToSend = false; 
-            finalTranscript = ""; 
-            recognition.stop();
-            
-            const micBtn = document.getElementById('bubbleMicBtn');
-            const retryBtn = document.getElementById('bubbleRetryBtn');
-            if(micBtn) {
-                micBtn.innerHTML = "🎙️ 다시 마이크 켜기";
-                micBtn.style.background = "linear-gradient(135deg, #0984e3, #74b9ff)";
-            }
-            if(retryBtn) retryBtn.style.display = "none";
-            
-            currentStudentTextSpan.innerText = "글씨가 지워졌어요. 다시 말해볼까요?";
-            currentStudentTextSpan.style.color = "#7f8c8d";
-            currentStudentTextSpan.style.borderBottom = "none";
-            document.getElementById('hintBtn').style.display = "block";
-        }
-        
-        recognition.onresult = function(event) {
-            let tempFinal = '';
-            let tempInterim = '';
-            for (let i = 0; i < event.results.length; i++) {
-                if (event.results[i].isFinal) tempFinal += event.results[i][0].transcript + ' ';
-                else tempInterim += event.results[i][0].transcript;
-            }
-            finalTranscript = tempFinal;
-            if (isRecording && currentStudentTextSpan) {
-                currentStudentTextSpan.innerText = tempFinal + tempInterim; 
-                document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-            }
-        };
-        
-        recognition.onerror = function(event) {
-            if (event.error !== 'aborted') {
-                if (currentStudentTextSpan) currentStudentTextSpan.innerText = "오류 발생! 마이크를 다시 켜주세요.";
-                isRecording = false;
-                isWaitingToSend = false;
-                const micBtn = document.getElementById('bubbleMicBtn');
-                const retryBtn = document.getElementById('bubbleRetryBtn');
-                if (micBtn) {
-                    micBtn.innerHTML = "🎙️ 다시 마이크 켜기";
-                    micBtn.style.background = "linear-gradient(135deg, #0984e3, #74b9ff)";
-                }
-                if (retryBtn) retryBtn.style.display = "none";
-            }
-        };
-        
-        recognition.onend = function() {
-            if (isRetrying) { isRetrying = false; return; }
-            if (isRecording) { try { recognition.start(); } catch(e) {} }
-        };
-        
         async function getHint() {
-            if (isRecording || isWaitingToSend) retryMic(); 
-            
-            const controls = document.getElementById('bubble-controls');
-            if (controls) controls.style.display = "none"; 
             document.getElementById('hintBtn').style.display = "none";
             
             const hintBox = document.getElementById('hintBox');
             hintBox.style.display = "block";
             hintBox.innerHTML = "⏳ 선생님의 말을 해석하고 대답을 고민 중이에요...";
+            
             const hintHistory = [...chatHistory];
             hintHistory.push({ "role": "user", "parts": [{ "text": "방금 네가(선생님) 한 말을 한국어로 해석해주고, 11살 한국 아이가 대답할 수 있는 아주 쉽고 짧은 영어 대답 2가지를 추천해줘. 양식: [선생님 말 해석]: (내용) / [추천 대답 1]: (영어) - (뜻) / [추천 대답 2]: (영어) - (뜻)" }] });
         
@@ -727,22 +592,76 @@
                     body: JSON.stringify({ contents: hintHistory })
                 });
                 const data = await response.json();
-                hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>') + '<br><br><button class="btn-mic-ready" onclick="resumeListening()">💡 힌트 확인 완료! 이제 말해볼게요</button>';
+                hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>') + '<br><br><button class="btn-restart" style="margin-top:10px; padding:10px; background:#ffeaa7;" onclick="closeHint()">💡 확인 완료!</button>';
             } catch (error) { hintBox.innerHTML = "힌트를 불러오지 못했어요."; }
         }
-        
-        function resumeListening() {
+
+        function closeHint() {
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('hintBtn').style.display = "block";
-            const controls = document.getElementById('bubble-controls');
-            if (controls) controls.style.display = "flex"; 
+            document.getElementById('studentChatInput').focus();
         }
-        
-        async function sendToGemini(userText) {
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        // 💡 새 기능: 문법 및 표현 체크 로직
+        async function checkGrammar() {
+            const inputEl = document.getElementById('studentChatInput');
+            const userText = inputEl.value.trim();
+            if (!userText) { alert("먼저 채팅창에 확인받고 싶은 문장을 입력해주세요!"); return; }
+
+            const feedbackDiv = document.getElementById('grammarFeedback');
+            feedbackDiv.style.display = "block";
+            feedbackDiv.innerHTML = "⏳ 문법을 체크하고 더 좋은 표현을 찾고 있어요...";
+
+            const checkPrompt = `학생(11살)이 화상영어 선생님에게 보낼 메시지야: "${userText}"
+이 문장의 문법 오류를 체크해주고, 더 자연스러운 영어 표현을 1~2개 추천해줘. 
+만약 학생이 한국어로만 입력했다면 영어로 어떻게 말하면 좋을지 알려줘. 
+초등학생이 이해하기 쉽게 아주 친절하고 짧게 한국어로 설명해줘.`;
+
+            try {
+                const response = await fetch(getModelUrl(), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: checkPrompt }] }] })
+                });
+                const data = await response.json();
+                let feedbackText = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                feedbackDiv.innerHTML = `<strong>💡 AI 교정 팁:</strong><br>${feedbackText}<br><span style="font-size:12px; color:#636e72; display:block; margin-top:8px;">(입력창의 내용을 수정한 뒤 ✈️ 전송 버튼을 눌러주세요)</span>`;
+            } catch (error) {
+                feedbackDiv.innerHTML = "교정 중에 오류가 발생했어요. 다시 시도해주세요.";
+            }
+        }
+
+        // 💡 새 기능: 메시지 전송 로직 (STT 제거 후 채팅 방식)
+        async function sendChatMessage() {
+            const inputEl = document.getElementById('studentChatInput');
+            const userText = inputEl.value.trim();
+            if (!userText) { alert("선생님께 보낼 내용을 입력해주세요!"); return; }
+
+            // 1. 피드백 창과 힌트 창 숨기기
+            document.getElementById('grammarFeedback').style.display = "none";
             document.getElementById('hintBtn').style.display = "none";
             document.getElementById('hintBox').style.display = "none";
             
+            // 2. 학생 말풍선 띄우고 입력창 비우기
+            addStudentMessage(userText);
+            inputEl.value = "";
+
+            // 3. 채팅 이력에 추가 후 Gemini 선생님 호출
             chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
+            
+            const chatBox = document.getElementById('chatBox');
+            const typingIndicator = document.createElement('div');
+            typingIndicator.id = "typingIndicator";
+            typingIndicator.style = "text-align:left; color:#a29bfe; margin:10px; font-weight:bold;";
+            typingIndicator.innerText = "👩‍🏫 쌤이 대답을 입력 중이에요... ✍️";
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
             try {
                 const response = await fetch(getModelUrl(), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -750,13 +669,17 @@
                 });
                 const data = await response.json();
                 if (data.error) throw new Error();
+                
+                typingIndicator.remove();
+                
                 const teacherReply = data.candidates[0].content.parts[0].text;
                 chatHistory.push({ "role": "model", "parts": [{ "text": teacherReply }] });
                 
-                addMessage(teacherReply, "teacher");
+                addTeacherMessage(teacherReply);
                 speakText(teacherReply); 
             } catch (error) { 
-                if (currentStudentTextSpan) currentStudentTextSpan.innerText = "오류 발생! 화면을 새로고침 해주세요."; 
+                if(document.getElementById('typingIndicator')) document.getElementById('typingIndicator').remove();
+                alert("선생님 답변을 받아오는 중 오류가 발생했습니다.");
             }
         }
         
