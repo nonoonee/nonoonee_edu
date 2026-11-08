@@ -17,6 +17,7 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
+            position: relative;
         }
         h2 { 
             text-align: center; 
@@ -124,23 +125,29 @@
         
         .blurred-text { filter: blur(5px); transition: filter 0.3s ease; user-select: none; }
         .msg-controls { display: flex; gap: 8px; margin-top: 10px; }
+        
+        /* 💡 수정된 부분: 메시지 하단 아이콘 버튼 스타일 */
         .msg-controls button {
-            padding: 6px 12px;
-            font-size: 13px;
-            border-radius: 12px;
+            padding: 0;
+            font-size: 16px;
+            border-radius: 50%;
             background-color: #f1f2f6;
             color: #2d3436;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            width: auto;
+            width: 36px;
+            height: 36px;
             border: 1px solid #dfe6e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
         .msg-controls button:hover { background-color: #e2e8f0; transform: translateY(-1px); }
         
         .btn-start-chat { background: linear-gradient(135deg, #ff7675, #d63031); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(214, 48, 49, 0.3); }
         .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4); transform: translateY(-2px); }
         .btn-restart { background-color: #dfe6e9; color: #2d3436; padding: 12px; margin-bottom: 15px; font-size: 14px; }
-        .btn-hint { background: linear-gradient(135deg, #f39c12, #f1c40f); color: white; padding: 14px; display: none; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3); }
-        #hintBox { display: none; padding: 18px; background-color: #fff3cd; border-radius: 12px; font-size: 15px; line-height: 1.7; margin-bottom: 20px; color: #856404; }
+        
         .btn-reset-key { background-color: transparent; color: #b2bec3; border: 1px solid #b2bec3; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
         .btn-reset-key:hover { background-color: #f5f6fa; color: #d63031; border-color: #d63031; }
         
@@ -166,10 +173,8 @@
         .input-row {
             display: flex;
             gap: 8px;
-            align-items: flex-end; /* 여러 줄 입력 시 버튼이 아래쪽에 정렬되도록 */
+            align-items: flex-end; 
         }
-        
-        /* 💡 수정된 부분: 다중 줄 입력이 가능한 textarea 디자인 */
         .input-row textarea {
             flex-grow: 1;
             padding: 12px 14px;
@@ -226,6 +231,46 @@
         .btn-send-msg:hover { background-color: #0984e3; transform: translateY(-2px); }
 
         .footer-info { text-align: center; font-size: 12px; color: #b2bec3; margin-top: 40px; margin-bottom: 10px; font-family: 'Nunito', sans-serif; }
+
+        /* 💡 새 기능: 힌트 모달(팝업창) 스타일 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            line-height: 1.6;
+            font-size: 15px;
+            color: #2d3436;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: #f1f2f6;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            color: #636e72;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover { background: #ff7675; color: white; }
     </style>
 </head>
 <body>
@@ -280,16 +325,11 @@
         <!-- 대화가 표시되는 영역 -->
         <div class="chat-box" id="chatBox"></div>
         
-        <!-- 힌트 상자 -->
-        <div id="hintBox"></div>
-        <button id="hintBtn" class="btn-hint" onclick="getHint()">💡 힌트 보기 (무슨 말인지 모르겠어요)</button>
-        
         <!-- 메신저형 하단 채팅 입력창 -->
         <div class="chat-input-area">
             <div id="grammarFeedback" class="grammar-feedback"></div>
             <div class="input-row">
-                <!-- 💡 수정된 부분: input type="text"를 textarea로 변경 -->
-                <textarea id="studentChatInput" placeholder="여기에 대답을 써주세요!" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+                <textarea id="studentChatInput" placeholder="여기에 대답을 써주세요!&#13;&#10;(Shift + Enter로 줄바꿈)" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
                 <button class="btn-check-grammar" onclick="checkGrammar()" title="문법 체크 및 추천 표현">🔍</button>
                 <button class="btn-send-msg" onclick="sendChatMessage()" title="선생님께 전송">✈️</button>
             </div>
@@ -297,9 +337,17 @@
     </div>
     
     <div class="footer-info">
-        v1.1.1 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.1.2 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
 </div> 
+
+<!-- 💡 새 기능: 힌트 팝업 모달 레이어 -->
+<div id="hintModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeHintModal()">✖</button>
+        <div id="hintModalBody">⏳ 선생님의 말을 해석하고 대답을 고민 중이에요...</div>
+    </div>
+</div>
 
     <script>
         let USER_API_KEY = ""; 
@@ -456,13 +504,11 @@
             
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = "<div id='chatLoading' style='text-align:center; color:#6c5ce7; margin:30px 0; font-weight:bold;'>👩‍🏫 선생님이 인사를 준비하고 있어요... ⏳</div>";
-            document.getElementById('hintBox').style.display = "none";
-            document.getElementById('hintBtn').style.display = "none";
             document.getElementById('grammarFeedback').style.display = "none";
             
             const inputEl = document.getElementById('studentChatInput');
             inputEl.value = "";
-            inputEl.style.height = '48px'; // 높이 초기화
+            inputEl.style.height = '48px'; 
         
             let systemPrompt = "";
         
@@ -477,7 +523,7 @@
                 speakText(`Hi ${STUDENT_NAME}! How was your day?`);
             } else {
                 if (currentUserInput !== "") {
-                    systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 대화할 주제는 "${currentUserInput}"이야. 이 주제에 대해 먼저 친근하게 질문하면서 대화를 시작해. (예: "Hi ${STUDENT_NAME}! ~"). 항상 짧고 쉬운 1~2문장으로 대답해. 지금 바로 첫 인사를 건네봐.`;
+                    systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 대화할 주제는 "${currentUserInput}"이야. 이 주제에 대해 먼저 친근하게 질문하면서 대화를 시작해. 항상 짧고 쉬운 1~2문장으로 대답해. 지금 바로 첫 인사를 건네봐.`;
                 } else {
                     systemPrompt = `너는 11살 한국 아이 '${STUDENT_NAME}'를 가르치는 화상영어 선생님이야. 오늘 정해진 주제는 없어. 네가 초등학생이 흥미로워할 만한 일상적인 주제(좋아하는 음식, 게임, 동물, 방학 계획 등)를 무작위로 하나 골라서 먼저 친근하게 질문하며 대화를 시작해. 항상 짧고 쉬운 1~2문장으로 대답해. 지금 바로 첫 인사를 건네봐.`;
                 }
@@ -523,34 +569,42 @@
             const controls = document.createElement('div');
             controls.classList.add('msg-controls');
         
+            // 💡 수정된 부분: 텍스트 버튼들을 이모지 아이콘으로 변경
             const replayBtn = document.createElement('button');
-            replayBtn.innerHTML = "🔊 다시 듣기";
+            replayBtn.innerHTML = "🔊";
+            replayBtn.title = "다시 듣기";
             replayBtn.onclick = function() { replayText(text); };
         
             const showBtn = document.createElement('button');
-            showBtn.innerHTML = "👁️ 텍스트 보기";
+            showBtn.innerHTML = "👁️";
+            showBtn.title = "텍스트 보기/가리기";
             let isBlurred = true;
             showBtn.onclick = function() {
                 if (isBlurred) {
                     textDiv.classList.remove('blurred-text');
-                    showBtn.innerHTML = "🙈 텍스트 가리기";
+                    showBtn.innerHTML = "🙈";
                     isBlurred = false;
                 } else {
                     textDiv.classList.add('blurred-text');
-                    showBtn.innerHTML = "👁️ 텍스트 보기";
+                    showBtn.innerHTML = "👁️";
                     isBlurred = true;
                 }
             };
+
+            const hintBtn = document.createElement('button');
+            hintBtn.innerHTML = "💡";
+            hintBtn.title = "힌트 보기 (선생님 말 해석 및 대답 추천)";
+            hintBtn.onclick = function() { showHintModal(text); };
         
             controls.appendChild(replayBtn);
             controls.appendChild(showBtn);
+            controls.appendChild(hintBtn);
             msgDiv.appendChild(header);
             msgDiv.appendChild(textDiv);
             msgDiv.appendChild(controls);
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
             
-            document.getElementById('hintBtn').style.display = "block";
             document.getElementById('studentChatInput').focus();
         }
 
@@ -566,7 +620,6 @@
             header.style.color = "#d35400";
 
             const textDiv = document.createElement('div');
-            // 💡 수정된 부분: 엔터(줄바꿈)를 <br> 태그로 변환하여 채팅창에 여러 줄로 표시되게 함
             textDiv.innerHTML = text.replace(/\n/g, '<br>');
             
             msgDiv.appendChild(header);
@@ -599,46 +652,48 @@
             window.speechSynthesis.speak(utterance);
         }
         
-        async function getHint() {
-            document.getElementById('hintBtn').style.display = "none";
+        // 💡 수정된 부분: 개별 메시지에 대한 힌트를 팝업 모달로 띄워주는 함수
+        async function showHintModal(teacherText) {
+            const modal = document.getElementById('hintModal');
+            const modalBody = document.getElementById('hintModalBody');
             
-            const hintBox = document.getElementById('hintBox');
-            hintBox.style.display = "block";
-            hintBox.innerHTML = "⏳ 선생님의 말을 해석하고 대답을 고민 중이에요...";
+            modal.style.display = "flex";
+            modalBody.innerHTML = "⏳ 선생님의 말을 해석하고 대답을 고민 중이에요...";
             
-            const hintHistory = [...chatHistory];
-            hintHistory.push({ "role": "user", "parts": [{ "text": "방금 네가(선생님) 한 말을 한국어로 해석해주고, 11살 한국 아이가 대답할 수 있는 아주 쉽고 짧은 영어 대답 2가지를 추천해줘. 양식: [선생님 말 해석]: (내용) / [추천 대답 1]: (영어) - (뜻) / [추천 대답 2]: (영어) - (뜻)" }] });
+            const hintPrompt = `선생님이 한 영어 문장: "${teacherText}"
+이 문장을 한국어로 해석해주고, 11살 한국 아이가 대답할 수 있는 아주 쉽고 짧은 영어 대답 2가지를 추천해줘. 
+양식: 
+[선생님 말 해석]: (내용)
+[추천 대답 1]: (영어) - (뜻)
+[추천 대답 2]: (영어) - (뜻)`;
         
             try {
                 const response = await fetch(getModelUrl(), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: hintHistory })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: hintPrompt }] }] })
                 });
                 const data = await response.json();
-                hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>') + '<br><br><button class="btn-restart" style="margin-top:10px; padding:10px; background:#ffeaa7;" onclick="closeHint()">💡 확인 완료!</button>';
-            } catch (error) { hintBox.innerHTML = "힌트를 불러오지 못했어요."; }
+                modalBody.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+            } catch (error) { 
+                modalBody.innerHTML = "힌트를 불러오지 못했어요. 다시 시도해주세요."; 
+            }
         }
 
-        function closeHint() {
-            document.getElementById('hintBox').style.display = "none";
-            document.getElementById('hintBtn').style.display = "block";
+        function closeHintModal() {
+            document.getElementById('hintModal').style.display = "none";
             document.getElementById('studentChatInput').focus();
         }
 
-        // 💡 수정된 부분: Shift + Enter 줄바꿈 로직 추가
         function handleEnter(e) {
-            // 엔터키를 눌렀고, Shift키를 누르지 않은 상태일 때 전송
             if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); // 기본 엔터 기능(줄바꿈) 방지
+                e.preventDefault(); 
                 sendChatMessage();
             }
-            // Shift + Enter 일때는 e.preventDefault()를 호출하지 않으므로 자연스럽게 줄바꿈 됨
         }
 
-        // 💡 수정된 부분: 텍스트 길이에 따라 입력창 높이가 자동으로 늘어나는 로직
         function autoResize(textarea) {
-            textarea.style.height = '48px'; // 기본 높이로 초기화
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; // 최대 120px까지만 늘어남
+            textarea.style.height = '48px'; 
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; 
         }
 
         async function checkGrammar() {
@@ -674,12 +729,9 @@
             if (!userText) { alert("선생님께 보낼 내용을 입력해주세요!"); return; }
 
             document.getElementById('grammarFeedback').style.display = "none";
-            document.getElementById('hintBtn').style.display = "none";
-            document.getElementById('hintBox').style.display = "none";
             
             addStudentMessage(userText);
             
-            // 입력창 비우고 높이 초기화
             inputEl.value = "";
             inputEl.style.height = '48px';
 
