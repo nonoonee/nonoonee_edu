@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI쌤과의 스몰토크 (채팅 버전)</title>
-    <!-- 구글 폰트 적용 (깔끔하고 동글동글한 느낌) --> 
+    <!-- 구글 폰트 적용 --> 
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -144,7 +144,7 @@
         .btn-reset-key { background-color: transparent; color: #b2bec3; border: 1px solid #b2bec3; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
         .btn-reset-key:hover { background-color: #f5f6fa; color: #d63031; border-color: #d63031; }
         
-        /* 💡 새 기능: 메신저형 하단 채팅 입력창 스타일 */
+        /* 메신저형 하단 채팅 입력창 스타일 */
         .chat-input-area {
             background-color: white;
             padding: 12px;
@@ -166,17 +166,34 @@
         .input-row {
             display: flex;
             gap: 8px;
-            align-items: center;
+            align-items: flex-end; /* 여러 줄 입력 시 버튼이 아래쪽에 정렬되도록 */
         }
-        .input-row input[type="text"] {
+        
+        /* 💡 수정된 부분: 다중 줄 입력이 가능한 textarea 디자인 */
+        .input-row textarea {
             flex-grow: 1;
-            padding: 14px;
+            padding: 12px 14px;
             border: 1px solid #dfe6e9;
-            border-radius: 20px;
+            border-radius: 16px;
             background-color: #f8fafc;
             margin: 0;
             width: auto;
+            resize: none;
+            min-height: 48px;
+            max-height: 120px;
+            font-family: inherit;
+            font-size: 15px;
+            line-height: 1.5;
+            overflow-y: auto;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s;
         }
+        .input-row textarea:focus {
+            border-color: #74b9ff;
+            background-color: #fff;
+        }
+
         .btn-check-grammar {
             background-color: #ffeaa7;
             color: #d35400;
@@ -189,6 +206,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
         .btn-send-msg {
             background-color: #74b9ff;
@@ -202,6 +220,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
         .btn-check-grammar:hover { background-color: #fdcb6e; transform: translateY(-2px); }
         .btn-send-msg:hover { background-color: #0984e3; transform: translateY(-2px); }
@@ -265,11 +284,12 @@
         <div id="hintBox"></div>
         <button id="hintBtn" class="btn-hint" onclick="getHint()">💡 힌트 보기 (무슨 말인지 모르겠어요)</button>
         
-        <!-- 💡 새 기능: 메신저형 하단 채팅 입력창 -->
+        <!-- 메신저형 하단 채팅 입력창 -->
         <div class="chat-input-area">
             <div id="grammarFeedback" class="grammar-feedback"></div>
             <div class="input-row">
-                <input type="text" id="studentChatInput" placeholder="여기에 대답을 영어(또는 한국어)로 써주세요!" onkeypress="handleEnter(event)">
+                <!-- 💡 수정된 부분: input type="text"를 textarea로 변경 -->
+                <textarea id="studentChatInput" placeholder="여기에 대답을 써주세요!&#13;&#10;(Shift + Enter로 줄바꿈)" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
                 <button class="btn-check-grammar" onclick="checkGrammar()" title="문법 체크 및 추천 표현">🔍</button>
                 <button class="btn-send-msg" onclick="sendChatMessage()" title="선생님께 전송">✈️</button>
             </div>
@@ -277,7 +297,7 @@
     </div>
     
     <div class="footer-info">
-        v1.1.0 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.1.1 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
 </div> 
 
@@ -439,7 +459,10 @@
             document.getElementById('hintBox').style.display = "none";
             document.getElementById('hintBtn').style.display = "none";
             document.getElementById('grammarFeedback').style.display = "none";
-            document.getElementById('studentChatInput').value = "";
+            
+            const inputEl = document.getElementById('studentChatInput');
+            inputEl.value = "";
+            inputEl.style.height = '48px'; // 높이 초기화
         
             let systemPrompt = "";
         
@@ -531,7 +554,6 @@
             document.getElementById('studentChatInput').focus();
         }
 
-        // 💡 새 기능: 학생 말풍선 추가 함수
         function addStudentMessage(text) {
             const chatBox = document.getElementById('chatBox');
             const msgDiv = document.createElement('div');
@@ -544,7 +566,8 @@
             header.style.color = "#d35400";
 
             const textDiv = document.createElement('div');
-            textDiv.innerText = text;
+            // 💡 수정된 부분: 엔터(줄바꿈)를 <br> 태그로 변환하여 채팅창에 여러 줄로 표시되게 함
+            textDiv.innerHTML = text.replace(/\n/g, '<br>');
             
             msgDiv.appendChild(header);
             msgDiv.appendChild(textDiv);
@@ -602,13 +625,22 @@
             document.getElementById('studentChatInput').focus();
         }
 
+        // 💡 수정된 부분: Shift + Enter 줄바꿈 로직 추가
         function handleEnter(e) {
-            if (e.key === 'Enter') {
+            // 엔터키를 눌렀고, Shift키를 누르지 않은 상태일 때 전송
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // 기본 엔터 기능(줄바꿈) 방지
                 sendChatMessage();
             }
+            // Shift + Enter 일때는 e.preventDefault()를 호출하지 않으므로 자연스럽게 줄바꿈 됨
         }
 
-        // 💡 새 기능: 문법 및 표현 체크 로직
+        // 💡 수정된 부분: 텍스트 길이에 따라 입력창 높이가 자동으로 늘어나는 로직
+        function autoResize(textarea) {
+            textarea.style.height = '48px'; // 기본 높이로 초기화
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; // 최대 120px까지만 늘어남
+        }
+
         async function checkGrammar() {
             const inputEl = document.getElementById('studentChatInput');
             const userText = inputEl.value.trim();
@@ -636,22 +668,21 @@
             }
         }
 
-        // 💡 새 기능: 메시지 전송 로직 (STT 제거 후 채팅 방식)
         async function sendChatMessage() {
             const inputEl = document.getElementById('studentChatInput');
             const userText = inputEl.value.trim();
             if (!userText) { alert("선생님께 보낼 내용을 입력해주세요!"); return; }
 
-            // 1. 피드백 창과 힌트 창 숨기기
             document.getElementById('grammarFeedback').style.display = "none";
             document.getElementById('hintBtn').style.display = "none";
             document.getElementById('hintBox').style.display = "none";
             
-            // 2. 학생 말풍선 띄우고 입력창 비우기
             addStudentMessage(userText);
+            
+            // 입력창 비우고 높이 초기화
             inputEl.value = "";
+            inputEl.style.height = '48px';
 
-            // 3. 채팅 이력에 추가 후 Gemini 선생님 호출
             chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
             
             const chatBox = document.getElementById('chatBox');
