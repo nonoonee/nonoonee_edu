@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI쌤과의 스몰토크 (자연스러운 교정 & 이모지 음성 제거)</title>
-    <!-- 구글 폰트 적용 --> 
+    <title>AI쌤과의 스몰토크 (API 비용 최적화 버전)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -56,7 +55,6 @@
             background-color: #fff;
         }
         
-        /* 버튼 공통 스타일 */
         button { 
             font-family: inherit; 
             border: none; 
@@ -136,7 +134,6 @@
         .btn-reset-key { background-color: transparent; color: #b2bec3; border: 1px solid #b2bec3; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
         .btn-reset-key:hover { background-color: #f5f6fa; color: #d63031; border-color: #d63031; }
         
-        /* 메신저형 하단 채팅 입력창 스타일 */
         .chat-input-area {
             background-color: white;
             padding: 12px;
@@ -205,7 +202,6 @@
 
         .footer-info { text-align: center; font-size: 12px; color: #b2bec3; margin-top: 40px; margin-bottom: 10px; font-family: 'Nunito', sans-serif; }
 
-        /* 힌트 팝업 모달 레이어 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -301,14 +297,15 @@
         <!-- 메신저형 하단 채팅 입력창 -->
         <div class="chat-input-area">
             <div class="input-row">
-                <textarea id="studentChatInput" placeholder="여기에 대답을 써주세요!" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+                <!-- 💡 비용 최적화: maxlength="150" 속성 추가로 무한 입력 방지 -->
+                <textarea id="studentChatInput" placeholder="여기에 대답을 써주세요!" maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
                 <button class="btn-send-msg" onclick="sendChatMessage()" title="선생님께 전송">✈️</button>
             </div>
         </div>
     </div>
     
     <div class="footer-info">
-        v1.2.1 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.3.0 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
 </div> 
 
@@ -606,13 +603,11 @@
             return wrapper; 
         }
         
-        // 💡 수정된 부분: 음성 합성 시 이모지를 무시하도록 정규표현식 추가
         function replayText(text) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
             
-            let cleanText = text.replace(/<[^>]*>?/gm, ''); // HTML 태그 제거
-            // 이모지 문자(Emoji Presentation 및 Extended Pictographic) 완전 제거
+            let cleanText = text.replace(/<[^>]*>?/gm, ''); 
             cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
             
             const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -623,13 +618,11 @@
             window.speechSynthesis.speak(utterance);
         }
         
-        // 💡 수정된 부분: 음성 합성 시 이모지를 무시하도록 정규표현식 추가
         function speakText(text) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
             
-            let cleanText = text.replace(/<[^>]*>?/gm, ''); // HTML 태그 제거
-            // 이모지 문자(Emoji Presentation 및 Extended Pictographic) 완전 제거
+            let cleanText = text.replace(/<[^>]*>?/gm, '');
             cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
             
             const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -697,7 +690,16 @@
             grammarTipDiv.innerHTML = "⏳ 문법을 확인하고 있어요...";
             studentMsgWrapper.appendChild(grammarTipDiv);
             
+            // 새 메시지 추가
             chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
+            
+            // 💡 비용 최적화 로직: 시스템 프롬프트 2개 + 가장 최근 대화 5개(마지막이 User)만 유지
+            if (chatHistory.length > 7) { 
+                const basePrompts = chatHistory.slice(0, 2);
+                const recentChats = chatHistory.slice(-5);
+                chatHistory = [...basePrompts, ...recentChats];
+            }
+
             const chatBox = document.getElementById('chatBox');
             const typingIndicator = document.createElement('div');
             typingIndicator.id = "typingIndicator";
