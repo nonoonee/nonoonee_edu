@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI쌤과의 스몰토크 (자연스러운 교정 버전)</title>
+    <title>AI쌤과의 스몰토크 (자연스러운 교정 & 이모지 음성 제거)</title>
     <!-- 구글 폰트 적용 --> 
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -173,7 +173,6 @@
             background-color: #fff;
         }
 
-        /* 💡 수정된 부분: 문법 버튼 제거, 전송 버튼 크기 조정 */
         .btn-send-msg {
             background-color: #74b9ff;
             color: white;
@@ -190,12 +189,11 @@
         }
         .btn-send-msg:hover { background-color: #0984e3; transform: translateY(-2px); }
 
-        /* 💡 새 기능: 학생 말풍선 하단에 붙는 교정 팁 스타일 */
         .inline-grammar-tip {
             background-color: #e3f2fd;
             color: #1565c0;
             padding: 10px 14px;
-            border-radius: 12px 0 12px 12px; /* 학생 말풍선 방향에 맞춰 우측 상단 각짐 */
+            border-radius: 12px 0 12px 12px; 
             font-size: 13px;
             line-height: 1.5;
             border-left: 3px solid #1976d2;
@@ -303,7 +301,6 @@
         <!-- 메신저형 하단 채팅 입력창 -->
         <div class="chat-input-area">
             <div class="input-row">
-                <!-- 💡 수정된 안내 문구 적용 -->
                 <textarea id="studentChatInput" placeholder="여기에 대답을 써주세요!" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
                 <button class="btn-send-msg" onclick="sendChatMessage()" title="선생님께 전송">✈️</button>
             </div>
@@ -311,7 +308,7 @@
     </div>
     
     <div class="footer-info">
-        v1.2.0 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
+        v1.2.1 | ⓒ 2026 노느니(Nonoonee). All rights reserved.
     </div>
 </div> 
 
@@ -472,7 +469,6 @@
             restartConversation(mode); 
         }
         
-        // 💡 쌤의 프롬프트를 대폭 강화하여 교정 및 따라 말하기를 유도하도록 변경
         async function restartConversation(mode = currentChatMode) {
             if(window.speechSynthesis) window.speechSynthesis.cancel();
             
@@ -580,7 +576,6 @@
             document.getElementById('studentChatInput').focus();
         }
 
-        // 💡 수정: 꼬리표(교정 팁)를 붙이기 위해 학생 말풍선을 감싸는 래퍼 반환
         function addStudentMessage(text) {
             const chatBox = document.getElementById('chatBox');
             
@@ -608,13 +603,18 @@
             chatBox.appendChild(wrapper);
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            return wrapper; // 이 래퍼 안에 교정 팁을 나중에 붙일 예정
+            return wrapper; 
         }
         
+        // 💡 수정된 부분: 음성 합성 시 이모지를 무시하도록 정규표현식 추가
         function replayText(text) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
-            const cleanText = text.replace(/<[^>]*>?/gm, ''); 
+            
+            let cleanText = text.replace(/<[^>]*>?/gm, ''); // HTML 태그 제거
+            // 이모지 문자(Emoji Presentation 및 Extended Pictographic) 완전 제거
+            cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
+            
             const utterance = new SpeechSynthesisUtterance(cleanText);
             const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
             if (selectedVoice) utterance.voice = selectedVoice;
@@ -623,10 +623,15 @@
             window.speechSynthesis.speak(utterance);
         }
         
+        // 💡 수정된 부분: 음성 합성 시 이모지를 무시하도록 정규표현식 추가
         function speakText(text) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
-            const cleanText = text.replace(/<[^>]*>?/gm, '');
+            
+            let cleanText = text.replace(/<[^>]*>?/gm, ''); // HTML 태그 제거
+            // 이모지 문자(Emoji Presentation 및 Extended Pictographic) 완전 제거
+            cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
+            
             const utterance = new SpeechSynthesisUtterance(cleanText);
             const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
             if (selectedVoice) utterance.voice = selectedVoice;
@@ -678,24 +683,20 @@
             textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; 
         }
 
-        // 💡 수정: 전송과 동시에 '교정 팁'과 '선생님 답변'을 병렬 처리(Promise.all)하여 속도 최적화
         async function sendChatMessage() {
             const inputEl = document.getElementById('studentChatInput');
             const userText = inputEl.value.trim();
             if (!userText) { alert("선생님께 보낼 내용을 입력해주세요!"); return; }
 
-            // 1. 학생 메시지 말풍선 생성 및 입력창 초기화
             const studentMsgWrapper = addStudentMessage(userText);
             inputEl.value = "";
             inputEl.style.height = '48px';
 
-            // 2. 학생 말풍선 바로 아래에 '교정 팁 대기 중' 상태 띄우기
             const grammarTipDiv = document.createElement('div');
             grammarTipDiv.classList.add('inline-grammar-tip');
             grammarTipDiv.innerHTML = "⏳ 문법을 확인하고 있어요...";
             studentMsgWrapper.appendChild(grammarTipDiv);
             
-            // 3. 선생님 '답변 대기 중' 상태 띄우기
             chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
             const chatBox = document.getElementById('chatBox');
             const typingIndicator = document.createElement('div');
@@ -705,18 +706,15 @@
             chatBox.appendChild(typingIndicator);
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 4. 병렬 API 호출 (교정 팁 + 선생님 답변)
             const checkPrompt = `학생(11살)이 화상영어 선생님에게 보낸 메시지야: "${userText}"
 이 문장의 문법 오류나 더 자연스러운 영어 표현을 초등학생이 이해하기 쉽게 한국어로 아주 짧게(1~2줄) 설명해줘.
 만약 문법이 완벽하고 자연스럽다면 "완벽한 문장이에요! 훌륭해요 👏"라고만 대답해.`;
 
-            // 교정 팁 요청
             const grammarFetch = fetch(getModelUrl(), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: checkPrompt }] }] })
             }).then(res => res.json());
 
-            // 선생님 답변 요청
             const teacherFetch = fetch(getModelUrl(), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: chatHistory }) 
@@ -725,12 +723,10 @@
             try {
                 const [grammarData, teacherData] = await Promise.all([grammarFetch, teacherFetch]);
                 
-                // 교정 팁 결과 화면에 업데이트
                 if (grammarData.error) throw new Error(grammarData.error.message);
                 const feedbackText = grammarData.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
                 grammarTipDiv.innerHTML = `<strong>💡 AI 교정 팁:</strong><br>${feedbackText}`;
 
-                // 선생님 답변 결과 화면에 업데이트
                 if (teacherData.error) throw new Error(teacherData.error.message);
                 if(document.getElementById('typingIndicator')) document.getElementById('typingIndicator').remove();
                 
