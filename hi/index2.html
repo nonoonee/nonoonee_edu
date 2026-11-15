@@ -1,1 +1,834 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 영어 튜터 (왕초보 스몰토크)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Nunito', 'Noto Sans KR', sans-serif; 
+            background-color: #f4f7f6; 
+            margin: 0; 
+            padding: 20px 10px; 
+            color: #333; 
+        } 
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+        h2 { 
+            text-align: center; 
+            color: #2d3436; 
+            font-weight: 700; 
+            font-size: 26px; 
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        .section-box { 
+            background: white; 
+            padding: 25px 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06); 
+            margin-bottom: 25px; 
+            transition: transform 0.2s;
+        }
+        h3 { margin-top: 0; color: #2c3e50; font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .input-group { margin-bottom: 18px; }
+        .input-group label { font-weight: 700; color: #4a4a4a; font-size: 14px; margin-bottom: 8px; display: block; }
+        select, input[type="text"], input[type="password"] { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #edf2f7; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            font-family: inherit;
+            transition: all 0.3s;
+            outline: none;
+            background-color: #f8fafc;
+        }
+        select:focus, input[type="text"]:focus, input[type="password"]:focus { 
+            border-color: #6c5ce7; 
+            background-color: #fff;
+        }
+        
+        button { 
+            font-family: inherit; 
+            border: none; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 700; 
+            width: 100%; 
+            transition: all 0.2s ease; 
+            box-sizing: border-box;
+        }
+        button:active { transform: scale(0.98); }
 
+        .btn-main { 
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe); 
+            color: white; 
+            padding: 16px; 
+            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.3); 
+        }
+        .btn-main:hover { box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4); transform: translateY(-2px); }
+        
+        #loading { display: none; margin-top: 20px; color: #6c5ce7; text-align: center; font-weight: 700; font-size: 15px; }
+        #scriptResult { 
+            margin-top: 20px; 
+            padding: 18px; 
+            background-color: #f8f9fa; 
+            border-radius: 12px;
+            border-left: 5px solid #6c5ce7; 
+            white-space: pre-wrap; 
+            line-height: 1.7; 
+            display: none; 
+            font-size: 15px;
+        }
+        #scriptResult b { color: #6c5ce7; font-size: 16px; background-color: #f0f0ff; padding: 2px 6px; border-radius: 4px; }
+        
+        #chatSection { display: none; margin-top: 30px; }
+        .chat-box { 
+            background-color: #f1f2f6;
+            border-radius: 16px; 
+            padding: 20px 15px; 
+            height: 400px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 16px; 
+            margin-bottom: 10px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .msg { padding: 12px 16px; border-radius: 18px; max-width: 75%; line-height: 1.5; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .teacher-msg { background-color: #ffffff; align-self: flex-start; border-bottom-left-radius: 4px; color: #2d3436; }
+        .student-msg { background-color: #e3f2fd; align-self: flex-end; border-bottom-right-radius: 4px; color: #2d3436; width: 100%; box-sizing: border-box; } /* 배경색을 어른스럽게 파스텔 블루로 변경 */
+        
+        .blurred-text { filter: blur(5px); transition: filter 0.3s ease; user-select: none; }
+        .msg-controls { display: flex; gap: 8px; margin-top: 10px; }
+        
+        .msg-controls button {
+            padding: 0;
+            font-size: 16px;
+            border-radius: 50%;
+            background-color: #f1f2f6;
+            color: #2d3436;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            width: 36px;
+            height: 36px;
+            border: 1px solid #dfe6e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .msg-controls button:hover { background-color: #e2e8f0; transform: translateY(-1px); }
+        
+        .btn-start-chat { background: linear-gradient(135deg, #0984e3, #74b9ff); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(9, 132, 227, 0.3); } /* 색상 차분하게 변경 */
+        .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(9, 132, 227, 0.4); transform: translateY(-2px); }
+        .btn-restart { background-color: #dfe6e9; color: #2d3436; padding: 12px; margin-bottom: 15px; font-size: 14px; }
+        
+        .btn-reset-key { background-color: transparent; color: #b2bec3; border: 1px solid #b2bec3; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
+        .btn-reset-key:hover { background-color: #f5f6fa; color: #d63031; border-color: #d63031; }
+        
+        .chat-input-area {
+            background-color: white;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+        }
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end; 
+        }
+        .input-row textarea {
+            flex-grow: 1;
+            padding: 12px 14px;
+            border: 1px solid #dfe6e9;
+            border-radius: 16px;
+            background-color: #f8fafc;
+            margin: 0;
+            width: auto;
+            resize: none;
+            min-height: 48px;
+            max-height: 120px;
+            font-family: inherit;
+            font-size: 15px;
+            line-height: 1.5;
+            overflow-y: auto;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .input-row textarea:focus {
+            border-color: #74b9ff;
+            background-color: #fff;
+        }
+
+        .btn-send-msg {
+            background-color: #74b9ff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .btn-send-msg:hover { background-color: #0984e3; transform: translateY(-2px); }
+
+        .inline-grammar-tip {
+            background-color: #f1f2f6; /* 약간 더 차분한 톤으로 변경 */
+            color: #2d3436;
+            padding: 10px 14px;
+            border-radius: 12px 0 12px 12px; 
+            font-size: 13px;
+            line-height: 1.5;
+            border-left: 3px solid #6c5ce7;
+            text-align: left;
+            max-width: 85%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-top: 6px;
+        }
+
+        .heart-container {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .heart-status {
+            display: inline-block;
+            background-color: #ffeaa7;
+            color: #d63031;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .footer-info { text-align: center; font-size: 12px; color: #b2bec3; margin-top: 40px; margin-bottom: 10px; font-family: 'Nunito', sans-serif; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            line-height: 1.6;
+            font-size: 15px;
+            color: #2d3436;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: #f1f2f6;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            color: #636e72;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover { background: #ff7675; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>💡 AI 튜터와 영어 스몰토크</h2>
+
+    <!-- [0단계] API 키 및 상품 설정 -->
+    <div class="section-box" id="step0">
+        <h3 style="justify-content: flex-start;">🔑 초기 설정 (1회만 진행)</h3>
+        <p style="font-size: 13px; color: #636e72; margin-top: -5px; margin-bottom: 20px;">사용자의 기기에 안전하게 저장됩니다. (서버 전송 X)</p>
+        
+        <div class="input-group">
+            <input type="text" id="studentNameInput" placeholder="사용하실 영어 이름 (예: Alex)">
+        </div>
+        <div class="input-group">
+            <input type="password" id="apiKeyInput" placeholder="구글 API 키를 입력하세요">
+        </div>
+        
+        <div class="input-group">
+            <label for="planSelect">💳 이용권 (하루 대화 가능 횟수)</label>
+            <select id="planSelect">
+                <option value="20">베이직 플랜 (하루 20회)</option>
+                <option value="50">스탠다드 플랜 (하루 50회)</option>
+                <option value="100">프리미엄 플랜 (하루 100회)</option>
+            </select>
+        </div>
+
+        <button class="btn-main" onclick="saveApiKey()">✅ 저장하고 시작하기</button>
+    </div>
+    
+    <!-- [1단계] 대본 생성 -->
+    <div class="section-box" id="step1" style="display: none;">
+        <h3>1단계: 대화 준비 📝 
+            <button class="btn-reset-key" onclick="resetApiKey()">설정 초기화</button>
+        </h3>
+        
+        <div class="input-group" style="margin-top: 15px;">
+            <label for="voiceSelect">🗣️ 튜터 목소리 선택</label>
+            <select id="voiceSelect" onchange="playSampleVoice()"></select>
+        </div>
+    
+        <div class="input-group">
+            <label for="userInput">💬 대화 주제 (또는 관심사)</label>
+            <input type="text" id="userInput" placeholder="예: 주말에 본 영화 / 카페에 다녀온 일">
+        </div>
+        <button class="btn-main" onclick="generateScript()">✨ 맞춤형 대본 생성하기</button>
+        
+        <button class="btn-start-chat" style="display: block; margin-top: 12px;" onclick="skipScriptAndChat()">🚀 대본 없이 프리토킹 시작</button>
+        
+        <div id="loading">대본을 생성 중입니다... ⏳</div>
+        <div id="scriptResult"></div>
+        
+        <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection('script')">🎤 실전 채팅 시작하기 ▶️</button>
+    </div>
+
+    <!-- [2단계] 실전 대화 (채팅형) -->
+    <div class="section-box" id="chatSection">
+        <h3>2단계: AI 튜터와 회화 연습 🗣️</h3>
+        <button class="btn-restart" onclick="restartConversation()">🔄 대화 다시 시작하기</button>
+        
+        <div class="heart-container">
+            <div id="heartStatus" class="heart-status">❤️ 20 / 20</div>
+        </div>
+
+        <div class="chat-box" id="chatBox"></div>
+        
+        <div class="chat-input-area">
+            <div class="input-row">
+                <textarea id="studentChatInput" placeholder="여기에 영어로 답변을 작성해주세요!" maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+                <button class="btn-send-msg" id="sendBtn" onclick="sendChatMessage()" title="전송">✈️</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-info">
+        v2.0.0 | AI English Tutor. All rights reserved.
+    </div>
+</div> 
+
+<!-- 힌트 팝업 모달 레이어 -->
+<div id="hintModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeHintModal()">✖</button>
+        <div id="hintModalBody">⏳ 의미를 파악하고 추천 답변을 생성 중입니다...</div>
+    </div>
+</div>
+
+    <script>
+        let USER_API_KEY = ""; 
+        let STUDENT_NAME = ""; 
+        let currentUserInput = ""; 
+        let chatHistory = []; 
+        let availableVoices = []; 
+        let currentChatMode = 'script'; 
+        
+        let USER_PLAN = 20; 
+        let CURRENT_HEARTS = 20;
+
+        window.onload = function() {
+            const savedKey = localStorage.getItem("gemini_tutor_api_key");
+            const savedName = localStorage.getItem("gemini_tutor_student_name");
+            if (savedKey && savedName) {
+                USER_API_KEY = savedKey;
+                STUDENT_NAME = savedName;
+                checkAndResetHearts(); 
+                document.getElementById('step0').style.display = "none"; 
+                document.getElementById('step1').style.display = "block"; 
+            }
+        };
+        
+        function checkAndResetHearts() {
+            const savedPlan = localStorage.getItem("gemini_tutor_plan");
+            if (savedPlan) USER_PLAN = parseInt(savedPlan);
+            
+            const today = new Date().toDateString();
+            const lastDate = localStorage.getItem("gemini_tutor_last_date");
+            
+            if (lastDate !== today) {
+                CURRENT_HEARTS = USER_PLAN;
+                localStorage.setItem("gemini_tutor_last_date", today);
+                localStorage.setItem("gemini_tutor_hearts", CURRENT_HEARTS);
+            } else {
+                const savedHearts = localStorage.getItem("gemini_tutor_hearts");
+                CURRENT_HEARTS = savedHearts !== null ? parseInt(savedHearts) : USER_PLAN;
+            }
+            updateHeartUI();
+        }
+
+        function updateHeartUI() {
+            const heartEl = document.getElementById('heartStatus');
+            if(heartEl) heartEl.innerText = `❤️ ${CURRENT_HEARTS} / ${USER_PLAN}`;
+            
+            const inputEl = document.getElementById('studentChatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            if (CURRENT_HEARTS <= 0) {
+                if(inputEl) {
+                    inputEl.disabled = true;
+                    inputEl.placeholder = "오늘의 한도를 모두 소진했습니다. 내일 다시 이용해주세요.";
+                    inputEl.style.backgroundColor = "#e2e8f0";
+                }
+                if(sendBtn) {
+                    sendBtn.disabled = true;
+                    sendBtn.style.backgroundColor = "#b2bec3";
+                }
+                if(heartEl) {
+                    heartEl.style.backgroundColor = "#e2e8f0";
+                    heartEl.style.color = "#b2bec3";
+                }
+            } else {
+                if(inputEl) {
+                    inputEl.disabled = false;
+                    inputEl.placeholder = "여기에 답변을 작성해주세요!";
+                    inputEl.style.backgroundColor = "#f8fafc";
+                }
+                if(sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.style.backgroundColor = "#74b9ff";
+                }
+                if(heartEl) {
+                    heartEl.style.backgroundColor = "#ffeaa7";
+                    heartEl.style.color = "#d63031";
+                }
+            }
+        }
+
+        function saveApiKey() {
+            const inputName = document.getElementById('studentNameInput').value.trim();
+            const inputKey = document.getElementById('apiKeyInput').value.trim();
+            if (!inputName) { alert("이름을 입력해주세요!"); return; }
+            if (!inputKey) { alert("API 키를 입력해주세요!"); return; }
+            
+            USER_API_KEY = inputKey;
+            STUDENT_NAME = inputName;
+            
+            const planValue = document.getElementById('planSelect').value;
+            localStorage.setItem("gemini_tutor_plan", planValue);
+            localStorage.setItem("gemini_tutor_api_key", USER_API_KEY); 
+            localStorage.setItem("gemini_tutor_student_name", STUDENT_NAME); 
+            
+            checkAndResetHearts();
+
+            document.getElementById('step0').style.display = "none";
+            document.getElementById('step1').style.display = "block";
+        }
+        
+        function resetApiKey() {
+            if(confirm("설정된 정보를 삭제하시겠습니까?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+        
+        function getModelUrl() {
+            return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY;
+        }
+        
+        function populateVoiceList() {
+            availableVoices = window.speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            const currentValue = voiceSelect.value;
+            voiceSelect.innerHTML = ''; 
+            
+            const usEnglishVoices = availableVoices.filter(voice => voice.lang.includes('en-US') || voice.lang.includes('en_US'));
+            
+            usEnglishVoices.forEach((voice) => {
+                const option = document.createElement('option');
+                let cleanName = voice.name.replace('Microsoft ', '').replace('Google ', '');
+                option.textContent = `${cleanName} (${voice.lang})`;
+                option.value = voice.name;
+                voiceSelect.appendChild(option);
+            });
+        
+            if (usEnglishVoices.length === 0) voiceSelect.innerHTML = '<option>영어 목소리를 찾을 수 없습니다.</option>';
+            else if (currentValue) voiceSelect.value = currentValue; 
+        }
+        populateVoiceList();
+        if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = populateVoiceList;
+        
+        function playSampleVoice() {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance("Hello! How do I sound?");
+            const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            else utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        // 💡 프롬프트 수정: "11살 아이" -> "영어 회화 초보자"
+        async function generateScript() {
+            const userInput = document.getElementById('userInput').value;
+            if (!userInput.trim()) { alert("대화 주제를 입력해주세요!"); return; }
+            currentUserInput = userInput; 
+            document.getElementById('scriptResult').style.display = "none";
+            document.getElementById('startChatBtn').style.display = "none";
+            document.getElementById('loading').style.display = "block";
+            document.getElementById('chatSection').style.display = "none"; 
+        
+            const promptText = `다음은 영어 회화 초보자인 '${STUDENT_NAME}'이(가) AI 영어 튜터와 나눌 스몰토크 대본입니다.
+        ※ 규칙 1: '영어 문장'은 반드시 <b> 태그로 감싸주세요.
+        ※ 규칙 2: 발음은 적지 마세요.
+        
+        [작성 순서 및 양식]
+        1. 튜터의 첫 질문("Hi ${STUDENT_NAME}! How was~?")에 대한 사용자의 대답
+        2. 튜터의 예상 꼬리 질문 2가지
+        3. 꼬리 질문에 대한 사용자 대답 2개
+        4. 튜터에게 되묻는 질문 1개
+        오늘 대화 주제: ${userInput}`;
+        
+            try {
+                const response = await fetch(getModelUrl(), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                document.getElementById('scriptResult').innerHTML = data.candidates[0].content.parts[0].text;
+                document.getElementById('scriptResult').style.display = "block";
+                document.getElementById('startChatBtn').style.display = "block";
+            } catch (error) {
+                document.getElementById('scriptResult').innerHTML = "오류가 발생했습니다: " + error.message;
+                document.getElementById('scriptResult').style.display = "block";
+            } finally {
+                document.getElementById('loading').style.display = "none";
+            }
+        }
+        
+        function skipScriptAndChat() {
+            currentUserInput = document.getElementById('userInput').value.trim();
+            document.getElementById('scriptResult').style.display = "none";
+            document.getElementById('startChatBtn').style.display = "none";
+            openChatSection('free');
+        }
+        
+        function openChatSection(mode) {
+            currentChatMode = mode;
+            document.getElementById('chatSection').style.display = "block";
+            setTimeout(() => { document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+            restartConversation(mode); 
+        }
+        
+        // 💡 프롬프트 수정: 선생님 페르소나를 일반적이고 부드러운 'AI 튜터'로 변경
+        async function restartConversation(mode = currentChatMode) {
+            checkAndResetHearts(); 
+            if(window.speechSynthesis) window.speechSynthesis.cancel();
+            
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = "<div id='chatLoading' style='text-align:center; color:#6c5ce7; margin:30px 0; font-weight:bold;'>🤖 튜터가 인사를 준비하고 있습니다... ⏳</div>";
+            
+            const inputEl = document.getElementById('studentChatInput');
+            inputEl.value = "";
+            if(!inputEl.disabled) inputEl.style.height = '48px'; 
+        
+            let systemPrompt = "";
+        
+            if (mode === 'script') {
+                systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절하고 인내심 많은 AI 영어 튜터야. 오늘 주제는 '${currentUserInput}'이야. 첫 인사로 무조건 'Hi ${STUDENT_NAME}! How was your day?'라고 말해. [중요 규칙]: 사용자가 문법을 틀리거나 어색한 영어를 쓰거나 한국어로 말하면, 자연스러운 영어 문장으로 고쳐주며 'Can you say [올바른 문장]?' 하고 부드럽게 따라 말하도록 유도해. 사용자가 잘 따라했다면 칭찬해주고 다음 질문을 해. 항상 아주 쉽고 간단한 1~2문장으로 말해.`;
+                chatHistory = [
+                    { "role": "user", "parts": [{ "text": systemPrompt }] },
+                    { "role": "model", "parts": [{ "text": `Hi ${STUDENT_NAME}! How was your day?` }] }
+                ];
+                document.getElementById('chatLoading').remove();
+                addTeacherMessage(`Hi ${STUDENT_NAME}! How was your day?`);
+                speakText(`Hi ${STUDENT_NAME}! How was your day?`);
+            } else {
+                if (currentUserInput !== "") {
+                    systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 AI 영어 튜터야. 오늘 대화할 주제는 '${currentUserInput}'이야. 이 주제에 대해 먼저 친근하게 질문하면서 대화를 시작해. [중요 규칙]: 사용자가 어색한 영어나 한국어를 쓰면 자연스러운 영어로 고쳐주며 'Can you say [올바른 문장]?' 하고 따라 말하도록 유도해. 항상 아주 쉽고 간단한 1~2문장으로 대답해.`;
+                } else {
+                    systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 AI 영어 튜터야. 오늘 정해진 주제는 없어. 일반적인 일상 주제(음식, 주말, 취미 등)를 하나 골라서 친근하게 질문하며 대화를 시작해. [중요 규칙]: 사용자가 어색한 영어나 한국어를 쓰면 자연스러운 영어로 고쳐주며 'Can you say [올바른 문장]?' 하고 따라 말하도록 유도해. 항상 아주 쉽고 간단한 1~2문장으로 대답해.`;
+                }
+        
+                chatHistory = [];
+                try {
+                    const response = await fetch(getModelUrl(), {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ "role": "user", "parts": [{ "text": systemPrompt }] }] }) 
+                    });
+                    const data = await response.json();
+                    if (data.error) throw new Error();
+                    const teacherGreeting = data.candidates[0].content.parts[0].text;
+                    
+                    chatHistory = [
+                        { "role": "user", "parts": [{ "text": systemPrompt }] },
+                        { "role": "model", "parts": [{ "text": teacherGreeting }] }
+                    ];
+                    document.getElementById('chatLoading').remove();
+                    addTeacherMessage(teacherGreeting);
+                    speakText(teacherGreeting);
+                } catch (error) { 
+                    document.getElementById('chatLoading').innerText = "오류가 발생했습니다. 새로고침 해주세요."; 
+                }
+            }
+        }
+        
+        function addTeacherMessage(text) {
+            const chatBox = document.getElementById('chatBox');
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('msg', 'teacher-msg'); 
+        
+            const header = document.createElement('div');
+            header.innerText = "🤖 튜터:";
+            header.style.fontWeight = "bold";
+            header.style.marginBottom = "6px";
+            header.style.color = "#2c3e50";
+        
+            const textDiv = document.createElement('div');
+            textDiv.classList.add('blurred-text');
+            textDiv.innerHTML = text; 
+        
+            const controls = document.createElement('div');
+            controls.classList.add('msg-controls');
+        
+            const replayBtn = document.createElement('button');
+            replayBtn.innerHTML = "🔊";
+            replayBtn.title = "다시 듣기";
+            replayBtn.onclick = function() { replayText(text); };
+        
+            const showBtn = document.createElement('button');
+            showBtn.innerHTML = "👁️";
+            showBtn.title = "텍스트 보기/가리기";
+            let isBlurred = true;
+            showBtn.onclick = function() {
+                if (isBlurred) {
+                    textDiv.classList.remove('blurred-text');
+                    showBtn.innerHTML = "🙈";
+                    isBlurred = false;
+                } else {
+                    textDiv.classList.add('blurred-text');
+                    showBtn.innerHTML = "👁️";
+                    isBlurred = true;
+                }
+            };
+
+            const hintBtn = document.createElement('button');
+            hintBtn.innerHTML = "💡";
+            hintBtn.title = "문장 해석 및 추천 대답";
+            hintBtn.onclick = function() { showHintModal(text); };
+        
+            controls.appendChild(replayBtn);
+            controls.appendChild(showBtn);
+            controls.appendChild(hintBtn);
+            msgDiv.appendChild(header);
+            msgDiv.appendChild(textDiv);
+            msgDiv.appendChild(controls);
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            document.getElementById('studentChatInput').focus();
+        }
+
+        function addStudentMessage(text) {
+            const chatBox = document.getElementById('chatBox');
+            
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.alignItems = 'flex-end';
+            wrapper.style.width = '100%';
+
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('msg', 'student-msg');
+            
+            const header = document.createElement('div');
+            header.innerText = "👤 나:";
+            header.style.fontWeight = "bold";
+            header.style.marginBottom = "6px";
+            header.style.color = "#0984e3";
+
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = text.replace(/\n/g, '<br>');
+            
+            msgDiv.appendChild(header);
+            msgDiv.appendChild(textDiv);
+            wrapper.appendChild(msgDiv);
+            chatBox.appendChild(wrapper);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            return wrapper; 
+        }
+        
+        function replayText(text) {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            
+            let cleanText = text.replace(/<[^>]*>?/gm, ''); 
+            cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
+            
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            else utterance.lang = 'en-US'; 
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        function speakText(text) {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            
+            let cleanText = text.replace(/<[^>]*>?/gm, '');
+            cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
+            
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            else utterance.lang = 'en-US'; 
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        // 💡 프롬프트 수정: "11살 한국 아이" -> "영어 초보자"
+        async function showHintModal(teacherText) {
+            const modal = document.getElementById('hintModal');
+            const modalBody = document.getElementById('hintModalBody');
+            
+            modal.style.display = "flex";
+            modalBody.innerHTML = "⏳ 의미를 파악하고 추천 답변을 생성 중입니다...";
+            
+            const hintPrompt = `튜터가 한 영어 문장: "${teacherText}"
+이 문장을 한국어로 해석해주고, 영어 초보자가 대답할 수 있는 쉽고 짧은 자연스러운 영어 대답 2가지를 추천해줘. 
+양식: 
+[문장 해석]: (내용)
+[추천 대답 1]: (영어) - (뜻)
+[추천 대답 2]: (영어) - (뜻)`;
+        
+            try {
+                const response = await fetch(getModelUrl(), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: hintPrompt }] }] })
+                });
+                const data = await response.json();
+                modalBody.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+            } catch (error) { 
+                modalBody.innerHTML = "정보를 불러오지 못했습니다. 다시 시도해주세요."; 
+            }
+        }
+
+        function closeHintModal() {
+            document.getElementById('hintModal').style.display = "none";
+            document.getElementById('studentChatInput').focus();
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                sendChatMessage();
+            }
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = '48px'; 
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; 
+        }
+
+        async function sendChatMessage() {
+            if (CURRENT_HEARTS <= 0) {
+                alert("이용 한도를 모두 소진했습니다. 내일 다시 이용해주세요.");
+                return;
+            }
+
+            const inputEl = document.getElementById('studentChatInput');
+            const userText = inputEl.value.trim();
+            if (!userText) { alert("답변을 입력해주세요!"); return; }
+
+            CURRENT_HEARTS--;
+            localStorage.setItem("gemini_tutor_hearts", CURRENT_HEARTS);
+            updateHeartUI();
+
+            const studentMsgWrapper = addStudentMessage(userText);
+            inputEl.value = "";
+            if(!inputEl.disabled) inputEl.style.height = '48px';
+
+            const grammarTipDiv = document.createElement('div');
+            grammarTipDiv.classList.add('inline-grammar-tip');
+            grammarTipDiv.innerHTML = "⏳ 표현을 점검하고 있습니다...";
+            studentMsgWrapper.appendChild(grammarTipDiv);
+            
+            chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
+            
+            if (chatHistory.length > 7) { 
+                const basePrompts = chatHistory.slice(0, 2);
+                const recentChats = chatHistory.slice(-5);
+                chatHistory = [...basePrompts, ...recentChats];
+            }
+
+            const chatBox = document.getElementById('chatBox');
+            const typingIndicator = document.createElement('div');
+            typingIndicator.id = "typingIndicator";
+            typingIndicator.style = "text-align:left; color:#a29bfe; margin:10px; font-weight:bold;";
+            typingIndicator.innerText = "🤖 튜터가 답변을 입력 중입니다... ✍️";
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 💡 프롬프트 수정: "초등학생" -> "초보자"
+            const checkPrompt = `영어 초보자가 AI 튜터에게 보낸 메시지야: "${userText}"
+이 문장의 문법 오류나 더 자연스러운 영어 표현을 초보자가 이해하기 쉽게 한국어로 아주 짧게(1~2줄) 설명해줘.
+만약 문법이 완벽하고 자연스럽다면 "완벽한 문장입니다! 훌륭해요 👏"라고만 대답해.`;
+
+            const grammarFetch = fetch(getModelUrl(), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: checkPrompt }] }] })
+            }).then(res => res.json());
+
+            const teacherFetch = fetch(getModelUrl(), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: chatHistory }) 
+            }).then(res => res.json());
+
+            try {
+                const [grammarData, teacherData] = await Promise.all([grammarFetch, teacherFetch]);
+                
+                if (grammarData.error) throw new Error(grammarData.error.message);
+                const feedbackText = grammarData.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                grammarTipDiv.innerHTML = `<strong>💡 AI 교정 팁:</strong><br>${feedbackText}`;
+
+                if (teacherData.error) throw new Error(teacherData.error.message);
+                if(document.getElementById('typingIndicator')) document.getElementById('typingIndicator').remove();
+                
+                const teacherReply = teacherData.candidates[0].content.parts[0].text;
+                chatHistory.push({ "role": "model", "parts": [{ "text": teacherReply }] });
+                
+                addTeacherMessage(teacherReply);
+                speakText(teacherReply); 
+
+            } catch (error) { 
+                grammarTipDiv.innerHTML = "💡 교정 팁을 불러오지 못했습니다.";
+                if(document.getElementById('typingIndicator')) document.getElementById('typingIndicator').remove();
+                alert("답변을 처리하는 중 오류가 발생했습니다.");
+            }
+        }
+    </script>
+</body>
+</html>
