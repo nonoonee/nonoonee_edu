@@ -194,10 +194,29 @@
         .btn-menu-action { background: #f8efd4; color: #d35400; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 14px; text-align: left; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; }
         .btn-menu-action:hover { background: #ffeaa7; }
 
-        .note-item { background: #ffffff; padding: 15px; border-radius: 16px; margin-bottom: 15px; border-left: 5px solid #ffda79; box-shadow: 0 4px 10px rgba(0,0,0,0.03); flex-shrink: 0; }
+        /* [개편] 교정 노트 아코디언 관련 CSS */
+        .note-item { background: #ffffff; padding: 15px; border-radius: 16px; margin-bottom: 12px; border-left: 5px solid #ffda79; box-shadow: 0 4px 10px rgba(0,0,0,0.03); flex-shrink: 0; }
         .note-original { color: #57606f; margin-bottom: 8px; font-size: 14px; }
         .note-correction { color: #d35400; font-size: 16px; font-weight: bold; line-height: 1.5; }
-        .note-date-header { font-weight: 800; color: #e15f41; margin: 15px 0 10px 0; border-bottom: 2px solid #ffeaa7; padding-bottom: 5px; flex-shrink: 0; }
+        
+        .note-date-header { 
+            font-weight: 800; color: #e15f41; margin: 20px 0 10px 0; 
+            border-bottom: 2px solid #ffeaa7; padding-bottom: 8px; flex-shrink: 0; 
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            user-select: none;
+        }
+        .note-date-header::after {
+            content: '▼'; font-size: 13px; color: #d35400; transition: transform 0.3s ease;
+        }
+        .note-date-header.open::after {
+            transform: rotate(-180deg);
+        }
+        .note-content-wrap {
+            display: none; animation: slideDown 0.3s ease; padding-bottom: 10px;
+        }
+        .note-content-wrap.open {
+            display: block;
+        }
 
         .footer-info { text-align: center; font-size: 12px; color: #ced6e0; margin: 30px 0 10px 0; font-family: 'Nunito', sans-serif; flex-shrink: 0;}
         #scriptResult { margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; border-left: 5px solid #ffda79; white-space: pre-wrap; line-height: 1.7; display: none; font-size: 15px; text-align: left;}
@@ -279,7 +298,7 @@
             </div>
             <button class="btn-main" onclick="saveApiKey()">✅ 저장하고 시작하기</button>
         </div>
-        <div class="footer-info">v8.1.0 (Tap-to-Talk) | AI English Tutor</div>
+        <div class="footer-info">v8.2.0 (Accordion Note) | AI English Tutor</div>
     </div>
     
     <div id="step1">
@@ -328,7 +347,7 @@
             <div id="scriptResult"></div>
             <button id="startChatBtn" class="btn-main" style="margin-top: 15px; display: none;" onclick="openChatSection('script')">🎤 준비된 대본으로 시작하기 ▶️</button>
         </div>
-        <div class="footer-info" style="margin-top:auto;">v8.1.0 (Tap-to-Talk) | AI English Tutor</div>
+        <div class="footer-info" style="margin-top:auto;">v8.2.0 (Accordion Note) | AI English Tutor</div>
     </div>
 
     <div id="chatSection">
@@ -375,7 +394,6 @@
     let mediaRecorder; let audioChunks = [];
     let previousSection = 'step1';
     
-    // [추가] 녹음 상태 관리 변수
     let isRecording = false; 
 
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -410,7 +428,6 @@
             document.getElementById('step1').style.display = "flex"; 
         }
         
-        // [개편] 마이크 버튼 이벤트 변경 (원터치 토글 방식)
         const micBtn = document.getElementById('micBtn');
         micBtn.addEventListener('click', toggleRecording);
         
@@ -469,6 +486,7 @@
         localStorage.setItem('gemini_tutor_daily_notes', JSON.stringify(allNotes));
     }
 
+    // [개편] 아코디언 방식으로 노트를 그려주는 함수
     function openNoteSection() {
         closeMenu(); 
         
@@ -489,14 +507,39 @@
         if (dates.length === 0) {
             noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:50px 10px; font-weight:bold;'>기록된 노트가 없습니다.<br>대화를 시작해보세요!</div>";
         } else {
-            dates.forEach(date => {
-                const dateHeader = document.createElement('div'); dateHeader.className = 'note-date-header'; dateHeader.innerText = `📅 ${date}`;
+            dates.forEach((date, index) => {
+                // 1. 날짜 헤더 생성
+                const dateHeader = document.createElement('div');
+                dateHeader.className = 'note-date-header';
+                dateHeader.innerText = `📅 ${date}`;
+                
+                // 2. 해당 날짜의 내용을 담을 래퍼 생성
+                const contentWrap = document.createElement('div');
+                contentWrap.className = 'note-content-wrap';
+                
+                // 첫 번째(가장 최근) 날짜만 기본적으로 열려있게 세팅
+                if (index === 0) {
+                    dateHeader.classList.add('open');
+                    contentWrap.classList.add('open');
+                }
+                
+                // 3. 터치 시 펼치기/접기 (토글) 기능 추가
+                dateHeader.onclick = () => {
+                    dateHeader.classList.toggle('open');
+                    contentWrap.classList.toggle('open');
+                };
+                
                 noteList.appendChild(dateHeader);
+                
+                // 4. 내용물 추가
                 allNotes[date].forEach((note) => {
-                    const item = document.createElement('div'); item.className = 'note-item';
+                    const item = document.createElement('div');
+                    item.className = 'note-item';
                     item.innerHTML = `<div class="note-original">Q. "${note.original}"</div><div class="note-correction">${note.correction.replace(/\n/g, '<br>')}</div>`;
-                    noteList.appendChild(item);
+                    contentWrap.appendChild(item);
                 });
+                
+                noteList.appendChild(contentWrap);
             });
         }
         document.getElementById('noteSection').style.display = "flex";
@@ -519,13 +562,8 @@
         navigator.clipboard.writeText(textToCopy).then(() => alert("클립보드에 복사되었습니다!")).catch(err => alert("복사에 실패했습니다."));
     }
 
-    // ==========================================
-    // 🎤 [개편] 마이크 원터치 토글 및 리셋 방식
-    // ==========================================
     async function toggleRecording(e) {
         if (e) e.preventDefault();
-        
-        // 이미 녹음 중이면 종료(stop)시키고, 아니면 시작(start)시킵니다.
         if (isRecording) {
             stopRecording();
         } else {
@@ -537,7 +575,6 @@
         const micBtn = document.getElementById('micBtn');
         const inputEl = document.getElementById('studentChatInput');
         
-        // 새로 누르면 무조건 텍스트 박스를 싹 지우고 초기화(리셋) 합니다.
         inputEl.value = ""; 
         autoResize(inputEl); 
 
