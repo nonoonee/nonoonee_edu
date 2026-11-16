@@ -47,6 +47,23 @@
         }
         .btn-main:hover { box-shadow: 0 8px 20px rgba(255, 168, 1, 0.4); transform: translateY(-3px); }
 
+        /* [추가] 1번 기능: 퀵 스타터 버튼 CSS */
+        .quick-starters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; margin-bottom: 5px; }
+        .btn-quick { 
+            background: #f1f2f6; border: 1px solid #dfe4ea; border-radius: 20px; padding: 8px 14px; 
+            font-size: 13px; font-weight: 600; cursor: pointer; color: #57606f; transition: all 0.2s; 
+            display: flex; align-items: center; gap: 6px; width: auto; 
+        }
+        .btn-quick:hover { background: #ffeaa7; border-color: #ffda79; color: #d35400; }
+
+        /* [추가] 3번 기능: 교정 노트 보기 버튼 */
+        .btn-note { 
+            background-color: #fff3cd; color: #d35400; border: 1px dashed #ffda79; 
+            padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; 
+            margin-bottom: 15px; font-size: 14px; transition: all 0.2s; 
+        }
+        .btn-note:hover { background-color: #ffeaa7; }
+
         #loading { display: none; margin-top: 20px; color: #ff9f43; text-align: center; font-weight: 700; font-size: 15px; }
         #scriptResult { 
             margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; 
@@ -78,6 +95,7 @@
 
         .btn-start-chat { background: linear-gradient(135deg, #78e08f, #38ada9); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(120, 224, 143, 0.3); text-shadow: 1px 1px 1px rgba(0,0,0,0.1); }
         .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(120, 224, 143, 0.4); transform: translateY(-3px); }
+        
         .btn-restart { background-color: #f1f2f6; color: #57606f; padding: 12px; margin-bottom: 15px; font-size: 14px; }
         .btn-reset-key { background-color: transparent; color: #a4b0be; border: 1px solid #a4b0be; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
         .btn-reset-key:hover { background-color: #ff7f50; color: white; border-color: #ff7f50; }
@@ -95,8 +113,20 @@
             background-color: #ffc048; color: white; border: none; border-radius: 50%; width: 48px; height: 48px;
             font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 192, 72, 0.3);
             flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; -webkit-user-select: none;
+            position: relative;
         }
         
+        /* [추가] 마이크 진동/시각 피드백 CSS (손가락에 가려져도 주변으로 퍼지는 파동 효과) */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.7); transform: scale(0.95); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 118, 117, 0); transform: scale(1.1); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); transform: scale(0.95); }
+        }
+        .btn-mic.recording {
+            background-color: #ff7675;
+            animation: pulse-ring 1.2s infinite;
+        }
+
         .btn-send-msg {
             background-color: #78e08f; color: white; border: none; border-radius: 50%; width: 48px; height: 48px;
             font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(120, 224, 143, 0.3); flex-shrink: 0;
@@ -119,10 +149,15 @@
 
         .footer-info { text-align: center; font-size: 12px; color: #ced6e0; margin-top: 40px; margin-bottom: 10px; font-family: 'Nunito', sans-serif; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-        .modal-content { background: white; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative; line-height: 1.6; font-size: 15px; color: #4a4a4a; text-align: center; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(3px); }
+        .modal-content { background: white; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative; line-height: 1.6; font-size: 15px; color: #4a4a4a; text-align: center; max-height: 80vh; display: flex; flex-direction: column; }
         .modal-close { position: absolute; top: 15px; right: 15px; background: #f1f2f6; border: none; font-size: 14px; cursor: pointer; color: #57606f; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .modal-close:hover { background: #ff7675; color: white; }
+        
+        .note-list { text-align: left; overflow-y: auto; flex-grow: 1; margin: 15px 0; padding-right: 5px; }
+        .note-item { background: #f8efd4; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid #ffda79; }
+        .note-original { font-weight: bold; color: #57606f; margin-bottom: 5px; }
+        .note-correction { color: #d35400; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -133,7 +168,7 @@
     <!-- [0단계] API 키 및 상품 설정 -->
     <div class="section-box" id="step0">
         <h3 style="justify-content: flex-start;">🔑 초기 설정 (1회만 진행)</h3>
-        <p style="font-size: 13px; color: #636e72; margin-top: -5px; margin-bottom: 20px;">사용자의 기기에 안전하게 저장됩니다. (서버 전송 X)</p>
+        <p style="font-size: 13px; color: #636e72; margin-top: -5px; margin-bottom: 20px;">사용자의 기기에 안전하게 저장됩니다.</p>
         
         <div class="input-group">
             <input type="text" id="studentNameInput" placeholder="사용하실 영어 이름 (예: Alex)">
@@ -142,7 +177,7 @@
             <input type="password" id="apiKeyInput" placeholder="구글 Gemini API 키를 입력하세요">
         </div>
         <div class="input-group">
-            <input type="password" id="openAiKeyInput" placeholder="OpenAI Whisper API 키를 입력하세요 (선택)">
+            <input type="password" id="openAiKeyInput" placeholder="OpenAI Whisper API 키를 입력하세요">
         </div>
         
         <div class="input-group">
@@ -153,11 +188,10 @@
                 <option value="100">프리미엄 플랜 (하루 100회)</option>
             </select>
         </div>
-
         <button class="btn-main" onclick="saveApiKey()">✅ 저장하고 시작하기</button>
     </div>
     
-    <!-- [1단계] 대본 생성 -->
+    <!-- [1단계] 대화 준비 -->
     <div class="section-box" id="step1" style="display: none;">
         <h3>1단계: 대화 준비 📝 
             <button class="btn-reset-key" onclick="resetApiKey()">설정 초기화</button>
@@ -168,17 +202,23 @@
             <select id="voiceSelect" onchange="playSampleVoice()"></select>
         </div>
     
-        <div class="input-group">
-            <label for="userInput">💬 대화 주제 (또는 관심사)</label>
-            <input type="text" id="userInput" placeholder="예: 주말에 본 영화 / 카페에 다녀온 일">
+        <div class="input-group" style="margin-bottom: 5px;">
+            <label>💬 상황을 고르거나 직접 입력하세요</label>
+            <!-- [추가] 1. 실전 상황별 '퀵 스타터' 버튼 -->
+            <div class="quick-starters">
+                <button class="btn-quick" onclick="startQuickScenario('카페에서 커피 주문하기')">☕ 카페 주문</button>
+                <button class="btn-quick" onclick="startQuickScenario('여행지 호텔 체크인하기')">🏨 호텔 체크인</button>
+                <button class="btn-quick" onclick="startQuickScenario('직장 동료와 주말 이야기')">💼 주말 스몰토크</button>
+                <button class="btn-quick" onclick="startQuickScenario('식당에서 메뉴 추천받기')">🍝 식당 주문</button>
+            </div>
+            <input type="text" id="userInput" placeholder="직접 입력 (예: 어제 본 영화 이야기)">
         </div>
-        <button class="btn-main" onclick="generateScript()">✨ 맞춤형 대본 생성하기</button>
+        <button class="btn-main" onclick="generateScript()" style="margin-top: 10px;">✨ 맞춤형 대본 생성하기</button>
         
         <button class="btn-start-chat" style="display: block; margin-top: 12px;" onclick="skipScriptAndChat()">🚀 대본 없이 프리토킹 시작</button>
         
         <div id="loading">대본을 생성 중입니다... ⏳</div>
         <div id="scriptResult"></div>
-        
         <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection('script')">🎤 실전 채팅 시작하기 ▶️</button>
     </div>
 
@@ -186,6 +226,9 @@
     <div class="section-box" id="chatSection">
         <h3>2단계: AI 튜터와 회화 연습 🗣️</h3>
         <button class="btn-restart" onclick="restartConversation()">🔄 대화 다시 시작하기</button>
+        
+        <!-- [추가] 3. 나만의 교정 노트 보기 버튼 -->
+        <button class="btn-note" onclick="openCorrectionNote()">📝 오늘 쌓인 '나만의 교정 노트' 보기</button>
         
         <div class="heart-container">
             <div id="heartStatus" class="heart-status">❤️ 20 / 20</div>
@@ -203,20 +246,34 @@
     </div>
     
     <div class="footer-info">
-        v2.5.0 | AI English Tutor. All rights reserved.
+        v2.6.0 | AI English Tutor. All rights reserved.
     </div>
 </div> 
 
-<!-- 힌트 팝업 모달 레이어 -->
+<!-- 힌트 팝업 모달 -->
 <div id="hintModal" class="modal-overlay">
-    <div class="modal-content">
+    <div class="modal-content" style="max-height: 60vh;">
         <button class="modal-close" onclick="closeHintModal()">✖</button>
         <div id="hintModalBody">⏳ 의미 파악 및 추천 답변 생성 중...</div>
     </div>
 </div>
 
+<!-- [추가] 3. 교정 노트 모달 -->
+<div id="noteModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeNoteModal()">✖</button>
+        <h3 style="margin-top: 0; color: #d35400;">📝 나만의 교정 노트</h3>
+        <p style="font-size: 13px; color: #636e72; margin-top: -10px;">오늘 AI 친구가 교정해준 표현들입니다.</p>
+        
+        <div id="noteList" class="note-list">
+            <!-- 노트 내용이 여기에 추가됩니다 -->
+        </div>
+        
+        <button class="btn-main" onclick="copyCorrectionNote()">📋 클립보드에 복사하기</button>
+    </div>
+</div>
+
 <script>
-    // --- 설정 변수 ---
     let USER_API_KEY = ""; 
     let OPENAI_API_KEY = ""; 
     let STUDENT_NAME = ""; 
@@ -228,9 +285,37 @@
     let USER_PLAN = 20; 
     let CURRENT_HEARTS = 20;
 
-    // --- 마이크(Whisper) 변수 ---
     let mediaRecorder;
     let audioChunks = [];
+    
+    // [추가] 3. 교정 노트 배열
+    let myCorrectionNotes = [];
+
+    // [추가] 효과음(Web Audio API) 설정
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playBeep(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        if (type === 'start') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // 높은 음
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'stop') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // 낮은 음
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.15);
+        }
+    }
 
     window.onload = function() {
         const savedKey = localStorage.getItem("gemini_tutor_api_key");
@@ -246,7 +331,6 @@
             document.getElementById('step1').style.display = "block"; 
         }
 
-        // 마이크 이벤트 등록 (PC/Mobile)
         const micBtn = document.getElementById('micBtn');
         micBtn.addEventListener('mousedown', startRecording);
         micBtn.addEventListener('mouseup', stopRecording);
@@ -256,7 +340,7 @@
     };
 
     // ==========================================
-    // 🎤 마이크 & Whisper API
+    // 🎤 마이크 (효과음 & 진동 & 시각 피드백 추가)
     // ==========================================
     async function startRecording(e) {
         if(e.type === 'mousedown' && e.button !== 0) return; 
@@ -275,7 +359,12 @@
             };
 
             mediaRecorder.start();
-            micBtn.style.backgroundColor = "#ff7675"; // 녹음 중 빨간색
+            
+            // [추가] 시각, 청각, 촉각 피드백
+            micBtn.classList.add('recording');
+            playBeep('start');
+            if (navigator.vibrate) navigator.vibrate(50); // 짧은 진동 1번
+
             inputEl.placeholder = "🎙️ 듣고 있어요... (손을 떼면 전송)";
         } catch (err) {
             alert("마이크 사용 권한을 허용해주세요!");
@@ -289,7 +378,12 @@
             
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
-            micBtn.style.backgroundColor = "#ffc048"; // 원래 피치색
+            
+            // [추가] 시각, 청각, 촉각 피드백 종료
+            micBtn.classList.remove('recording');
+            playBeep('stop');
+            if (navigator.vibrate) navigator.vibrate([30, 50, 30]); // 징-징 두 번 진동
+
             inputEl.placeholder = "⏳ 목소리를 문자로 변환 중입니다...";
         }
     }
@@ -303,11 +397,8 @@
 
         try {
             const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-                method: "POST",
-                headers: { "Authorization": `Bearer ${OPENAI_API_KEY}` },
-                body: formData
+                method: "POST", headers: { "Authorization": `Bearer ${OPENAI_API_KEY}` }, body: formData
             });
-
             const data = await response.json();
             
             if (data.text) {
@@ -323,7 +414,7 @@
     }
 
     // ==========================================
-    // ❤️ 하트 관리 및 기본 설정 로직
+    // ❤️ 하트 관리 및 기본 설정
     // ==========================================
     function checkAndResetHearts() {
         const savedPlan = localStorage.getItem("gemini_tutor_plan");
@@ -336,6 +427,7 @@
             CURRENT_HEARTS = USER_PLAN;
             localStorage.setItem("gemini_tutor_last_date", today);
             localStorage.setItem("gemini_tutor_hearts", CURRENT_HEARTS);
+            myCorrectionNotes = []; // 날짜가 바뀌면 노트 초기화
         } else {
             const savedHearts = localStorage.getItem("gemini_tutor_hearts");
             CURRENT_HEARTS = savedHearts !== null ? parseInt(savedHearts) : USER_PLAN;
@@ -352,20 +444,12 @@
         const micBtn = document.getElementById('micBtn');
         
         if (CURRENT_HEARTS <= 0) {
-            if(inputEl) {
-                inputEl.disabled = true;
-                inputEl.placeholder = "오늘의 한도를 소진했습니다. 내일 다시 만나요!";
-                inputEl.style.backgroundColor = "#e2e8f0";
-            }
+            if(inputEl) { inputEl.disabled = true; inputEl.placeholder = "오늘의 한도를 소진했습니다."; inputEl.style.backgroundColor = "#e2e8f0"; }
             if(sendBtn) { sendBtn.disabled = true; sendBtn.style.backgroundColor = "#b2bec3"; }
             if(micBtn) { micBtn.disabled = true; micBtn.style.opacity = "0.5"; }
             if(heartEl) { heartEl.style.backgroundColor = "#e2e8f0"; heartEl.style.color = "#b2bec3"; }
         } else {
-            if(inputEl) {
-                inputEl.disabled = false;
-                inputEl.placeholder = "여기에 영어로 답변을 작성해주세요!";
-                inputEl.style.backgroundColor = "#fafbfc";
-            }
+            if(inputEl) { inputEl.disabled = false; inputEl.placeholder = "여기에 영어로 답변을 작성해주세요!"; inputEl.style.backgroundColor = "#fafbfc"; }
             if(sendBtn) { sendBtn.disabled = false; sendBtn.style.backgroundColor = "#78e08f"; }
             if(micBtn) { micBtn.disabled = false; micBtn.style.opacity = "1"; }
             if(heartEl) { heartEl.style.backgroundColor = "#ff7675"; heartEl.style.color = "white"; }
@@ -377,16 +461,11 @@
         const inputKey = document.getElementById('apiKeyInput').value.trim();
         const inputOpenAiKey = document.getElementById('openAiKeyInput').value.trim();
         
-        if (!inputName) { alert("이름을 입력해주세요!"); return; }
-        if (!inputKey) { alert("구글 API 키를 입력해주세요!"); return; }
-        if (!inputOpenAiKey) { alert("OpenAI API 키를 입력해주세요!"); return; }
+        if (!inputName || !inputKey || !inputOpenAiKey) { alert("모든 항목을 입력해주세요!"); return; }
         
-        USER_API_KEY = inputKey;
-        OPENAI_API_KEY = inputOpenAiKey;
-        STUDENT_NAME = inputName;
+        USER_API_KEY = inputKey; OPENAI_API_KEY = inputOpenAiKey; STUDENT_NAME = inputName;
         
-        const planValue = document.getElementById('planSelect').value;
-        localStorage.setItem("gemini_tutor_plan", planValue);
+        localStorage.setItem("gemini_tutor_plan", document.getElementById('planSelect').value);
         localStorage.setItem("gemini_tutor_api_key", USER_API_KEY); 
         localStorage.setItem("gemini_tutor_openai_key", OPENAI_API_KEY);
         localStorage.setItem("gemini_tutor_student_name", STUDENT_NAME); 
@@ -397,18 +476,13 @@
     }
     
     function resetApiKey() {
-        if(confirm("설정된 정보를 삭제하시겠습니까?")) {
-            localStorage.clear();
-            location.reload();
-        }
+        if(confirm("설정된 정보를 삭제하시겠습니까?")) { localStorage.clear(); location.reload(); }
     }
     
-    function getModelUrl() {
-        return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY;
-    }
+    function getModelUrl() { return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY; }
 
     // ==========================================
-    // 🗣️ TTS (텍스트 음성 변환) 로직
+    // 🗣️ TTS (텍스트 음성 변환 - 2. 느리게 듣기 적용)
     // ==========================================
     function populateVoiceList() {
         availableVoices = window.speechSynthesis.getVoices();
@@ -419,8 +493,7 @@
         const usEnglishVoices = availableVoices.filter(voice => voice.lang.includes('en-US') || voice.lang.includes('en_US'));
         usEnglishVoices.forEach((voice) => {
             const option = document.createElement('option');
-            let cleanName = voice.name.replace('Microsoft ', '').replace('Google ', '');
-            option.textContent = `${cleanName} (${voice.lang})`;
+            option.textContent = `${voice.name.replace('Microsoft ', '').replace('Google ', '')} (${voice.lang})`;
             option.value = voice.name;
             voiceSelect.appendChild(option);
         });
@@ -437,40 +510,33 @@
         const utterance = new SpeechSynthesisUtterance("Hello! How do I sound?");
         const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
         if (selectedVoice) utterance.voice = selectedVoice;
-        else utterance.lang = 'en-US';
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
     }
     
-    function replayText(text) {
+    // [수정] 2. rate 파라미터 추가 (기본 0.9, 느리게 0.65)
+    function replayText(text, rate = 0.9) {
         if(!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
-        let cleanText = text.replace(/<[^>]*>?/gm, ''); 
-        cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
+        let cleanText = text.replace(/<[^>]*>?/gm, '').replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
         const utterance = new SpeechSynthesisUtterance(cleanText);
         const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
         if (selectedVoice) utterance.voice = selectedVoice;
-        else utterance.lang = 'en-US'; 
-        utterance.rate = 0.9;
+        utterance.rate = rate; // 적용
         window.speechSynthesis.speak(utterance);
     }
     
-    function speakText(text) {
-        if(!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        let cleanText = text.replace(/<[^>]*>?/gm, '');
-        cleanText = cleanText.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        const selectedVoice = availableVoices.find(voice => voice.name === document.getElementById('voiceSelect').value);
-        if (selectedVoice) utterance.voice = selectedVoice;
-        else utterance.lang = 'en-US'; 
-        utterance.rate = 0.9;
-        window.speechSynthesis.speak(utterance);
-    }
+    function speakText(text) { replayText(text, 0.9); }
 
     // ==========================================
-    // 📝 대본 생성 및 대화 시작 로직
+    // 📝 대본 생성 및 대화 시작
     // ==========================================
+    // [추가] 1. 퀵 스타터 로직
+    function startQuickScenario(scenario) {
+        document.getElementById('userInput').value = scenario;
+        skipScriptAndChat(); // 대본 건너뛰고 바로 프리토킹으로 연결
+    }
+
     async function generateScript() {
         const userInput = document.getElementById('userInput').value;
         if (!userInput.trim()) { alert("대화 주제를 입력해주세요!"); return; }
@@ -478,17 +544,12 @@
         document.getElementById('scriptResult').style.display = "none";
         document.getElementById('startChatBtn').style.display = "none";
         document.getElementById('loading').style.display = "block";
-        document.getElementById('chatSection').style.display = "none"; 
         
         const promptText = `다음은 영어 회화 초보자인 '${STUDENT_NAME}'이(가) AI 영어 튜터와 나눌 스몰토크 대본입니다.
-        ※ 규칙 1: '영어 문장'은 반드시 <b> 태그로 감싸주세요.
-        ※ 규칙 2: 발음은 적지 마세요.
-        
-        [작성 순서 및 양식]
+        ※ 규칙: '영어 문장'은 반드시 <b> 태그로 감싸주세요. 발음은 적지 마세요.
         1. 튜터의 첫 질문("Hi ${STUDENT_NAME}! How was~?")에 대한 사용자의 대답
-        2. 튜터의 예상 꼬리 질문 2가지
-        3. 꼬리 질문에 대한 사용자 대답 2개
-        4. 튜터에게 되묻는 질문 1개
+        2. 튜터의 예상 꼬리 질문 2가지와 사용자 대답 2개
+        3. 튜터에게 되묻는 질문 1개
         오늘 대화 주제: ${userInput}`;
         
         try {
@@ -510,7 +571,9 @@
     }
     
     function skipScriptAndChat() {
-        currentUserInput = document.getElementById('userInput').value.trim();
+        const val = document.getElementById('userInput').value.trim();
+        if(!val) { alert("대화 주제를 입력하거나 버튼을 눌러주세요."); return; }
+        currentUserInput = val;
         document.getElementById('scriptResult').style.display = "none";
         document.getElementById('startChatBtn').style.display = "none";
         openChatSection('free');
@@ -518,8 +581,9 @@
     
     function openChatSection(mode) {
         currentChatMode = mode;
+        document.getElementById('step1').style.display = "none";
         document.getElementById('chatSection').style.display = "block";
-        setTimeout(() => { document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+        setTimeout(() => { document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth' }); }, 100);
         restartConversation(mode); 
     }
     
@@ -528,16 +592,15 @@
         if(window.speechSynthesis) window.speechSynthesis.cancel();
         
         const chatBox = document.getElementById('chatBox');
-        chatBox.innerHTML = "<div id='chatLoading' style='text-align:center; color:#ff9f43; margin:30px 0; font-weight:bold;'>🤖 튜터가 인사를 준비하고 있습니다... ⏳</div>";
+        chatBox.innerHTML = "<div id='chatLoading' style='text-align:center; color:#ff9f43; margin:30px 0; font-weight:bold;'>🤖 튜터가 상황에 맞는 인사를 준비하고 있습니다... ⏳</div>";
         
         const inputEl = document.getElementById('studentChatInput');
         inputEl.value = "";
-        if(!inputEl.disabled) inputEl.style.height = '48px'; 
         
         let systemPrompt = "";
         
         if (mode === 'script') {
-            systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절하고 인내심 많은 AI 영어 튜터야. 오늘 주제는 '${currentUserInput}'이야. 첫 인사로 무조건 'Hi ${STUDENT_NAME}! How was your day?'라고 말해. [중요 규칙]: 사용자가 문법을 틀리거나 어색한 영어를 쓰거나 한국어로 말하면, 자연스러운 영어 문장으로 고쳐주며 'Can you say [올바른 문장]?' 하고 부드럽게 따라 말하도록 유도해. 사용자가 잘 따라했다면 칭찬해주고 다음 질문을 해. 항상 아주 쉽고 간단한 1~2문장으로 말해.`;
+            systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 AI 영어 튜터야. 오늘 주제는 '${currentUserInput}'이야. 무조건 'Hi ${STUDENT_NAME}! How was your day?'라고 말해. 사용자가 틀리면 고쳐주고 'Can you say [올바른 문장]?' 유도해. 1~2문장으로 짧게 말해.`;
             chatHistory = [
                 { "role": "user", "parts": [{ "text": systemPrompt }] },
                 { "role": "model", "parts": [{ "text": `Hi ${STUDENT_NAME}! How was your day?` }] }
@@ -546,20 +609,17 @@
             addTeacherMessage(`Hi ${STUDENT_NAME}! How was your day?`);
             speakText(`Hi ${STUDENT_NAME}! How was your day?`);
         } else {
-            if (currentUserInput !== "") {
-                systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 AI 영어 튜터야. 오늘 대화할 주제는 '${currentUserInput}'이야. 이 주제에 대해 먼저 친근하게 질문하면서 대화를 시작해. [중요 규칙]: 사용자가 어색한 영어나 한국어를 쓰면 자연스러운 영어로 고쳐주며 'Can you say [올바른 문장]?' 하고 따라 말하도록 유도해. 항상 아주 쉽고 간단한 1~2문장으로 대답해.`;
-            } else {
-                systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 AI 영어 튜터야. 오늘 정해진 주제는 없어. 일반적인 일상 주제(음식, 주말, 취미 등)를 하나 골라서 친근하게 질문하며 대화를 시작해. [중요 규칙]: 사용자가 어색한 영어나 한국어를 쓰면 자연스러운 영어로 고쳐주며 'Can you say [올바른 문장]?' 하고 따라 말하도록 유도해. 항상 아주 쉽고 간단한 1~2문장으로 대답해.`;
-            }
-            
+            // 프리토킹(퀵 스타터 포함) 모드
+            systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 외국인 역할(카페 직원, 호텔 직원, 친구 등)이야. 오늘 상황(주제)은 '${currentUserInput}'이야. 상황에 완벽히 몰입해서 먼저 아주 쉽고 친근하게 첫 질문을 던지며 상황극을 시작해. 
+            [규칙]: 사용자가 틀리면 고쳐주고 'Can you say [올바른 문장]?' 유도해. 1~2문장으로 짧게 말해.`;
             chatHistory = [];
+            
             try {
                 const response = await fetch(getModelUrl(), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ "role": "user", "parts": [{ "text": systemPrompt }] }] }) 
                 });
                 const data = await response.json();
-                if (data.error) throw new Error();
                 const teacherGreeting = data.candidates[0].content.parts[0].text;
                 
                 chatHistory = [
@@ -584,170 +644,104 @@
         msgDiv.classList.add('msg', 'teacher-msg'); 
         
         const header = document.createElement('div');
-        header.innerText = "🤖 튜터:";
-        header.style.fontWeight = "bold";
-        header.style.marginBottom = "6px";
-        header.style.color = "#d35400";
+        header.innerText = "🤖 튜터:"; header.style.fontWeight = "bold"; header.style.marginBottom = "6px"; header.style.color = "#d35400";
         
         const textDiv = document.createElement('div');
-        textDiv.classList.add('blurred-text');
-        textDiv.innerHTML = text; 
+        textDiv.classList.add('blurred-text'); textDiv.innerHTML = text; 
         
         const controls = document.createElement('div');
         controls.classList.add('msg-controls');
         
         const replayBtn = document.createElement('button');
-        replayBtn.innerHTML = "🔊";
-        replayBtn.title = "다시 듣기";
-        replayBtn.onclick = function() { replayText(text); };
+        replayBtn.innerHTML = "🔊"; replayBtn.title = "다시 듣기";
+        replayBtn.onclick = function() { replayText(text, 0.9); };
+
+        // [추가] 2. 느리게 듣기 버튼
+        const turtleBtn = document.createElement('button');
+        turtleBtn.innerHTML = "🐢"; turtleBtn.title = "느리게 듣기";
+        turtleBtn.onclick = function() { replayText(text, 0.65); }; // 0.65배속
         
         const showBtn = document.createElement('button');
-        showBtn.innerHTML = "👁️";
-        showBtn.title = "텍스트 보기/가리기";
+        showBtn.innerHTML = "👁️"; showBtn.title = "텍스트 보기/가리기";
         let isBlurred = true;
         showBtn.onclick = function() {
-            if (isBlurred) {
-                textDiv.classList.remove('blurred-text');
-                showBtn.innerHTML = "🙈";
-                isBlurred = false;
-            } else {
-                textDiv.classList.add('blurred-text');
-                showBtn.innerHTML = "👁️";
-                isBlurred = true;
-            }
+            if (isBlurred) { textDiv.classList.remove('blurred-text'); showBtn.innerHTML = "🙈"; isBlurred = false; } 
+            else { textDiv.classList.add('blurred-text'); showBtn.innerHTML = "👁️"; isBlurred = true; }
         };
 
         const hintBtn = document.createElement('button');
-        hintBtn.innerHTML = "📝"; // 튜터용 힌트는 노트 아이콘으로 변경
-        hintBtn.title = "문장 해석 및 추천 대답";
+        hintBtn.innerHTML = "📝"; hintBtn.title = "문장 해석 및 추천 대답";
         hintBtn.onclick = function() { showHintModal(text); };
         
         controls.appendChild(replayBtn);
+        controls.appendChild(turtleBtn); // 거북이 추가
         controls.appendChild(showBtn);
         controls.appendChild(hintBtn);
-        msgDiv.appendChild(header);
-        msgDiv.appendChild(textDiv);
-        msgDiv.appendChild(controls);
-        chatBox.appendChild(msgDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        msgDiv.appendChild(header); msgDiv.appendChild(textDiv); msgDiv.appendChild(controls);
+        chatBox.appendChild(msgDiv); chatBox.scrollTop = chatBox.scrollHeight;
         
         document.getElementById('studentChatInput').focus();
     }
 
-    // 💡 새로운 💡 토글 아이콘 및 교정 팁 박스 생성
     function addStudentMessage(text) {
         const chatBox = document.getElementById('chatBox');
+        const wrapper = document.createElement('div'); wrapper.classList.add('student-msg-wrapper');
+        const msgDiv = document.createElement('div'); msgDiv.classList.add('msg', 'student-msg');
+        const header = document.createElement('div'); header.innerText = "👤 나:"; header.style.fontWeight = "bold"; header.style.marginBottom = "6px"; header.style.color = "#d35400";
+        const textDiv = document.createElement('div'); textDiv.innerHTML = text.replace(/\n/g, '<br>');
         
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('student-msg-wrapper');
+        msgDiv.appendChild(header); msgDiv.appendChild(textDiv); wrapper.appendChild(msgDiv);
 
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('msg', 'student-msg');
+        const controls = document.createElement('div'); controls.classList.add('student-controls');
+        const tipBtn = document.createElement('button'); tipBtn.innerHTML = "💡"; tipBtn.title = "AI 친구의 교정 팁 보기";
         
-        const header = document.createElement('div');
-        header.innerText = "👤 나:";
-        header.style.fontWeight = "bold";
-        header.style.marginBottom = "6px";
-        header.style.color = "#d35400";
-
-        const textDiv = document.createElement('div');
-        textDiv.innerHTML = text.replace(/\n/g, '<br>');
-        
-        msgDiv.appendChild(header);
-        msgDiv.appendChild(textDiv);
-        wrapper.appendChild(msgDiv);
-
-        // 컨트롤 박스
-        const controls = document.createElement('div');
-        controls.classList.add('student-controls');
-        
-        const tipBtn = document.createElement('button');
-        tipBtn.innerHTML = "💡";
-        tipBtn.title = "AI 친구의 교정 팁 보기";
-        
-        const tipBox = document.createElement('div');
-        tipBox.classList.add('tip-container');
+        const tipBox = document.createElement('div'); tipBox.classList.add('tip-container');
         tipBox.innerHTML = "⏳ 다정한 친구가 피드백을 적고 있어요...";
 
-        // 토글 애니메이션 로직
         tipBtn.onclick = function() {
-            if (tipBox.classList.contains('show')) {
-                tipBox.classList.remove('show');
-                tipBtn.classList.remove('active');
-            } else {
-                tipBox.classList.add('show');
-                tipBtn.classList.add('active');
-            }
+            if (tipBox.classList.contains('show')) { tipBox.classList.remove('show'); tipBtn.classList.remove('active'); } 
+            else { tipBox.classList.add('show'); tipBtn.classList.add('active'); }
             chatBox.scrollTop = chatBox.scrollHeight; 
         };
 
-        controls.appendChild(tipBtn);
-        wrapper.appendChild(controls);
-        wrapper.appendChild(tipBox);
-
-        chatBox.appendChild(wrapper);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        controls.appendChild(tipBtn); wrapper.appendChild(controls); wrapper.appendChild(tipBox);
+        chatBox.appendChild(wrapper); chatBox.scrollTop = chatBox.scrollHeight;
 
         return { tipBox, tipBtn }; 
     }
 
     // ==========================================
-    // 📩 메시지 전송 및 AI 교정/답변 호출
+    // 📩 메시지 전송 및 교정 처리
     // ==========================================
-    function handleEnter(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); 
-            sendChatMessage();
-        }
-    }
-
-    function autoResize(textarea) {
-        textarea.style.height = '48px'; 
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; 
-    }
+    function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }
+    function autoResize(textarea) { textarea.style.height = '48px'; textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; }
 
     async function sendChatMessage() {
-        if (CURRENT_HEARTS <= 0) {
-            alert("이용 한도를 모두 소진했습니다. 내일 다시 이용해주세요.");
-            return;
-        }
+        if (CURRENT_HEARTS <= 0) return;
 
         const inputEl = document.getElementById('studentChatInput');
         const userText = inputEl.value.trim();
         if (!userText) { alert("답변을 입력해주세요!"); return; }
 
-        CURRENT_HEARTS--;
-        localStorage.setItem("gemini_tutor_hearts", CURRENT_HEARTS);
-        updateHeartUI();
+        CURRENT_HEARTS--; localStorage.setItem("gemini_tutor_hearts", CURRENT_HEARTS); updateHeartUI();
 
-        // 사용자 말풍선 그리기 (tipBox, tipBtn 객체 받기)
         const { tipBox, tipBtn } = addStudentMessage(userText);
-        
-        inputEl.value = "";
-        if(!inputEl.disabled) inputEl.style.height = '48px';
+        inputEl.value = ""; inputEl.style.height = '48px';
 
         chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
-        
         if (chatHistory.length > 7) { 
-            const basePrompts = chatHistory.slice(0, 2);
-            const recentChats = chatHistory.slice(-5);
+            const basePrompts = chatHistory.slice(0, 2); const recentChats = chatHistory.slice(-5);
             chatHistory = [...basePrompts, ...recentChats];
         }
 
         const chatBox = document.getElementById('chatBox');
         const typingIndicator = document.createElement('div');
-        typingIndicator.id = "typingIndicator";
-        typingIndicator.style = "text-align:left; color:#ff9f43; margin:10px; font-weight:bold;";
+        typingIndicator.id = "typingIndicator"; typingIndicator.style = "text-align:left; color:#ff9f43; margin:10px; font-weight:bold;";
         typingIndicator.innerText = "🤖 튜터가 답변을 입력 중입니다... ✍️";
-        chatBox.appendChild(typingIndicator);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        chatBox.appendChild(typingIndicator); chatBox.scrollTop = chatBox.scrollHeight;
 
-        // 🌟 수정된 프롬프트: 폭풍 칭찬 및 다정한 제안
-        const checkPrompt = `영어 왕초보가 용기를 내서 보낸 메시지야: "${userText}"
-틀린 부분을 지적하지 말고, 가장 친한 친구처럼 "오, 의미 전달 완벽해!"라고 먼저 칭찬해 줘. 
-그런 뒤에 "이런 표현을 쓰면 원어민처럼 더 자연스러워~"라며 더 나은 문장을 부드럽게 하나만 제안해 줘. 
-설명은 다정하고 친근한 말투(해요체 또는 반말)로 한국어 1~2줄 이내로 아주 짧게 써줘. 
-만약 문장이 완벽하다면 "우와, 문법도 표현도 흠잡을 데 없어! 진짜 최고야 👏"라고만 대답해.`;
+        const checkPrompt = `영어 왕초보의 메시지: "${userText}"
+틀린 부분을 지적하지 말고, "의미 전달 완벽해!"라고 칭찬 후, "이런 표현을 쓰면 더 자연스러워~"라며 나은 문장을 하나 제안해 줘. 짧게 한국어로. 완벽하면 칭찬만 해.`;
 
         const grammarFetch = fetch(getModelUrl(), {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -762,13 +756,14 @@
         try {
             const [grammarData, teacherData] = await Promise.all([grammarFetch, teacherFetch]);
             
-            // 교정 팁 업데이트 (반짝이 효과 추가)
             if (grammarData.error) throw new Error(grammarData.error.message);
-            const feedbackText = grammarData.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-            tipBox.innerHTML = `<strong>💡 AI 친구의 제안:</strong><br>${feedbackText}`;
-            tipBtn.innerHTML = "💡✨"; // 완료 아이콘 표시
+            const feedbackText = grammarData.candidates[0].content.parts[0].text;
+            tipBox.innerHTML = `<strong>💡 AI 친구의 제안:</strong><br>${feedbackText.replace(/\n/g, '<br>')}`;
+            tipBtn.innerHTML = "💡✨"; 
+            
+            // [추가] 3. 교정 내역 배열에 저장 (완벽하다는 칭찬만 있는 경우는 제외 가능하나 일단 저장)
+            myCorrectionNotes.push({ original: userText, correction: feedbackText });
 
-            // 튜터 답변 업데이트
             if (teacherData.error) throw new Error(teacherData.error.message);
             if(document.getElementById('typingIndicator')) document.getElementById('typingIndicator').remove();
             
@@ -781,26 +776,20 @@
         } catch (error) { 
             tipBox.innerHTML = "💡 교정 팁을 불러오지 못했습니다.";
             if(document.getElementById('typingIndicator')) document.getElementById('typingIndicator').remove();
-            alert("답변을 처리하는 중 오류가 발생했습니다.");
         }
     }
 
     // ==========================================
-    // 📝 튜터 힌트 팝업 모달
+    // 📝 튜터 힌트 & 교정 노트 모달
     // ==========================================
     async function showHintModal(teacherText) {
         const modal = document.getElementById('hintModal');
         const modalBody = document.getElementById('hintModalBody');
-        
-        modal.style.display = "flex";
-        modalBody.innerHTML = "⏳ 의미를 파악하고 추천 답변을 생성 중입니다...";
+        modal.style.display = "flex"; modalBody.innerHTML = "⏳ 의미를 파악하고 추천 답변을 생성 중입니다...";
         
         const hintPrompt = `튜터가 한 영어 문장: "${teacherText}"
-이 문장을 한국어로 해석해주고, 영어 초보자가 대답할 수 있는 쉽고 짧은 자연스러운 영어 대답 2가지를 추천해줘. 
-양식: 
-[문장 해석]: (내용)
-[추천 대답 1]: (영어) - (뜻)
-[추천 대답 2]: (영어) - (뜻)`;
+이 문장을 한국어로 해석해주고, 초보자가 대답할 수 있는 쉽고 짧은 대답 2가지를 추천해줘. 
+양식: [문장 해석]: (내용) / [추천 대답 1]: (영어)-(뜻) / [추천 대답 2]: (영어)-(뜻)`;
         
         try {
             const response = await fetch(getModelUrl(), {
@@ -809,14 +798,47 @@
             });
             const data = await response.json();
             modalBody.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-        } catch (error) { 
-            modalBody.innerHTML = "정보를 불러오지 못했습니다. 다시 시도해주세요."; 
+        } catch (error) { modalBody.innerHTML = "정보를 불러오지 못했습니다."; }
+    }
+    function closeHintModal() { document.getElementById('hintModal').style.display = "none"; }
+
+    // [추가] 3. 교정 노트 열기/닫기/복사 로직
+    function openCorrectionNote() {
+        const modal = document.getElementById('noteModal');
+        const noteList = document.getElementById('noteList');
+        noteList.innerHTML = "";
+        
+        if (myCorrectionNotes.length === 0) {
+            noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:20px;'>아직 기록된 교정 노트가 없습니다.<br>AI 튜터와 대화를 시작해보세요!</div>";
+        } else {
+            myCorrectionNotes.forEach((note, index) => {
+                const item = document.createElement('div');
+                item.className = 'note-item';
+                item.innerHTML = `
+                    <div class="note-original">Q${index + 1}. 내가 한 말: "${note.original}"</div>
+                    <div class="note-correction">${note.correction.replace(/\n/g, '<br>')}</div>
+                `;
+                noteList.appendChild(item);
+            });
         }
+        modal.style.display = "flex";
     }
 
-    function closeHintModal() {
-        document.getElementById('hintModal').style.display = "none";
-        document.getElementById('studentChatInput').focus();
+    function closeNoteModal() { document.getElementById('noteModal').style.display = "none"; }
+
+    function copyCorrectionNote() {
+        if (myCorrectionNotes.length === 0) { alert("복사할 내용이 없습니다."); return; }
+        
+        let textToCopy = `📝 [오늘의 AI 영어 교정 노트]\n\n`;
+        myCorrectionNotes.forEach((note, index) => {
+            textToCopy += `[${index + 1}. 내가 한 말]\n"${note.original}"\n\n[AI 튜터의 추천 표현]\n${note.correction}\n------------------------\n\n`;
+        });
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert("교정 노트가 클립보드에 복사되었습니다! 메모장이나 카톡에 붙여넣기 해보세요.");
+        }).catch(err => {
+            alert("복사에 실패했습니다. 브라우저 설정을 확인해주세요.");
+        });
     }
 </script>
 </body>
