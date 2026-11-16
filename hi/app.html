@@ -11,11 +11,11 @@
             background-color: #fff9ec; 
             margin: 0; 
             padding: 20px 10px; 
-            color: #4a4a4a; 
+            color: #2f3640; 
         } 
         .container { max-width: 500px; margin: 0 auto; position: relative; }
         h2 { 
-            text-align: center; color: #d35400; font-weight: 700; font-size: 26px; 
+            text-align: center; color: #d35400; font-weight: 700; font-size: 24px; 
             margin-bottom: 25px; text-shadow: 1px 1px 2px rgba(211, 84, 0, 0.1);
         }
         .section-box { 
@@ -64,123 +64,121 @@
         }
         .btn-quick:hover { background: #ffeaa7; border-color: #ffda79; color: #d35400; }
 
-        .btn-note { 
-            background-color: #fff3cd; color: #d35400; border: 1px dashed #ffda79; 
-            padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; 
-            margin-bottom: 15px; font-size: 14px; transition: all 0.2s; 
-        }
-        .btn-note:hover { background-color: #ffeaa7; }
-
-        /* [추가] 앱 상단 네비게이션 바 (뒤로가기 / 설정) */
-        .chat-top-nav { display: flex; gap: 10px; margin-bottom: 20px; }
+        /* 네비게이션 바 (뒤로가기 / 설정 / 노트보기 통합) */
+        .chat-top-nav { display: flex; gap: 8px; margin-bottom: 20px; }
         .btn-nav {
-            background: #ffffff; border: 1px solid #dfe4ea; border-radius: 14px; padding: 10px;
-            font-size: 14px; font-weight: 700; color: #57606f; cursor: pointer; flex: 1;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
+            background: #ffffff; border: 1px solid #dfe4ea; border-radius: 14px; padding: 10px 8px;
+            font-size: 13px; font-weight: 700; color: #57606f; cursor: pointer; flex: 1;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: all 0.2s;
         }
         .btn-nav:hover { background: #f8efd4; border-color: #ffda79; color: #d35400; }
 
-        /* [추가] 설정 메뉴 리스트 스타일 */
-        .menu-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 0; border-bottom: 1px solid #f1f2f6;
-        }
-        .menu-item:last-child { border-bottom: none; }
-
-        #loading { display: none; margin-top: 20px; color: #ff9f43; text-align: center; font-weight: 700; font-size: 15px; }
-        #scriptResult { 
-            margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; 
-            border-left: 5px solid #ffda79; white-space: pre-wrap; line-height: 1.7; display: none; font-size: 15px;
-        }
-        #scriptResult b { color: #e15f41; font-size: 16px; background-color: #ffeaa7; padding: 2px 6px; border-radius: 6px; }
-
+        /* [개편됨] 채팅 공간 (파파고 스타일 배경) */
         #chatSection { display: none; margin-top: 10px; }
         .chat-box { 
-            background-color: #f8efd4; border-radius: 20px; padding: 20px 15px; height: 400px; 
-            overflow-y: auto; display: flex; flex-direction: column; gap: 16px; 
-            margin-bottom: 10px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+            background-color: #f1f2f6; border-radius: 24px; padding: 20px 15px; height: 460px; 
+            overflow-y: auto; display: flex; flex-direction: column; gap: 20px; 
+            margin-bottom: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
         }
-        .msg { padding: 12px 16px; border-radius: 20px; max-width: 75%; line-height: 1.5; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        .teacher-msg { background-color: #ffffff; align-self: flex-start; border-bottom-left-radius: 4px; color: #4a4a4a; }
-        .student-msg-wrapper { display: flex; flex-direction: column; align-items: flex-end; width: 100%; margin-bottom: 10px; }
-        .student-msg { background-color: #fff3cd; align-self: flex-end; border-bottom-right-radius: 4px; color: #4a4a4a; width: 100%; box-sizing: border-box; }
-
-        .blurred-text { filter: blur(5px); transition: filter 0.3s ease; user-select: none; }
-        .msg-controls, .student-controls { display: flex; gap: 8px; margin-top: 6px; margin-bottom: 4px; }
-        .msg-controls button, .student-controls button {
-            padding: 0; font-size: 16px; border-radius: 50%; background-color: #ffffff; color: #4a4a4a;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06); width: 36px; height: 36px; border: none; 
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        /* [신규] 카드형 말풍선 UI */
+        .chat-card { 
+            background: white; border-radius: 20px; padding: 20px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.04); width: 100%; box-sizing: border-box; 
+            display: flex; flex-direction: column;
         }
-        .msg-controls button:hover, .student-controls button:hover { background-color: #ffeaa7; transform: translateY(-2px); }
-        .student-controls button.active { background-color: #78e08f; color: white; border-color: #78e08f; }
-
-        .btn-start-chat { background: linear-gradient(135deg, #78e08f, #38ada9); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(120, 224, 143, 0.3); text-shadow: 1px 1px 1px rgba(0,0,0,0.1); }
-        .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(120, 224, 143, 0.4); transform: translateY(-3px); }
+        .card-tutor { border-top: 6px solid #78e08f; }
+        .card-student { background: #fffdf7; border-top: 6px solid #ffda79; }
         
-        .btn-restart { background-color: #f1f2f6; color: #57606f; padding: 12px; margin-bottom: 15px; font-size: 14px; }
-        .btn-reset-key { background-color: #ff7675; color: white; border: none; padding: 8px 14px; border-radius: 12px; font-size: 12px; width: auto; font-weight: bold; cursor: pointer; }
-        .btn-reset-key:hover { background-color: #d63031; }
-
-        .chat-input-area { background-color: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 15px rgba(255, 177, 66, 0.1); margin-bottom: 15px; }
-        .input-row { display: flex; gap: 8px; align-items: flex-end; }
-        .input-row textarea {
-            flex-grow: 1; padding: 12px 14px; border: 2px solid #f1f2f6; border-radius: 16px;
-            background-color: #fafbfc; margin: 0; width: auto; resize: none; min-height: 48px; max-height: 120px;
-            font-family: inherit; font-size: 15px; line-height: 1.5; overflow-y: auto; box-sizing: border-box; outline: none; transition: all 0.3s;
+        .card-header { font-size: 13px; font-weight: 700; color: #a4b0be; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .card-body { font-size: 18px; line-height: 1.5; color: #2f3640; font-weight: 700; margin-bottom: 15px; word-break: keep-all; }
+        
+        .blurred-text { filter: blur(6px); transition: filter 0.3s ease; user-select: none; }
+        
+        /* 카드 하단 툴바 버튼들 */
+        .card-tools { display: flex; justify-content: space-between; border-top: 1px solid #f1f2f6; padding-top: 12px; align-items: center; }
+        .tool-left { display: flex; gap: 6px; }
+        .tool-btn { 
+            background: #f8efd4; border: none; padding: 8px 12px; border-radius: 12px; 
+            font-size: 13px; color: #d35400; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; gap: 4px; transition: all 0.2s; width: auto;
         }
-        .input-row textarea:focus { border-color: #78e08f; background-color: #fff; }
+        .tool-btn:hover { background: #ffeaa7; transform: translateY(-1px); }
 
-        .btn-mic {
-            background-color: #ffc048; color: white; border: none; border-radius: 50%; width: 48px; height: 48px;
-            font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 192, 72, 0.3);
-            flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; -webkit-user-select: none;
-            position: relative;
+        .tip-container {
+            display: none; background-color: #f6fff8; border: 1px dashed #78e08f; padding: 15px;
+            border-radius: 12px; font-size: 15px; margin-top: 15px; 
+            color: #2f3640; line-height: 1.6; text-align: left;
+        }
+        .tip-container.show { display: block; animation: slideDown 0.35s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* [신규] 입력 패널 (초대형 마이크 & 파파고 스타일) */
+        .chat-input-panel { 
+            background: white; border-radius: 28px; padding: 20px; 
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.06); text-align: center;
+        }
+        .mic-huge-wrap { display: flex; justify-content: center; margin-top: -50px; margin-bottom: 12px; position: relative; z-index: 10;}
+        .btn-huge-mic {
+            width: 80px; height: 80px; border-radius: 50%; background: #ffc048; 
+            color: white; font-size: 34px; border: 6px solid white; 
+            box-shadow: 0 8px 20px rgba(255, 192, 72, 0.3);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.2s; user-select: none; -webkit-user-select: none;
         }
         
         @keyframes pulse-ring {
             0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.7); transform: scale(0.95); }
-            70% { box-shadow: 0 0 0 20px rgba(255, 118, 117, 0); transform: scale(1.1); }
+            70% { box-shadow: 0 0 0 25px rgba(255, 118, 117, 0); transform: scale(1.1); }
             100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); transform: scale(0.95); }
         }
-        .btn-mic.recording {
-            background-color: #ff7675;
-            animation: pulse-ring 1.2s infinite;
+        .btn-huge-mic.recording { background-color: #ff7675; animation: pulse-ring 1.2s infinite; }
+
+        .input-row { display: flex; gap: 8px; align-items: flex-end; }
+        .input-row textarea {
+            flex-grow: 1; padding: 14px 16px; border: 2px solid #f1f2f6; border-radius: 20px;
+            background-color: #fafbfc; margin: 0; width: auto; resize: none; height: 52px; min-height: 52px; max-height: 120px;
+            font-family: inherit; font-size: 15px; line-height: 1.5; overflow-y: auto; box-sizing: border-box; outline: none; transition: all 0.3s;
         }
+        .input-row textarea:focus { border-color: #78e08f; background-color: #fff; }
 
         .btn-send-msg {
-            background-color: #78e08f; color: white; border: none; border-radius: 50%; width: 48px; height: 48px;
+            background-color: #78e08f; color: white; border: none; border-radius: 20px; width: 52px; height: 52px;
             font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(120, 224, 143, 0.3); flex-shrink: 0;
         }
         .btn-send-msg:hover { background-color: #38ada9; transform: translateY(-2px); }
 
-        .tip-container {
-            display: none; background-color: #f6fff8; border-left: 4px solid #78e08f; padding: 14px;
-            border-radius: 12px 0 12px 12px; font-size: 14px; margin-top: 4px; max-width: 85%;
-            color: #4a4a4a; box-shadow: 0 4px 12px rgba(120, 224, 143, 0.15); line-height: 1.5; text-align: left;
-        }
-        .tip-container.show { display: block; animation: slideDown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        /* [신규] 타이핑 인디케이터 (점 3개 애니메이션) */
+        .typing-indicator { display: inline-flex; gap: 5px; align-items: center; }
+        .typing-dot { width: 7px; height: 7px; background: #a4b0be; border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        .heart-container { text-align: center; margin-bottom: 12px; }
-        .heart-status {
-            display: inline-block; background-color: #ff7675; color: white; font-weight: 700;
-            font-size: 15px; padding: 8px 18px; border-radius: 20px; box-shadow: 0 4px 10px rgba(255, 118, 117, 0.3); transition: transform 0.2s;
-        }
-
-        .footer-info { text-align: center; font-size: 12px; color: #ced6e0; margin-top: 40px; margin-bottom: 10px; font-family: 'Nunito', sans-serif; }
-
+        /* 모달 스타일 */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(3px); }
         .modal-content { background: white; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative; line-height: 1.6; font-size: 15px; color: #4a4a4a; text-align: center; max-height: 80vh; display: flex; flex-direction: column; }
         .modal-close { position: absolute; top: 15px; right: 15px; background: #f1f2f6; border: none; font-size: 14px; cursor: pointer; color: #57606f; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .modal-close:hover { background: #ff7675; color: white; }
         
         .note-list { text-align: left; overflow-y: auto; flex-grow: 1; margin: 15px 0; padding-right: 5px; }
-        .note-item { background: #f8efd4; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid #ffda79; }
-        .note-original { font-weight: bold; color: #57606f; margin-bottom: 5px; }
-        .note-correction { color: #d35400; font-size: 14px; }
+        .note-item { background: #f8efd4; padding: 15px; border-radius: 16px; margin-bottom: 12px; border-left: 5px solid #ffda79; }
+        .note-original { font-weight: bold; color: #57606f; margin-bottom: 5px; font-size: 14px; }
+        .note-correction { color: #d35400; font-size: 16px; font-weight: bold; }
+        
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid #f1f2f6; }
+        .menu-item:last-child { border-bottom: none; }
+        
+        .footer-info { text-align: center; font-size: 12px; color: #ced6e0; margin-top: 40px; margin-bottom: 10px; font-family: 'Nunito', sans-serif; }
+        
+        #loading { display: none; margin-top: 20px; color: #ff9f43; text-align: center; font-weight: 700; font-size: 15px; }
+        #scriptResult { margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; border-left: 5px solid #ffda79; white-space: pre-wrap; line-height: 1.7; display: none; font-size: 15px; }
+        #scriptResult b { color: #e15f41; font-size: 16px; background-color: #ffeaa7; padding: 2px 6px; border-radius: 6px; }
+        
+        .btn-start-chat { background: linear-gradient(135deg, #78e08f, #38ada9); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(120, 224, 143, 0.3); text-shadow: 1px 1px 1px rgba(0,0,0,0.1); }
+        .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(120, 224, 143, 0.4); transform: translateY(-3px); }
+        .btn-reset-key { background-color: #ff7675; color: white; border: none; padding: 8px 14px; border-radius: 12px; font-size: 12px; width: auto; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -216,7 +214,6 @@
     
     <!-- [1단계] 대화 준비 -->
     <div class="section-box" id="step1" style="display: none;">
-        <!-- [변경됨] 설정 초기화 버튼을 메뉴 모달로 이동하고 텍스트 깔끔하게 정리 -->
         <h3>1단계: 대화 준비 📝</h3>
         
         <div class="input-group" style="margin-top: 15px;">
@@ -249,40 +246,44 @@
         <button id="startChatBtn" class="btn-start-chat" style="display: none;" onclick="openChatSection('script')">🎤 실전 채팅 시작하기 ▶️</button>
     </div>
 
-    <!-- [2단계] 실전 대화 (채팅형) -->
-    <div class="section-box" id="chatSection">
-        <!-- [추가] 앱 상단 네비게이션 바 -->
+    <!-- [2단계] 개편된 실전 대화 카드 UI -->
+    <div id="chatSection">
+        <!-- 네비게이션 바 -->
         <div class="chat-top-nav">
-            <button class="btn-nav" onclick="goBackToSetup()">⬅️ 뒤로 가기</button>
-            <button class="btn-nav" onclick="openAppMenu()">☰ 앱 설정</button>
+            <button class="btn-nav" onclick="goBackToSetup()">⬅️ 뒤로가기</button>
+            <button class="btn-nav" onclick="restartConversation()">🔄 재시작</button>
+            <button class="btn-nav" onclick="openCorrectionNote()">📝 내 노트</button>
+            <button class="btn-nav" onclick="openAppMenu()">⚙️ 설정</button>
         </div>
 
-        <h3>2단계: AI 튜터와 회화 연습 🗣️</h3>
-        <button class="btn-restart" onclick="restartConversation()">🔄 대화 다시 시작하기</button>
-        
-        <button class="btn-note" onclick="openCorrectionNote()">📝 오늘 쌓인 '나만의 교정 노트' 보기</button>
-        
-        <div class="heart-container">
-            <div id="heartStatus" class="heart-status">❤️ 20 / 20</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px;">
+            <h3 style="margin: 0; color: #4a4a4a; font-size: 16px;">AI 실전 대화 🗣️</h3>
+            <div id="heartStatus" style="font-weight: 700; color: #ff7675; font-size: 15px;">❤️ 20 / 20</div>
         </div>
 
+        <!-- 카드들이 쌓이는 공간 -->
         <div class="chat-box" id="chatBox"></div>
         
-        <div class="chat-input-area">
+        <!-- 초대형 마이크 & 입력 패널 -->
+        <div class="chat-input-panel">
+            <div class="mic-huge-wrap">
+                <button id="micBtn" class="btn-huge-mic" title="누르고 말하기">🎤</button>
+            </div>
+            <p style="margin-top: -5px; margin-bottom: 15px; font-size: 13px; color: #a4b0be; font-weight: bold;">버튼을 누른 채로 말하세요</p>
+            
             <div class="input-row">
-                <textarea id="studentChatInput" placeholder="여기에 영어로 답변을 작성해주세요!" maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
-                <button id="micBtn" class="btn-mic" title="누르고 말하기">🎤</button>
+                <textarea id="studentChatInput" placeholder="또는 직접 타이핑하세요" maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
                 <button class="btn-send-msg" id="sendBtn" onclick="sendChatMessage()" title="전송">✈️</button>
             </div>
         </div>
     </div>
     
     <div class="footer-info">
-        v2.8.0 | AI English Tutor. All rights reserved.
+        v3.0.0 | AI English Tutor (Card UX). All rights reserved.
     </div>
 </div> 
 
-<!-- 힌트 팝업 모달 -->
+<!-- 힌트 모달 -->
 <div id="hintModal" class="modal-overlay">
     <div class="modal-content" style="max-height: 60vh;">
         <button class="modal-close" onclick="closeHintModal()">✖</button>
@@ -296,14 +297,12 @@
         <button class="modal-close" onclick="closeNoteModal()">✖</button>
         <h3 style="margin-top: 0; color: #d35400;">📝 나만의 교정 노트</h3>
         <p style="font-size: 13px; color: #636e72; margin-top: -10px;">오늘 AI 친구가 교정해준 표현들입니다.</p>
-        
         <div id="noteList" class="note-list"></div>
-        
         <button class="btn-main" onclick="copyCorrectionNote()">📋 클립보드에 복사하기</button>
     </div>
 </div>
 
-<!-- [추가] 앱 전체 설정/메뉴 모달 -->
+<!-- 앱 설정 모달 -->
 <div id="appMenuModal" class="modal-overlay">
     <div class="modal-content" style="text-align: left;">
         <button class="modal-close" onclick="closeAppMenu()">✖</button>
@@ -321,7 +320,6 @@
                 <div style="font-weight: bold; color: #4a4a4a;">❤️ 남은 하트 (이용권)</div>
                 <div style="font-size: 13px; color: #a4b0be;" id="menuHeartStatus">0 / 20</div>
             </div>
-            <!-- 결제 기능 대비 버튼 미리 추가 -->
             <button class="btn-quick" style="margin: 0; background: #fff3cd; color: #d35400; border-color: #ffda79;" onclick="alert('결제 기능은 곧 추가될 예정입니다!')">충전하기</button>
         </div>
 
@@ -400,34 +398,22 @@
         }
     };
 
-    // ==========================================
-    // 앱 네비게이션 및 메뉴 로직 [신규 추가]
-    // ==========================================
     function goBackToSetup() {
-        // 채팅창을 숨기고 설정(1단계) 화면을 다시 띄움
         document.getElementById('chatSection').style.display = "none";
         document.getElementById('step1').style.display = "block";
-        
-        // 뒤로 돌아갈 때 말하고 있던 소리가 있다면 끔
         if(window.speechSynthesis) window.speechSynthesis.cancel();
-        
-        // 부드럽게 위로 스크롤
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function openAppMenu() {
-        // 메뉴창 띄우기 전 최신 데이터 업데이트
         document.getElementById('menuStudentName').innerText = STUDENT_NAME + " 님";
         document.getElementById('menuHeartStatus').innerText = CURRENT_HEARTS + " / " + USER_PLAN;
         document.getElementById('appMenuModal').style.display = "flex";
     }
-
-    function closeAppMenu() {
-        document.getElementById('appMenuModal').style.display = "none";
-    }
+    function closeAppMenu() { document.getElementById('appMenuModal').style.display = "none"; }
 
     // ==========================================
-    // 🎤 마이크 로직
+    // 🎤 마이크 (초대형 마이크 연동)
     // ==========================================
     async function startRecording(e) {
         if(e.type === 'mousedown' && e.button !== 0) return; 
@@ -446,7 +432,7 @@
             micBtn.classList.add('recording');
             playBeep('start');
             if (navigator.vibrate) navigator.vibrate(50); 
-            inputEl.placeholder = "🎙️ 듣고 있어요... (손을 떼면 전송)";
+            inputEl.placeholder = "듣고 있어요! 손을 떼면 전송됩니다...";
         } catch (err) { alert("마이크 사용 권한을 허용해주세요!"); }
     }
 
@@ -459,7 +445,7 @@
             micBtn.classList.remove('recording');
             playBeep('stop');
             if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
-            inputEl.placeholder = "⏳ 목소리를 문자로 변환 중입니다...";
+            inputEl.placeholder = "⏳ 텍스트로 변환 중입니다...";
         }
     }
 
@@ -477,13 +463,10 @@
             else { throw new Error(data.error?.message || "변환 실패"); }
         } catch (error) {
             alert("음성 인식 중 오류가 발생했습니다.");
-            inputEl.placeholder = "여기에 영어로 답변을 작성해주세요!";
+            inputEl.placeholder = "또는 직접 타이핑하세요";
         }
     }
 
-    // ==========================================
-    // ❤️ 하트 관리 및 기본 설정
-    // ==========================================
     function checkAndResetHearts() {
         const savedPlan = localStorage.getItem("gemini_tutor_plan");
         if (savedPlan) USER_PLAN = parseInt(savedPlan);
@@ -509,15 +492,13 @@
         const micBtn = document.getElementById('micBtn');
         
         if (CURRENT_HEARTS <= 0) {
-            if(inputEl) { inputEl.disabled = true; inputEl.placeholder = "오늘의 한도를 소진했습니다."; inputEl.style.backgroundColor = "#e2e8f0"; }
+            if(inputEl) { inputEl.disabled = true; inputEl.placeholder = "오늘 한도를 소진했습니다."; }
             if(sendBtn) { sendBtn.disabled = true; sendBtn.style.backgroundColor = "#b2bec3"; }
-            if(micBtn) { micBtn.disabled = true; micBtn.style.opacity = "0.5"; }
-            if(heartEl) { heartEl.style.backgroundColor = "#e2e8f0"; heartEl.style.color = "#b2bec3"; }
+            if(micBtn) { micBtn.disabled = true; micBtn.style.backgroundColor = "#b2bec3"; }
         } else {
-            if(inputEl) { inputEl.disabled = false; inputEl.placeholder = "여기에 영어로 답변을 작성해주세요!"; inputEl.style.backgroundColor = "#fafbfc"; }
+            if(inputEl) { inputEl.disabled = false; inputEl.placeholder = "또는 직접 타이핑하세요"; }
             if(sendBtn) { sendBtn.disabled = false; sendBtn.style.backgroundColor = "#78e08f"; }
-            if(micBtn) { micBtn.disabled = false; micBtn.style.opacity = "1"; }
-            if(heartEl) { heartEl.style.backgroundColor = "#ff7675"; heartEl.style.color = "white"; }
+            if(micBtn) { micBtn.disabled = false; micBtn.style.backgroundColor = "#ffc048"; }
         }
     }
 
@@ -541,18 +522,13 @@
     function resetApiKey() { if(confirm("설정된 정보를 삭제하시겠습니까?")) { localStorage.clear(); location.reload(); } }
     function getModelUrl() { return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY; }
 
-    // ==========================================
-    // 🗣️ TTS (목소리 매핑 및 재생 로직 - 최적화 적용)
-    // ==========================================
     function selectVoice(profile, btnElement) {
         currentVoiceProfile = profile;
         const buttons = document.querySelectorAll('.btn-voice');
         buttons.forEach(btn => btn.classList.remove('selected'));
         btnElement.classList.add('selected');
-        
         if(!window.speechSynthesis) return;
         window.speechSynthesis.cancel(); 
-        
         const utterance = new SpeechSynthesisUtterance("Hello! How do I sound?");
         applyVoiceProfile(utterance, currentVoiceProfile, 0.9);
         window.speechSynthesis.speak(utterance);
@@ -560,17 +536,13 @@
 
     function getBestVoiceForProfile(profile) {
         if (!availableVoices || availableVoices.length === 0) return null;
-        
         let enVoices = availableVoices.filter(v => v.lang.startsWith('en'));
         if (enVoices.length === 0) return availableVoices[0]; 
-
         const findByWords = (words) => enVoices.find(v => words.some(w => v.name.toLowerCase().includes(w)));
-
         if (profile === 'female' || profile === 'girl') {
             return findByWords(['samantha', 'zira', 'female', 'karen', 'victoria', 'susan', 'ava']) || 
                    enVoices.find(v => v.name.toLowerCase().includes('google us english')) || 
-                   enVoices.find(v => v.default) || 
-                   enVoices[0];
+                   enVoices.find(v => v.default) || enVoices[0];
         } else { 
             let maleVoice = findByWords(['david', 'alex', 'daniel', 'arthur', 'fred', 'male', 'george', 'gordon']);
             return maleVoice || enVoices.find(v => v.default) || enVoices[0]; 
@@ -580,16 +552,10 @@
     function applyVoiceProfile(utterance, profile, baseRate) {
         const voice = getBestVoiceForProfile(profile);
         if (voice) utterance.voice = voice;
-        
-        if (profile === 'female') {
-            utterance.pitch = 1.0; utterance.rate = baseRate;
-        } else if (profile === 'male') {
-            utterance.pitch = 1.0; utterance.rate = baseRate; 
-        } else if (profile === 'girl') {
-            utterance.pitch = 1.2; utterance.rate = baseRate * 1.05; 
-        } else if (profile === 'boy') {
-            utterance.pitch = 1.1; utterance.rate = baseRate * 1.05;
-        }
+        if (profile === 'female') { utterance.pitch = 1.0; utterance.rate = baseRate; } 
+        else if (profile === 'male') { utterance.pitch = 1.0; utterance.rate = baseRate; } 
+        else if (profile === 'girl') { utterance.pitch = 1.2; utterance.rate = baseRate * 1.05; } 
+        else if (profile === 'boy') { utterance.pitch = 1.1; utterance.rate = baseRate * 1.05; }
     }
 
     function replayText(text, rate = 0.9) {
@@ -597,16 +563,11 @@
         window.speechSynthesis.cancel();
         let cleanText = text.replace(/<[^>]*>?/gm, '').replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
         const utterance = new SpeechSynthesisUtterance(cleanText);
-        
         applyVoiceProfile(utterance, currentVoiceProfile, rate);
         window.speechSynthesis.speak(utterance);
     }
-    
     function speakText(text) { replayText(text, 0.9); }
 
-    // ==========================================
-    // 📝 대본 생성 및 대화 시작
-    // ==========================================
     function startQuickScenario(scenario) {
         document.getElementById('userInput').value = scenario;
         skipScriptAndChat(); 
@@ -620,29 +581,20 @@
         document.getElementById('startChatBtn').style.display = "none";
         document.getElementById('loading').style.display = "block";
         
-        const promptText = `다음은 영어 회화 초보자인 '${STUDENT_NAME}'이(가) AI 영어 튜터와 나눌 스몰토크 대본입니다.
-        ※ 규칙: '영어 문장'은 반드시 <b> 태그로 감싸주세요. 발음은 적지 마세요.
-        1. 튜터의 첫 질문("Hi ${STUDENT_NAME}! How was~?")에 대한 사용자의 대답
-        2. 튜터의 예상 꼬리 질문 2가지와 사용자 대답 2개
-        3. 튜터에게 되묻는 질문 1개
-        오늘 대화 주제: ${userInput}`;
+        const promptText = `다음은 초보자인 '${STUDENT_NAME}'과 AI 튜터의 스몰토크 대본입니다.
+        ※ 규칙: 영어 문장은 <b> 태그로 감싸주세요. 발음은 적지 마세요.
+        1. 첫 질문("Hi ${STUDENT_NAME}! How was~?")에 대한 대답
+        2. 튜터 꼬리 질문 2개와 대답 2개 / 3. 튜터에게 되묻기 1개
+        주제: ${userInput}`;
         
         try {
-            const response = await fetch(getModelUrl(), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-            });
+            const response = await fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] }) });
             const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
             document.getElementById('scriptResult').innerHTML = data.candidates[0].content.parts[0].text;
             document.getElementById('scriptResult').style.display = "block";
             document.getElementById('startChatBtn').style.display = "block";
-        } catch (error) {
-            document.getElementById('scriptResult').innerHTML = "오류가 발생했습니다: " + error.message;
-            document.getElementById('scriptResult').style.display = "block";
-        } finally {
-            document.getElementById('loading').style.display = "none";
-        }
+        } catch (error) { document.getElementById('scriptResult').innerHTML = "오류 발생: " + error.message; document.getElementById('scriptResult').style.display = "block"; } 
+        finally { document.getElementById('loading').style.display = "none"; }
     }
     
     function skipScriptAndChat() {
@@ -667,128 +619,137 @@
         if(window.speechSynthesis) window.speechSynthesis.cancel();
         
         const chatBox = document.getElementById('chatBox');
-        chatBox.innerHTML = "<div id='chatLoading' style='text-align:center; color:#ff9f43; margin:30px 0; font-weight:bold;'>🤖 튜터가 상황에 맞는 인사를 준비하고 있습니다... ⏳</div>";
+        chatBox.innerHTML = `
+            <div id='chatLoading' class='chat-card' style='text-align:center; padding: 25px;'>
+                <div class="typing-indicator" style="justify-content: center;">
+                    <span style="font-size:14px; color:#57606f; font-weight:bold; margin-right:10px;">🤖 튜터가 말을 걸어오고 있습니다</span>
+                    <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+                </div>
+            </div>`;
         
         const inputEl = document.getElementById('studentChatInput');
         inputEl.value = "";
         
         let systemPrompt = "";
-        
         if (mode === 'script') {
-            systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 AI 영어 튜터야. 오늘 주제는 '${currentUserInput}'이야. 무조건 'Hi ${STUDENT_NAME}! How was your day?'라고 말해. 사용자가 틀리면 고쳐주고 'Can you say [올바른 문장]?' 유도해. 1~2문장으로 짧게 말해.`;
-            chatHistory = [
-                { "role": "user", "parts": [{ "text": systemPrompt }] },
-                { "role": "model", "parts": [{ "text": `Hi ${STUDENT_NAME}! How was your day?` }] }
-            ];
+            systemPrompt = `너는 왕초보 '${STUDENT_NAME}'을 돕는 AI 튜터야. 주제는 '${currentUserInput}'. 첫인사 무조건 'Hi ${STUDENT_NAME}! How was your day?'. 틀리면 고쳐주고 'Can you say?' 유도. 짧게 1~2문장.`;
+            chatHistory = [ { "role": "user", "parts": [{ "text": systemPrompt }] }, { "role": "model", "parts": [{ "text": `Hi ${STUDENT_NAME}! How was your day?` }] } ];
             document.getElementById('chatLoading').remove();
             addTeacherMessage(`Hi ${STUDENT_NAME}! How was your day?`);
             speakText(`Hi ${STUDENT_NAME}! How was your day?`);
         } else {
-            systemPrompt = `너는 영어 회화 왕초보인 '${STUDENT_NAME}'을(를) 돕는 친절한 외국인 역할(카페 직원, 호텔 직원, 친구 등)이야. 오늘 상황(주제)은 '${currentUserInput}'이야. 상황에 완벽히 몰입해서 먼저 아주 쉽고 친근하게 첫 질문을 던지며 상황극을 시작해. 
-            [규칙]: 사용자가 틀리면 고쳐주고 'Can you say [올바른 문장]?' 유도해. 1~2문장으로 짧게 말해.`;
+            systemPrompt = `너는 왕초보 '${STUDENT_NAME}'을 돕는 친절한 외국인(카페/호텔/친구) 역할이야. 주제 '${currentUserInput}'에 몰입해서 첫 질문 던져. 틀리면 고쳐주고 'Can you say?' 유도. 짧게 1~2문장.`;
             chatHistory = [];
-            
             try {
-                const response = await fetch(getModelUrl(), {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ "role": "user", "parts": [{ "text": systemPrompt }] }] }) 
-                });
+                const response = await fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ "role": "user", "parts": [{ "text": systemPrompt }] }] }) });
                 const data = await response.json();
                 const teacherGreeting = data.candidates[0].content.parts[0].text;
-                
-                chatHistory = [
-                    { "role": "user", "parts": [{ "text": systemPrompt }] },
-                    { "role": "model", "parts": [{ "text": teacherGreeting }] }
-                ];
+                chatHistory = [ { "role": "user", "parts": [{ "text": systemPrompt }] }, { "role": "model", "parts": [{ "text": teacherGreeting }] } ];
                 document.getElementById('chatLoading').remove();
                 addTeacherMessage(teacherGreeting);
                 speakText(teacherGreeting);
-            } catch (error) { 
-                document.getElementById('chatLoading').innerText = "오류가 발생했습니다. 새로고침 해주세요."; 
-            }
+            } catch (error) { document.getElementById('chatLoading').innerHTML = "<div style='color:#e15f41; font-weight:bold;'>오류가 발생했습니다. 재시작해주세요.</div>"; }
         }
     }
     
     // ==========================================
-    // 💬 채팅 말풍선 UI 생성
+    // 💬 [파파고 스타일 카드 UI] 말풍선 생성
     // ==========================================
     function addTeacherMessage(text) {
         const chatBox = document.getElementById('chatBox');
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('msg', 'teacher-msg'); 
+        
+        const card = document.createElement('div');
+        card.className = 'chat-card card-tutor';
         
         const header = document.createElement('div');
-        header.innerText = "🤖 튜터:"; header.style.fontWeight = "bold"; header.style.marginBottom = "6px"; header.style.color = "#d35400";
+        header.className = 'card-header';
+        header.innerHTML = `<span>🤖 AI 튜터</span>`;
         
-        const textDiv = document.createElement('div');
-        textDiv.classList.add('blurred-text'); textDiv.innerHTML = text; 
+        const body = document.createElement('div');
+        body.className = 'card-body blurred-text';
+        body.innerHTML = text; 
         
-        const controls = document.createElement('div');
-        controls.classList.add('msg-controls');
+        const tools = document.createElement('div');
+        tools.className = 'card-tools';
         
+        const leftTools = document.createElement('div');
+        leftTools.className = 'tool-left';
+
         const replayBtn = document.createElement('button');
-        replayBtn.innerHTML = "🔊"; replayBtn.title = "다시 듣기";
-        replayBtn.onclick = function() { replayText(text, 0.9); };
+        replayBtn.className = 'tool-btn'; replayBtn.innerHTML = "🔊 듣기";
+        replayBtn.onclick = () => replayText(text, 0.9);
 
         const turtleBtn = document.createElement('button');
-        turtleBtn.innerHTML = "🐢"; turtleBtn.title = "느리게 듣기";
-        turtleBtn.onclick = function() { replayText(text, 0.65); }; 
+        turtleBtn.className = 'tool-btn'; turtleBtn.innerHTML = "🐢 느리게";
+        turtleBtn.onclick = () => replayText(text, 0.65); 
         
         const showBtn = document.createElement('button');
-        showBtn.innerHTML = "👁️"; showBtn.title = "텍스트 보기/가리기";
+        showBtn.className = 'tool-btn'; showBtn.innerHTML = "👁️ 보기";
         let isBlurred = true;
-        showBtn.onclick = function() {
-            if (isBlurred) { textDiv.classList.remove('blurred-text'); showBtn.innerHTML = "🙈"; isBlurred = false; } 
-            else { textDiv.classList.add('blurred-text'); showBtn.innerHTML = "👁️"; isBlurred = true; }
+        showBtn.onclick = () => {
+            if (isBlurred) { body.classList.remove('blurred-text'); showBtn.innerHTML = "🙈 숨기기"; isBlurred = false; } 
+            else { body.classList.add('blurred-text'); showBtn.innerHTML = "👁️ 보기"; isBlurred = true; }
         };
 
         const hintBtn = document.createElement('button');
-        hintBtn.innerHTML = "📝"; hintBtn.title = "문장 해석 및 추천 대답";
-        hintBtn.onclick = function() { showHintModal(text); };
+        hintBtn.className = 'tool-btn'; hintBtn.innerHTML = "📝 해석/힌트";
+        hintBtn.onclick = () => showHintModal(text);
         
-        controls.appendChild(replayBtn); controls.appendChild(turtleBtn); controls.appendChild(showBtn); controls.appendChild(hintBtn);
-        msgDiv.appendChild(header); msgDiv.appendChild(textDiv); msgDiv.appendChild(controls);
-        chatBox.appendChild(msgDiv); chatBox.scrollTop = chatBox.scrollHeight;
+        leftTools.append(replayBtn, turtleBtn, showBtn);
+        tools.append(leftTools, hintBtn);
+        
+        card.append(header, body, tools);
+        chatBox.appendChild(card);
+        chatBox.scrollTop = chatBox.scrollHeight;
         
         document.getElementById('studentChatInput').focus();
     }
 
     function addStudentMessage(text) {
         const chatBox = document.getElementById('chatBox');
-        const wrapper = document.createElement('div'); wrapper.classList.add('student-msg-wrapper');
-        const msgDiv = document.createElement('div'); msgDiv.classList.add('msg', 'student-msg');
-        const header = document.createElement('div'); header.innerText = "👤 나:"; header.style.fontWeight = "bold"; header.style.marginBottom = "6px"; header.style.color = "#d35400";
-        const textDiv = document.createElement('div'); textDiv.innerHTML = text.replace(/\n/g, '<br>');
         
-        msgDiv.appendChild(header); msgDiv.appendChild(textDiv); wrapper.appendChild(msgDiv);
-
-        const controls = document.createElement('div'); controls.classList.add('student-controls');
-        const tipBtn = document.createElement('button'); tipBtn.innerHTML = "💡"; tipBtn.title = "AI 친구의 교정 팁 보기";
+        const card = document.createElement('div');
+        card.className = 'chat-card card-student';
         
-        const tipBox = document.createElement('div'); tipBox.classList.add('tip-container');
+        const header = document.createElement('div');
+        header.className = 'card-header';
+        header.innerHTML = `<span>👤 내 대답</span>`;
+        
+        const body = document.createElement('div');
+        body.className = 'card-body';
+        body.innerHTML = text.replace(/\n/g, '<br>');
+        
+        const tools = document.createElement('div');
+        tools.className = 'card-tools';
+        tools.style.borderTop = "none"; tools.style.paddingTop = "0"; // 학생 카드는 선 제거
+        
+        const tipBtn = document.createElement('button');
+        tipBtn.className = 'tool-btn'; tipBtn.innerHTML = "💡 AI 교정 팁 보기";
+        tipBtn.style.width = "100%"; tipBtn.style.justifyContent = "center";
+        
+        const tipBox = document.createElement('div');
+        tipBox.className = 'tip-container';
         tipBox.innerHTML = "⏳ 다정한 친구가 피드백을 적고 있어요...";
 
-        tipBtn.onclick = function() {
-            if (tipBox.classList.contains('show')) { tipBox.classList.remove('show'); tipBtn.classList.remove('active'); } 
-            else { tipBox.classList.add('show'); tipBtn.classList.add('active'); }
+        tipBtn.onclick = () => {
+            if (tipBox.classList.contains('show')) { tipBox.classList.remove('show'); tipBtn.style.background = "#f8efd4"; } 
+            else { tipBox.classList.add('show'); tipBtn.style.background = "#ffeaa7"; }
             chatBox.scrollTop = chatBox.scrollHeight; 
         };
 
-        controls.appendChild(tipBtn); wrapper.appendChild(controls); wrapper.appendChild(tipBox);
-        chatBox.appendChild(wrapper); chatBox.scrollTop = chatBox.scrollHeight;
+        tools.appendChild(tipBtn);
+        card.append(header, body, tools, tipBox);
+        chatBox.appendChild(card);
+        chatBox.scrollTop = chatBox.scrollHeight;
 
         return { tipBox, tipBtn }; 
     }
 
-    // ==========================================
-    // 📩 메시지 전송 및 교정 처리
-    // ==========================================
     function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }
-    function autoResize(textarea) { textarea.style.height = '48px'; textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; }
+    function autoResize(textarea) { textarea.style.height = '52px'; textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; }
 
     async function sendChatMessage() {
         if (CURRENT_HEARTS <= 0) return;
-
         const inputEl = document.getElementById('studentChatInput');
         const userText = inputEl.value.trim();
         if (!userText) { alert("답변을 입력해주세요!"); return; }
@@ -796,7 +757,7 @@
         CURRENT_HEARTS--; localStorage.setItem("gemini_tutor_hearts", CURRENT_HEARTS); updateHeartUI();
 
         const { tipBox, tipBtn } = addStudentMessage(userText);
-        inputEl.value = ""; inputEl.style.height = '48px';
+        inputEl.value = ""; inputEl.style.height = '52px';
 
         chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
         if (chatHistory.length > 7) { 
@@ -805,23 +766,25 @@
         }
 
         const chatBox = document.getElementById('chatBox');
+        
+        // [신규] 물결치는 타이핑 인디케이터 카드 추가
         const typingIndicator = document.createElement('div');
-        typingIndicator.id = "typingIndicator"; typingIndicator.style = "text-align:left; color:#ff9f43; margin:10px; font-weight:bold;";
-        typingIndicator.innerText = "🤖 튜터가 답변을 입력 중입니다... ✍️";
+        typingIndicator.id = "typingIndicator";
+        typingIndicator.className = 'chat-card card-tutor';
+        typingIndicator.style.padding = "20px";
+        typingIndicator.innerHTML = `
+            <div class="typing-indicator">
+                <span style="font-size:14px; color:#57606f; font-weight:bold; margin-right:8px;">🤖 튜터가 입력 중</span>
+                <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+            </div>
+        `;
         chatBox.appendChild(typingIndicator); chatBox.scrollTop = chatBox.scrollHeight;
 
         const checkPrompt = `영어 왕초보의 메시지: "${userText}"
 틀린 부분을 지적하지 말고, "의미 전달 완벽해!"라고 칭찬 후, "이런 표현을 쓰면 더 자연스러워~"라며 나은 문장을 하나 제안해 줘. 짧게 한국어로. 완벽하면 칭찬만 해.`;
 
-        const grammarFetch = fetch(getModelUrl(), {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: checkPrompt }] }] })
-        }).then(res => res.json());
-
-        const teacherFetch = fetch(getModelUrl(), {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: chatHistory }) 
-        }).then(res => res.json());
+        const grammarFetch = fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: checkPrompt }] }] }) }).then(res => res.json());
+        const teacherFetch = fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: chatHistory }) }).then(res => res.json());
 
         try {
             const [grammarData, teacherData] = await Promise.all([grammarFetch, teacherFetch]);
@@ -829,7 +792,7 @@
             if (grammarData.error) throw new Error(grammarData.error.message);
             const feedbackText = grammarData.candidates[0].content.parts[0].text;
             tipBox.innerHTML = `<strong>💡 AI 친구의 제안:</strong><br>${feedbackText.replace(/\n/g, '<br>')}`;
-            tipBtn.innerHTML = "💡✨"; 
+            tipBtn.innerHTML = "💡✨ 교정 팁 확인하기"; 
             
             myCorrectionNotes.push({ original: userText, correction: feedbackText });
 
@@ -848,23 +811,17 @@
         }
     }
 
-    // ==========================================
-    // 📝 튜터 힌트 & 교정 노트 모달
-    // ==========================================
     async function showHintModal(teacherText) {
         const modal = document.getElementById('hintModal');
         const modalBody = document.getElementById('hintModalBody');
         modal.style.display = "flex"; modalBody.innerHTML = "⏳ 의미를 파악하고 추천 답변을 생성 중입니다...";
         
         const hintPrompt = `튜터가 한 영어 문장: "${teacherText}"
-이 문장을 한국어로 해석해주고, 초보자가 대답할 수 있는 쉽고 짧은 대답 2가지를 추천해줘. 
-양식: [문장 해석]: (내용) / [추천 대답 1]: (영어)-(뜻) / [추천 대답 2]: (영어)-(뜻)`;
+한국어로 해석해주고, 초보자가 대답할 수 있는 쉽고 짧은 대답 2가지를 추천해줘. 
+양식: [해석]: (내용) / [추천 대답 1]: (영어)-(뜻) / [추천 대답 2]: (영어)-(뜻)`;
         
         try {
-            const response = await fetch(getModelUrl(), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: hintPrompt }] }] })
-            });
+            const response = await fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: hintPrompt }] }] }) });
             const data = await response.json();
             modalBody.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
         } catch (error) { modalBody.innerHTML = "정보를 불러오지 못했습니다."; }
@@ -875,15 +832,14 @@
         const modal = document.getElementById('noteModal');
         const noteList = document.getElementById('noteList');
         noteList.innerHTML = "";
-        
         if (myCorrectionNotes.length === 0) {
-            noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:20px;'>아직 기록된 교정 노트가 없습니다.<br>AI 튜터와 대화를 시작해보세요!</div>";
+            noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:30px 10px;'>아직 기록된 교정 노트가 없습니다.<br>AI 튜터와 대화를 시작해보세요!</div>";
         } else {
             myCorrectionNotes.forEach((note, index) => {
                 const item = document.createElement('div');
                 item.className = 'note-item';
                 item.innerHTML = `
-                    <div class="note-original">Q${index + 1}. 내가 한 말: "${note.original}"</div>
+                    <div class="note-original">Q${index + 1}. 내가 한 말:<br>"${note.original}"</div>
                     <div class="note-correction">${note.correction.replace(/\n/g, '<br>')}</div>
                 `;
                 noteList.appendChild(item);
@@ -891,22 +847,13 @@
         }
         modal.style.display = "flex";
     }
-
     function closeNoteModal() { document.getElementById('noteModal').style.display = "none"; }
 
     function copyCorrectionNote() {
         if (myCorrectionNotes.length === 0) { alert("복사할 내용이 없습니다."); return; }
-        
         let textToCopy = `📝 [오늘의 AI 영어 교정 노트]\n\n`;
-        myCorrectionNotes.forEach((note, index) => {
-            textToCopy += `[${index + 1}. 내가 한 말]\n"${note.original}"\n\n[AI 튜터의 추천 표현]\n${note.correction}\n------------------------\n\n`;
-        });
-        
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert("교정 노트가 클립보드에 복사되었습니다! 메모장이나 카톡에 붙여넣기 해보세요.");
-        }).catch(err => {
-            alert("복사에 실패했습니다. 브라우저 설정을 확인해주세요.");
-        });
+        myCorrectionNotes.forEach((note, index) => { textToCopy += `[${index + 1}. 내가 한 말]\n"${note.original}"\n\n[AI 튜터의 추천 표현]\n${note.correction}\n------------------------\n\n`; });
+        navigator.clipboard.writeText(textToCopy).then(() => { alert("클립보드에 복사되었습니다!"); }).catch(err => { alert("복사에 실패했습니다."); });
     }
 </script>
 </body>
