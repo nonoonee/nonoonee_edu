@@ -484,27 +484,31 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    // [수정됨] 기기의 내장 목소리 중 프로필에 가장 잘 맞는 것을 찾아 매핑
+    // [수정] 기기에 진짜 남성 목소리가 있는지 더 꼼꼼히 찾고, 없으면 갈라지는 소리 대신 안전한 기본음 사용
     function getBestVoiceForProfile(profile) {
         if (!availableVoices || availableVoices.length === 0) return null;
         
-        // 1순위: 미국 영어, 2순위: 영국/호주 등 영어 전체
-        let enVoices = availableVoices.filter(v => v.lang.includes('en-US') || v.lang.includes('en_US'));
-        if (enVoices.length === 0) enVoices = availableVoices.filter(v => v.lang.includes('en'));
-        if (enVoices.length === 0) return availableVoices[0]; 
+        let enVoices = availableVoices.filter(v => v.lang.startsWith('en'));
+        if (enVoices.length === 0) return availableVoices[0]; // 영어가 아예 없으면 기기 기본 목소리
 
         const findByWords = (words) => enVoices.find(v => words.some(w => v.name.toLowerCase().includes(w)));
 
         if (profile === 'female' || profile === 'girl') {
-            // 여성 목소리 선호 이름들 (구글, 애플, 마이크로소프트)
-            return findByWords(['samantha', 'zira', 'female', 'karen', 'victoria', 'google us english']) || enVoices[0];
+            // 유명한 여성 목소리 키워드
+            return findByWords(['samantha', 'zira', 'female', 'karen', 'victoria', 'susan', 'ava']) || 
+                   enVoices.find(v => v.name.toLowerCase().includes('google us english')) || 
+                   enVoices.find(v => v.default) || 
+                   enVoices[0];
         } else { 
-            // 남성 목소리 선호 이름들
-            return findByWords(['alex', 'david', 'male', 'daniel', 'mark', 'arthur']) || enVoices[enVoices.length > 1 ? 1 : 0]; 
+            // 유명한 남성 목소리 키워드 대폭 추가
+            let maleVoice = findByWords(['david', 'alex', 'daniel', 'arthur', 'fred', 'male', 'george', 'gordon']);
+            
+            // 핵심 수정: 남성 목소리가 없으면 억지로 이상한 목소리를 쓰지 말고 가장 깨끗한 '기본(default)' 목소리로 폴백
+            return maleVoice || enVoices.find(v => v.default) || enVoices[0]; 
         }
     }
 
-    // [수정됨] 기계음 방지를 위해 남성/어린이 피치(pitch) 값 최적화
+    // [수정] 억지 피치(pitch) 조작을 최소화하여 기계음 원천 차단
     function applyVoiceProfile(utterance, profile, baseRate) {
         const voice = getBestVoiceForProfile(profile);
         if (voice) utterance.voice = voice;
@@ -513,13 +517,13 @@
             utterance.pitch = 1.0; 
             utterance.rate = baseRate;
         } else if (profile === 'male') {
-            utterance.pitch = 1.0; // 기존 0.8에서 1.0으로 복구 (인위적인 톤 다운 제거하여 기계음 방지)
+            utterance.pitch = 1.0; 
             utterance.rate = baseRate; 
         } else if (profile === 'girl') {
-            utterance.pitch = 1.4; // 기존 1.6에서 1.4로 완화 (귀엽지만 일그러지지 않게)
+            utterance.pitch = 1.2; // 1.4 -> 1.2로 대폭 낮춤 (살짝만 귀엽게)
             utterance.rate = baseRate * 1.05; 
         } else if (profile === 'boy') {
-            utterance.pitch = 1.2; // 기존 1.35에서 1.2로 완화
+            utterance.pitch = 1.1; // 1.2 -> 1.1로 낮춤 (살짝만 톤업, 기계음 안 나게)
             utterance.rate = baseRate * 1.05;
         }
     }
