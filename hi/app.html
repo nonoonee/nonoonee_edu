@@ -6,7 +6,6 @@
     <title>AI 영어 튜터 (왕초보 스몰토크)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 전체 화면 꽉 채우기 및 브라우저 스크롤 바운스 방지 */
         html, body { 
             height: 100%; margin: 0; padding: 0; background-color: #fff9ec; 
             overflow: hidden; touch-action: pan-y;
@@ -19,18 +18,24 @@
         
         .app-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 0; margin-bottom: 5px; flex-shrink: 0;
+            padding: 12px 0; margin-bottom: 5px; flex-shrink: 0;
             background-color: #fff9ec; z-index: 100;
         }
         .icon-btn {
             background: none; border: none; font-size: 24px; cursor: pointer;
             width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; color: #57606f; transition: background 0.2s;
+            border-radius: 50%; color: #57606f; transition: background 0.2s; flex-shrink: 0;
         }
         .icon-btn:hover { background: #f8efd4; }
+        
+        /* [개편] 제목과 하트를 하나로 묶기 위한 중앙 타이틀 영역 */
+        .header-center {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            flex-grow: 1; overflow: hidden; text-align: center;
+        }
         .header-title {
-            font-size: 18px; font-weight: 700; color: #2f3640; margin: 0;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; text-align: center;
+            font-size: 17px; font-weight: 700; color: #2f3640; margin: 0;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
         }
 
         .section-box { 
@@ -73,12 +78,13 @@
         }
         .btn-quick:hover { background: #ffeaa7; border-color: #ffda79; color: #d35400; }
 
-        #step0, #step1 { flex: 1; overflow-y: auto; padding-top: 15px; display: none; flex-direction: column; }
-        #step0 { display: flex; } 
+        /* [개편] 4개의 전체 페이지 섹션 관리 */
+        #step0, #step1, #chatSection, #noteSection { flex: 1; overflow-y: auto; padding-top: 10px; display: none; flex-direction: column; }
+        #step0 { display: flex; padding-top: 15px; } 
+        #chatSection, #noteSection { overflow: hidden; } 
         
-        #chatSection { display: none; flex-direction: column; flex: 1; overflow: hidden; } 
-        
-        .chat-box { 
+        /* 공통 스크롤 박스 (대화창 및 노트창) */
+        .scroll-box { 
             background-color: #f1f2f6; border-radius: 24px; padding: 20px 15px; 
             flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; 
             margin-bottom: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
@@ -108,7 +114,6 @@
         .tip-container.show { display: block; animation: slideDown 0.35s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 하단 고정 입력 패널 */
         .chat-input-panel { 
             background: white; border-radius: 28px 28px 0 0; 
             padding: 12px 15px calc(15px + env(safe-area-inset-bottom)) 15px; 
@@ -116,8 +121,6 @@
             margin: 0 -15px; flex-shrink: 0; z-index: 10;
             display: flex; align-items: flex-end; gap: 10px;
         }
-        
-        /* [추가] 왼손잡이 모드일 때 좌우 반전 클래스 */
         .chat-input-panel.left-handed { flex-direction: row-reverse; }
         
         .btn-round-mic {
@@ -180,15 +183,11 @@
         .btn-menu-action { background: #f8efd4; color: #d35400; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 14px; text-align: left; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; }
         .btn-menu-action:hover { background: #ffeaa7; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(3px); }
-        .modal-content { background: white; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative; line-height: 1.6; font-size: 15px; color: #4a4a4a; text-align: center; max-height: 80vh; display: flex; flex-direction: column; }
-        .modal-close { position: absolute; top: 15px; right: 15px; background: #f1f2f6; border: none; font-size: 14px; cursor: pointer; color: #57606f; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        
-        .note-list { text-align: left; overflow-y: auto; flex-grow: 1; margin: 15px 0; padding-right: 5px; }
-        .note-item { background: #f8efd4; padding: 15px; border-radius: 16px; margin-bottom: 12px; border-left: 5px solid #ffda79; }
-        .note-original { color: #57606f; margin-bottom: 5px; font-size: 13px; }
-        .note-correction { color: #d35400; font-size: 15px; font-weight: bold; }
-        .note-date-header { font-weight: 800; color: #e15f41; margin: 20px 0 10px 0; border-bottom: 2px solid #ffeaa7; padding-bottom: 5px; }
+        /* 교정 노트 전용 CSS */
+        .note-item { background: #ffffff; padding: 15px; border-radius: 16px; margin-bottom: 15px; border-left: 5px solid #ffda79; box-shadow: 0 4px 10px rgba(0,0,0,0.03); flex-shrink: 0; }
+        .note-original { color: #57606f; margin-bottom: 8px; font-size: 14px; }
+        .note-correction { color: #d35400; font-size: 16px; font-weight: bold; line-height: 1.5; }
+        .note-date-header { font-weight: 800; color: #e15f41; margin: 15px 0 10px 0; border-bottom: 2px solid #ffeaa7; padding-bottom: 5px; flex-shrink: 0; }
 
         .footer-info { text-align: center; font-size: 12px; color: #ced6e0; margin: 30px 0 10px 0; font-family: 'Nunito', sans-serif; flex-shrink: 0;}
         #scriptResult { margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; border-left: 5px solid #ffda79; white-space: pre-wrap; line-height: 1.7; display: none; font-size: 15px; text-align: left;}
@@ -209,7 +208,6 @@
             <input type="text" id="menuProfileName" placeholder="영어 이름 입력" onblur="saveProfileName()" style="padding: 10px; font-size:14px; background: white;">
         </div>
         
-        <!-- [추가] 사용 손 설정 (왼손/오른손잡이) -->
         <div class="menu-section">
             <div class="menu-title">🖐️ 사용 손 설정 (마이크 위치)</div>
             <div class="voice-options">
@@ -230,7 +228,7 @@
 
         <div class="menu-section">
             <div class="menu-title">📚 내 학습 기록</div>
-            <button class="btn-menu-action" onclick="openCorrectionNote()">📝 일자별 교정 노트 보기</button>
+            <button class="btn-menu-action" onclick="openNoteSection()">📝 일자별 교정 노트 보기</button>
             <div style="display:flex; justify-content:space-between; align-items:center; background:#f1f2f6; padding: 12px; border-radius:12px; margin-top:8px;">
                 <span style="font-size:14px; font-weight:bold; color:#57606f;">남은 하트 ❤️</span>
                 <span id="drawerHeartStatus" style="color:#d35400; font-weight:bold;">20 / 20</span>
@@ -273,14 +271,16 @@
             </div>
             <button class="btn-main" onclick="saveApiKey()">✅ 저장하고 시작하기</button>
         </div>
-        <div class="footer-info">v6.0.0 | AI English Tutor App</div>
+        <div class="footer-info">v7.0.0 | AI English Tutor App</div>
     </div>
     
     <!-- [1단계] 대화 준비 -->
     <div id="step1">
         <div class="app-header">
             <button class="icon-btn" onclick="openMenu()">☰</button>
-            <h1 class="header-title">AI 영어 튜터</h1>
+            <div class="header-center">
+                <h1 class="header-title">AI 영어 튜터</h1>
+            </div>
             <div style="width: 44px;"></div>
         </div>
 
@@ -321,24 +321,23 @@
             <div id="scriptResult"></div>
             <button id="startChatBtn" class="btn-main" style="margin-top: 15px; display: none;" onclick="openChatSection('script')">🎤 준비된 대본으로 시작하기 ▶️</button>
         </div>
-        <div class="footer-info" style="margin-top:auto;">v6.0.0 | AI English Tutor App</div>
+        <div class="footer-info" style="margin-top:auto;">v7.0.0 | AI English Tutor App</div>
     </div>
 
     <!-- [2단계] 채팅 UI -->
     <div id="chatSection">
+        <!-- [개편] 제목 아래로 하트를 묶어서 수직 공간 완벽 절약 -->
         <div class="app-header">
             <button class="icon-btn" onclick="goBackToSetup()">⬅️</button>
-            <h1 class="header-title" id="chatHeaderTitle">상황 불러오는 중...</h1>
+            <div class="header-center">
+                <h1 class="header-title" id="chatHeaderTitle">상황 불러오는 중...</h1>
+                <div id="heartStatus" style="font-size: 13px; color: #ff7675; font-weight: 800; margin-top: 2px;">❤️ 20 / 20</div>
+            </div>
             <button class="icon-btn" onclick="restartConversation()" title="대화 재시작">🔄</button>
         </div>
 
-        <div style="text-align: right; margin-bottom: 10px; padding-right: 5px; flex-shrink:0;">
-            <div id="heartStatus" style="font-weight: 700; color: #ff7675; font-size: 14px;">❤️ 20 / 20</div>
-        </div>
-
-        <div class="chat-box" id="chatBox"></div>
+        <div class="scroll-box" id="chatBox"></div>
         
-        <!-- [개편] 오른손잡이 기본 설정 레이아웃 (텍스트 박스 먼저, 마이크 나중) -->
         <div class="chat-input-panel" id="chatInputPanel">
             <div class="text-input-wrap">
                 <textarea id="studentChatInput" placeholder="마이크나 텍스트 입력..." maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
@@ -347,25 +346,33 @@
             <button id="micBtn" class="btn-round-mic" title="누르고 말하기">🎤</button>
         </div>
     </div>
-</div> 
-
-<!-- 교정 노트 모달 -->
-<div id="noteModal" class="modal-overlay">
-    <div class="modal-content">
-        <button class="modal-close" onclick="closeNoteModal()">✖</button>
-        <h3 style="margin-top: 0; color: #d35400;">📝 내 교정 노트</h3>
-        <div id="noteList" class="note-list"></div>
-        <button class="btn-main" onclick="copyCorrectionNote()">📋 클립보드에 복사하기</button>
+    
+    <!-- [개편] 모달이 아닌 전체 화면(Full Page) 형태의 노트 영역 -->
+    <div id="noteSection">
+        <div class="app-header">
+            <button class="icon-btn" onclick="closeNoteSection()">⬅️</button>
+            <div class="header-center">
+                <h1 class="header-title">📝 내 교정 노트</h1>
+            </div>
+            <button class="icon-btn" onclick="copyCorrectionNote()" title="전체 복사하기">📋</button>
+        </div>
+        
+        <div class="scroll-box" id="noteListFull" style="margin-bottom:0; border-radius: 24px 24px 0 0; background: #f8efd4;">
+            <!-- 노트 리스트가 여기에 삽입됨 -->
+        </div>
     </div>
-</div>
+</div> 
 
 <script>
     let USER_API_KEY = ""; let OPENAI_API_KEY = ""; let STUDENT_NAME = ""; 
     let currentUserInput = ""; let chatHistory = []; let availableVoices = []; 
     let currentVoiceProfile = 'female'; let currentChatMode = 'script'; 
-    let currentHandMode = 'right'; // 기본은 오른손잡이
+    let currentHandMode = 'right'; 
     let USER_PLAN = 20; let CURRENT_HEARTS = 20;
     let mediaRecorder; let audioChunks = [];
+    
+    // [추가] 노트 화면에서 돌아갈 이전 섹션을 기억하는 변수
+    let previousSection = 'step1';
 
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
@@ -423,32 +430,24 @@
         document.getElementById('drawerOverlay').style.display = "block";
         setTimeout(() => document.getElementById('drawerMenu').classList.add('open'), 10);
     }
-    
     function closeMenu() {
         document.getElementById('drawerMenu').classList.remove('open');
         setTimeout(() => document.getElementById('drawerOverlay').style.display = "none", 300);
     }
 
-    // [추가] 왼손/오른손잡이 모드 설정 기능
     function selectHandMode(mode, btnElement) {
         currentHandMode = mode;
-        
         document.getElementById('btnHandLeft').classList.remove('selected');
         document.getElementById('btnHandRight').classList.remove('selected');
         
-        if(btnElement) {
-            btnElement.classList.add('selected');
-        } else {
-            document.getElementById(mode === 'left' ? 'btnHandLeft' : 'btnHandRight').classList.add('selected');
-        }
+        if(btnElement) { btnElement.classList.add('selected'); } 
+        else { document.getElementById(mode === 'left' ? 'btnHandLeft' : 'btnHandRight').classList.add('selected'); }
 
-        // 패널 클래스 토글 (left-handed 클래스가 붙으면 flex-direction이 row-reverse가 되어 좌우가 바뀜)
         const panel = document.getElementById('chatInputPanel');
         if(panel) {
             if(mode === 'left') panel.classList.add('left-handed');
             else panel.classList.remove('left-handed');
         }
-        
         localStorage.setItem("gemini_tutor_hand_mode", mode);
     }
 
@@ -469,17 +468,27 @@
         localStorage.setItem('gemini_tutor_daily_notes', JSON.stringify(allNotes));
     }
 
-    function openCorrectionNote() {
+    // [개편] 전체 화면 뷰로 교정 노트 열기
+    function openNoteSection() {
         closeMenu(); 
-        const modal = document.getElementById('noteModal');
-        const noteList = document.getElementById('noteList');
+        
+        // 현재 열려있는 화면을 기억 (step0, step1, chatSection 중 하나)
+        if(document.getElementById('chatSection').style.display === 'flex') previousSection = 'chatSection';
+        else if(document.getElementById('step1').style.display === 'flex') previousSection = 'step1';
+        else previousSection = 'step0';
+
+        document.getElementById('step0').style.display = "none";
+        document.getElementById('step1').style.display = "none";
+        document.getElementById('chatSection').style.display = "none";
+        
+        const noteList = document.getElementById('noteListFull');
         noteList.innerHTML = "";
         
         let allNotes = JSON.parse(localStorage.getItem('gemini_tutor_daily_notes') || '{}');
         const dates = Object.keys(allNotes).reverse(); 
         
         if (dates.length === 0) {
-            noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:30px 10px;'>기록된 노트가 없습니다.<br>대화를 시작해보세요!</div>";
+            noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:50px 10px; font-weight:bold;'>기록된 노트가 없습니다.<br>대화를 시작해보세요!</div>";
         } else {
             dates.forEach(date => {
                 const dateHeader = document.createElement('div'); dateHeader.className = 'note-date-header'; dateHeader.innerText = `📅 ${date}`;
@@ -491,9 +500,15 @@
                 });
             });
         }
-        modal.style.display = "flex";
+        document.getElementById('noteSection').style.display = "flex";
     }
-    function closeNoteModal() { document.getElementById('noteModal').style.display = "none"; }
+    
+    // [개편] 노트 창 닫고 이전 화면으로 복귀
+    function closeNoteSection() { 
+        document.getElementById('noteSection').style.display = "none"; 
+        document.getElementById(previousSection).style.display = "flex";
+    }
+
     function copyCorrectionNote() {
         let allNotes = JSON.parse(localStorage.getItem('gemini_tutor_daily_notes') || '{}');
         const dates = Object.keys(allNotes).reverse();
@@ -506,6 +521,9 @@
         navigator.clipboard.writeText(textToCopy).then(() => alert("클립보드에 복사되었습니다!")).catch(err => alert("복사에 실패했습니다."));
     }
 
+    // ==========================================
+    // 🎤 마이크 및 입력 패널 기능
+    // ==========================================
     async function startRecording(e) {
         if(e.type === 'mousedown' && e.button !== 0) return; 
         const micBtn = document.getElementById('micBtn');
@@ -620,7 +638,6 @@
     function selectVoice(profile, btnElement) {
         currentVoiceProfile = profile;
         const buttons = document.querySelectorAll('.btn-voice');
-        // 핸드모드 버튼을 제외한 목소리 버튼들만 처리
         buttons.forEach(btn => {
             if(!btn.id.includes('btnHand')) btn.classList.remove('selected');
         });
