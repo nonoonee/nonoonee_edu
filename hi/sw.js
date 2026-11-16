@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ai-tutor-v2';
+const CACHE_NAME = 'ai-tutor-v3';
 const urlsToCache = [
   './index.html',
   './manifest.json'
