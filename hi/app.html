@@ -6,19 +6,11 @@
     <title>AI 영어 튜터 (왕초보 스몰토크)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* [개편] 전체 화면 꽉 채우기 및 브라우저 스크롤 바운스 방지 (앱 룩앤필) */
         html, body { 
-            height: 100%; 
-            margin: 0; padding: 0; 
-            background-color: #fff9ec; 
-            overflow: hidden; /* 모바일 브라우저 자체 스크롤 차단 */
-            touch-action: pan-y;
+            height: 100%; margin: 0; padding: 0; background-color: #fff9ec; 
+            overflow: hidden; touch-action: pan-y;
         } 
-        body { 
-            font-family: 'Nunito', 'Noto Sans KR', sans-serif; 
-            color: #2f3640; 
-        } 
-        /* 100dvh를 사용하여 아이폰 하단 홈바나 사파리 툴바 영역에 완벽히 대응 */
+        body { font-family: 'Nunito', 'Noto Sans KR', sans-serif; color: #2f3640; } 
         .container { 
             max-width: 500px; margin: 0 auto; position: relative; padding: 0 15px; 
             height: 100dvh; display: flex; flex-direction: column; box-sizing: border-box;
@@ -53,7 +45,7 @@
             box-sizing: border-box; font-size: 15px; font-family: inherit;
             transition: all 0.3s; outline: none; background-color: #fffdf7;
         }
-        select:focus, input[type="text"], input[type="password"]:focus { border-color: #ffda79; background-color: #fff; }
+        select:focus, input[type="text"]:focus, input[type="password"]:focus { border-color: #ffda79; background-color: #fff; }
 
         button { font-family: inherit; border: none; border-radius: 18px; cursor: pointer; font-size: 16px; font-weight: 700; width: 100%; transition: all 0.2s; }
         button:active { transform: scale(0.96); }
@@ -80,17 +72,14 @@
         }
         .btn-quick:hover { background: #ffeaa7; border-color: #ffda79; color: #d35400; }
 
-        /* [개편] 플렉스 박스로 화면 채우기 및 독립 스크롤 영역 지정 */
         #step0, #step1 { flex: 1; overflow-y: auto; padding-top: 15px; display: none; flex-direction: column; }
-        #step0 { display: flex; } /* 초기 화면 */
+        #step0 { display: flex; } 
         
-        #chatSection { display: none; flex-direction: column; flex: 1; overflow: hidden; } /* 전체 레이아웃 스크롤 차단 */
+        #chatSection { display: none; flex-direction: column; flex: 1; overflow: hidden; } 
         
         .chat-box { 
             background-color: #f1f2f6; border-radius: 24px; padding: 20px 15px; 
-            flex: 1; /* 남은 공간 모두 차지 */
-            overflow-y: auto; /* 채팅창 내부만 스크롤 됨 */
-            display: flex; flex-direction: column; gap: 20px; 
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; 
             margin-bottom: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
         }
 
@@ -118,32 +107,53 @@
         .tip-container.show { display: block; animation: slideDown 0.35s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* [개편] 하단 고정 입력 패널 */
+        /* [개편] 하단 고정 입력 패널 (메신저 스타일) */
         .chat-input-panel { 
             background: white; border-radius: 28px 28px 0 0; 
-            padding: 15px 15px calc(20px + env(safe-area-inset-bottom)) 15px; /* 아이폰 홈바 침범 방지 */
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.06); text-align: center;
-            margin: 0 -15px; /* 화면 좌우 끝까지 확장 */
-            flex-shrink: 0; /* 채팅창이 길어져도 줄어들지 않고 하단 고정 */
+            padding: 12px 15px calc(15px + env(safe-area-inset-bottom)) 15px; 
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.06); 
+            margin: 0 -15px; 
+            flex-shrink: 0; 
             z-index: 10;
+            display: flex; align-items: flex-end; gap: 10px;
         }
-        .mic-huge-wrap { display: flex; justify-content: center; margin-top: -50px; margin-bottom: 15px; position: relative; z-index: 10;}
-        .btn-huge-mic {
-            width: 80px; height: 80px; border-radius: 50%; background: #ffc048; color: white; font-size: 34px; border: 6px solid white; 
-            box-shadow: 0 8px 20px rgba(255, 192, 72, 0.3); display: flex; align-items: center; justify-content: center; cursor: pointer;
-            transition: all 0.2s; user-select: none; -webkit-user-select: none;
+        
+        /* 둥근 마이크 버튼 */
+        .btn-round-mic {
+            width: 48px; height: 48px; border-radius: 50%; 
+            background: #ffc048; color: white; font-size: 22px; 
+            border: none; box-shadow: 0 4px 10px rgba(255, 192, 72, 0.3); 
+            display: flex; align-items: center; justify-content: center; 
+            flex-shrink: 0; cursor: pointer; user-select: none; -webkit-user-select: none;
+            transition: all 0.2s;
         }
-        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.7); transform: scale(0.95); } 70% { box-shadow: 0 0 0 25px rgba(255, 118, 117, 0); transform: scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); transform: scale(0.95); } }
-        .btn-huge-mic.recording { background-color: #ff7675; animation: pulse-ring 1.2s infinite; }
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.7); transform: scale(0.95); } 70% { box-shadow: 0 0 0 20px rgba(255, 118, 117, 0); transform: scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); transform: scale(0.95); } }
+        .btn-round-mic.recording { background-color: #ff7675; animation: pulse-ring 1.2s infinite; }
 
-        .input-row { display: flex; gap: 8px; align-items: flex-end; }
-        .input-row textarea {
-            flex-grow: 1; padding: 14px 16px; border: 2px solid #f1f2f6; border-radius: 20px;
-            background-color: #fafbfc; margin: 0; width: auto; resize: none; height: 52px; min-height: 52px; max-height: 120px;
-            font-family: inherit; font-size: 15px; line-height: 1.5; overflow-y: auto; box-sizing: border-box; outline: none; transition: all 0.3s;
+        /* 텍스트 박스 래퍼 (테두리 및 위 화살표 포함) */
+        .text-input-wrap {
+            flex-grow: 1; position: relative; display: flex; align-items: flex-end;
+            background: #ffffff; border: 1.5px solid #dfe4ea; border-radius: 24px;
+            box-sizing: border-box; transition: border-color 0.3s;
         }
-        .input-row textarea:focus { border-color: #78e08f; background-color: #fff; }
-        .btn-send-msg { background-color: #78e08f; color: white; border: none; border-radius: 20px; width: 52px; height: 52px; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(120, 224, 143, 0.3); flex-shrink: 0; }
+        .text-input-wrap:focus-within { border-color: #78e08f; }
+        
+        .text-input-wrap textarea {
+            width: 100%; padding: 12px 48px 12px 16px; /* 우측 화살표 공간 확보 */
+            border: none; background: transparent; 
+            margin: 0; resize: none; height: 48px; min-height: 48px; max-height: 120px;
+            font-family: inherit; font-size: 15px; line-height: 1.5; 
+            outline: none; box-sizing: border-box;
+        }
+        
+        /* 위로 향한 전송 화살표 버튼 */
+        .btn-send-arrow {
+            position: absolute; right: 6px; bottom: 6px;
+            width: 36px; height: 36px; border-radius: 50%;
+            background-color: #dfe4ea; color: white; border: none;
+            font-size: 18px; display: flex; align-items: center; justify-content: center;
+            cursor: not-allowed; transition: all 0.2s;
+        }
 
         .loading-wrap { display: flex; justify-content: center; align-items: center; color: #ff9f43; font-weight: 700; font-size: 15px; margin: 20px 0; }
         .spinner { border: 4px solid rgba(255, 177, 66, 0.2); border-top: 4px solid #ff9f43; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; margin-right: 10px; }
@@ -181,7 +191,6 @@
         .note-correction { color: #d35400; font-size: 15px; font-weight: bold; }
         .note-date-header { font-weight: 800; color: #e15f41; margin: 20px 0 10px 0; border-bottom: 2px solid #ffeaa7; padding-bottom: 5px; }
 
-        /* 푸터 위치 조정 */
         .footer-info { text-align: center; font-size: 12px; color: #ced6e0; margin: 30px 0 10px 0; font-family: 'Nunito', sans-serif; flex-shrink: 0;}
         #scriptResult { margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; border-left: 5px solid #ffda79; white-space: pre-wrap; line-height: 1.7; display: none; font-size: 15px; text-align: left;}
         
@@ -204,7 +213,7 @@
         </div>
         
         <div class="menu-section">
-            <div class="menu-title">🗣️ 튜터 목소리 변경</div>
+            <div class="menu-title">🗣️ 튜터 목소 변경</div>
             <div class="voice-options">
                 <button class="btn-voice selected" onclick="selectVoice('female', this)">👩 성인 여자</button>
                 <button class="btn-voice" onclick="selectVoice('male', this)">👨 성인 남자</button>
@@ -258,7 +267,7 @@
             </div>
             <button class="btn-main" onclick="saveApiKey()">✅ 저장하고 시작하기</button>
         </div>
-        <div class="footer-info">v4.0.0 | AI English Tutor App</div>
+        <div class="footer-info">v5.0.0 | AI English Tutor App</div>
     </div>
     
     <!-- [1단계] 대화 준비 -->
@@ -306,10 +315,10 @@
             <div id="scriptResult"></div>
             <button id="startChatBtn" class="btn-start-chat" onclick="openChatSection('script')">🎤 준비된 대본으로 시작하기 ▶️</button>
         </div>
-        <div class="footer-info" style="margin-top:auto;">v4.0.0 | AI English Tutor App</div>
+        <div class="footer-info" style="margin-top:auto;">v5.0.0 | AI English Tutor App</div>
     </div>
 
-    <!-- [2단계] 채팅 UI (독립 스크롤 & 하단 고정 입력창) -->
+    <!-- [2단계] 채팅 UI (독립 스크롤 & 1줄 메신저형 입력창) -->
     <div id="chatSection">
         <div class="app-header">
             <button class="icon-btn" onclick="goBackToSetup()">⬅️</button>
@@ -321,18 +330,16 @@
             <div id="heartStatus" style="font-weight: 700; color: #ff7675; font-size: 14px;">❤️ 20 / 20</div>
         </div>
 
-        <!-- 독립 스크롤되는 채팅 박스 -->
+        <!-- 독립 스크롤 영역 -->
         <div class="chat-box" id="chatBox"></div>
         
-        <!-- 바닥에 고정되는 텍스트 입력 영역 -->
+        <!-- 바닥에 고정되는 1줄 압축 입력 패널 -->
         <div class="chat-input-panel">
-            <div class="mic-huge-wrap">
-                <button id="micBtn" class="btn-huge-mic" title="누르고 말하기">🎤</button>
-            </div>
-            <!-- 불필요한 설명 텍스트 삭제됨 -->
-            <div class="input-row">
-                <textarea id="studentChatInput" placeholder="마이크를 누르거나 텍스트를 입력하세요" maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
-                <button class="btn-send-msg" id="sendBtn" onclick="sendChatMessage()" title="전송">✈️</button>
+            <button id="micBtn" class="btn-round-mic" title="누르고 말하기">🎤</button>
+            
+            <div class="text-input-wrap">
+                <textarea id="studentChatInput" placeholder="마이크나 텍스트 입력..." maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+                <button class="btn-send-arrow" id="sendBtn" onclick="sendChatMessage()" title="전송" disabled>⬆️</button>
             </div>
         </div>
     </div>
@@ -408,7 +415,6 @@
         document.getElementById('drawerOverlay').style.display = "block";
         setTimeout(() => document.getElementById('drawerMenu').classList.add('open'), 10);
     }
-    
     function closeMenu() {
         document.getElementById('drawerMenu').classList.remove('open');
         setTimeout(() => document.getElementById('drawerOverlay').style.display = "none", 300);
@@ -444,14 +450,10 @@
             noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:30px 10px;'>기록된 노트가 없습니다.<br>대화를 시작해보세요!</div>";
         } else {
             dates.forEach(date => {
-                const dateHeader = document.createElement('div');
-                dateHeader.className = 'note-date-header';
-                dateHeader.innerText = `📅 ${date}`;
+                const dateHeader = document.createElement('div'); dateHeader.className = 'note-date-header'; dateHeader.innerText = `📅 ${date}`;
                 noteList.appendChild(dateHeader);
-                
-                allNotes[date].forEach((note, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'note-item';
+                allNotes[date].forEach((note) => {
+                    const item = document.createElement('div'); item.className = 'note-item';
                     item.innerHTML = `<div class="note-original">Q. "${note.original}"</div><div class="note-correction">${note.correction.replace(/\n/g, '<br>')}</div>`;
                     noteList.appendChild(item);
                 });
@@ -459,14 +461,11 @@
         }
         modal.style.display = "flex";
     }
-    
     function closeNoteModal() { document.getElementById('noteModal').style.display = "none"; }
-
     function copyCorrectionNote() {
         let allNotes = JSON.parse(localStorage.getItem('gemini_tutor_daily_notes') || '{}');
         const dates = Object.keys(allNotes).reverse();
         if (dates.length === 0) { alert("복사할 내용이 없습니다."); return; }
-        
         let textToCopy = `📝 [나의 AI 영어 교정 노트]\n\n`;
         dates.forEach(date => {
             textToCopy += `--- 📅 ${date} ---\n`;
@@ -476,15 +475,17 @@
     }
 
     // ==========================================
-    // 🎤 마이크 로직
+    // 🎤 1줄 메신저형 입력 패널 기능
     // ==========================================
     async function startRecording(e) {
         if(e.type === 'mousedown' && e.button !== 0) return; 
         const micBtn = document.getElementById('micBtn');
         const inputEl = document.getElementById('studentChatInput');
+        const sendBtn = document.getElementById('sendBtn');
         
-        inputEl.value = "";
-        inputEl.style.height = '52px';
+        inputEl.value = ""; inputEl.style.height = '48px';
+        sendBtn.disabled = true; sendBtn.style.backgroundColor = "#dfe4ea"; sendBtn.style.boxShadow = "none";
+        sendBtn.style.cursor = "not-allowed";
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -499,7 +500,7 @@
             micBtn.classList.add('recording');
             playBeep('start');
             if (navigator.vibrate) navigator.vibrate(50); 
-            inputEl.placeholder = "듣고 있어요! 손을 떼면 변환을 시작합니다...";
+            inputEl.placeholder = "듣고 있어요! 손을 떼면 변환합니다...";
         } catch (err) { alert("마이크 사용 권한을 허용해주세요!"); }
     }
 
@@ -507,12 +508,10 @@
         if(mediaRecorder && mediaRecorder.state === "recording") {
             const micBtn = document.getElementById('micBtn');
             const inputEl = document.getElementById('studentChatInput');
-            mediaRecorder.stop();
-            mediaRecorder.stream.getTracks().forEach(track => track.stop());
-            micBtn.classList.remove('recording');
-            playBeep('stop');
+            mediaRecorder.stop(); mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            micBtn.classList.remove('recording'); playBeep('stop');
             if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
-            inputEl.placeholder = "⏳ 텍스트로 변환 중입니다 (잠시만 대기)...";
+            inputEl.placeholder = "⏳ 텍스트로 변환 중입니다...";
         }
     }
 
@@ -528,13 +527,13 @@
             const data = await response.json();
             if (data.text) { 
                 inputEl.value = data.text; 
-                autoResize(inputEl);
-                inputEl.placeholder = "텍스트를 수정하거나 ✈️ 전송 버튼을 누르세요";
+                autoResize(inputEl); // 활성화 트리거
+                inputEl.placeholder = "텍스트를 수정하거나 ⬆️ 화살표를 누르세요";
             } 
             else { throw new Error(data.error?.message || "변환 실패"); }
         } catch (error) {
             alert("음성 인식 중 오류가 발생했습니다.");
-            inputEl.placeholder = "다시 녹음하거나 텍스트를 입력하세요";
+            inputEl.placeholder = "마이크를 누르거나 텍스트 입력...";
         }
     }
 
@@ -558,17 +557,14 @@
         const heartEl = document.getElementById('heartStatus');
         if(heartEl) heartEl.innerText = `❤️ ${CURRENT_HEARTS} / ${USER_PLAN}`;
         const inputEl = document.getElementById('studentChatInput');
-        const sendBtn = document.getElementById('sendBtn');
         const micBtn = document.getElementById('micBtn');
         
         if (CURRENT_HEARTS <= 0) {
             if(inputEl) { inputEl.disabled = true; inputEl.placeholder = "오늘 한도를 소진했습니다."; }
-            if(sendBtn) { sendBtn.disabled = true; sendBtn.style.backgroundColor = "#b2bec3"; }
-            if(micBtn) { micBtn.disabled = true; micBtn.style.backgroundColor = "#b2bec3"; }
+            if(micBtn) { micBtn.disabled = true; micBtn.style.backgroundColor = "#dfe4ea"; micBtn.style.boxShadow="none"; }
         } else {
-            if(inputEl) { inputEl.disabled = false; inputEl.placeholder = "마이크를 누르거나 텍스트를 입력하세요"; }
-            if(sendBtn) { sendBtn.disabled = false; sendBtn.style.backgroundColor = "#78e08f"; }
-            if(micBtn) { micBtn.disabled = false; micBtn.style.backgroundColor = "#ffc048"; }
+            if(inputEl) { inputEl.disabled = false; inputEl.placeholder = "마이크를 누르거나 텍스트 입력..."; }
+            if(micBtn) { micBtn.disabled = false; micBtn.style.backgroundColor = "#ffc048"; micBtn.style.boxShadow="";}
         }
     }
 
@@ -641,12 +637,8 @@
     function startQuickScenario(scenario) {
         const inputEl = document.getElementById('userInput');
         inputEl.value = scenario;
-        inputEl.style.transform = "scale(1.02)";
-        inputEl.style.borderColor = "#78e08f";
-        setTimeout(() => {
-            inputEl.style.transform = "scale(1)";
-            inputEl.style.borderColor = "#ffda79";
-        }, 200);
+        inputEl.style.transform = "scale(1.02)"; inputEl.style.borderColor = "#78e08f";
+        setTimeout(() => { inputEl.style.transform = "scale(1)"; inputEl.style.borderColor = "#ffda79"; }, 200);
     }
 
     async function generateScript() {
@@ -667,10 +659,7 @@
             document.getElementById('scriptResult').innerHTML = data.candidates[0].content.parts[0].text;
             document.getElementById('scriptResult').style.display = "block";
             document.getElementById('startChatBtn').style.display = "block";
-            setTimeout(() => { 
-                const container = document.getElementById('step1');
-                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' }); 
-            }, 100);
+            setTimeout(() => { const container = document.getElementById('step1'); container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' }); }, 100);
         } catch (error) { document.getElementById('scriptResult').innerHTML = "오류 발생: " + error.message; document.getElementById('scriptResult').style.display = "block"; } 
         finally { document.getElementById('loading').style.display = "none"; }
     }
@@ -706,8 +695,11 @@
             </div>`;
         
         const inputEl = document.getElementById('studentChatInput');
-        inputEl.value = "";
-        inputEl.placeholder = "마이크를 누르거나 텍스트를 입력하세요";
+        inputEl.value = ""; inputEl.style.height = '48px';
+        inputEl.placeholder = "마이크를 누르거나 텍스트 입력...";
+        
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true; sendBtn.style.backgroundColor = "#dfe4ea"; sendBtn.style.cursor = "not-allowed"; sendBtn.style.boxShadow = "none";
         
         let systemPrompt = "";
         if (mode === 'script') {
@@ -755,34 +747,22 @@
 
         const hintBtn = document.createElement('button'); hintBtn.className = 'tool-btn'; hintBtn.innerHTML = "📝 해석/힌트"; 
         
-        const hintBox = document.createElement('div');
-        hintBox.className = 'tip-container';
-        hintBox.innerHTML = `
-            <div class="loading-wrap" style="margin:10px 0;">
-                <div class="spinner"></div> 의미 파악 및 추천 답변 생성 중...
-            </div>`;
+        const hintBox = document.createElement('div'); hintBox.className = 'tip-container';
+        hintBox.innerHTML = `<div class="loading-wrap" style="margin:10px 0;"><div class="spinner"></div> 의미 파악 및 추천 답변 생성 중...</div>`;
         
         let isHintLoaded = false;
         hintBtn.onclick = async () => {
             if (hintBox.classList.contains('show')) { 
-                hintBox.classList.remove('show'); 
-                hintBtn.style.background = "#f8efd4"; 
+                hintBox.classList.remove('show'); hintBtn.style.background = "#f8efd4"; 
             } else { 
-                hintBox.classList.add('show'); 
-                hintBtn.style.background = "#ffeaa7"; 
-                chatBox.scrollTop = chatBox.scrollHeight;
-                
+                hintBox.classList.add('show'); hintBtn.style.background = "#ffeaa7"; chatBox.scrollTop = chatBox.scrollHeight;
                 if (!isHintLoaded) {
                     isHintLoaded = true;
                     const hintPrompt = `튜터가 한 영어 문장: "${text}"\n한국어로 해석해주고, 초보자가 대답할 수 있는 쉽고 짧은 대답 2가지를 추천해줘. \n양식: [해석]: (내용) / [추천 대답 1]: (영어)-(뜻) / [추천 대답 2]: (영어)-(뜻)`;
                     try {
                         const response = await fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: hintPrompt }] }] }) });
-                        const data = await response.json(); 
-                        hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-                    } catch (error) { 
-                        hintBox.innerHTML = "정보를 불러오지 못했습니다."; 
-                        isHintLoaded = false;
-                    }
+                        const data = await response.json(); hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                    } catch (error) { hintBox.innerHTML = "정보를 불러오지 못했습니다."; isHintLoaded = false; }
                     chatBox.scrollTop = chatBox.scrollHeight;
                 }
             }
@@ -802,10 +782,7 @@
         
         const tipBtn = document.createElement('button'); tipBtn.className = 'tool-btn'; tipBtn.innerHTML = "💡 AI 교정 팁 보기"; tipBtn.style.width = "100%"; tipBtn.style.justifyContent = "center";
         const tipBox = document.createElement('div'); tipBox.className = 'tip-container'; 
-        tipBox.innerHTML = `
-            <div class="loading-wrap" style="margin:10px 0;">
-                <div class="spinner green"></div> 다정한 친구가 피드백을 적고 있어요...
-            </div>`;
+        tipBox.innerHTML = `<div class="loading-wrap" style="margin:10px 0;"><div class="spinner green"></div> 다정한 친구가 피드백을 적고 있어요...</div>`;
 
         tipBtn.onclick = () => {
             if (tipBox.classList.contains('show')) { tipBox.classList.remove('show'); tipBtn.style.background = "#f8efd4"; } 
@@ -817,8 +794,26 @@
         return { tipBox, tipBtn }; 
     }
 
-    function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }
-    function autoResize(textarea) { textarea.style.height = '52px'; textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; }
+    // [수정] 텍스트 입력 시 화살표 활성화 토글
+    function autoResize(textarea) { 
+        textarea.style.height = '48px'; 
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; 
+        
+        const sendBtn = document.getElementById('sendBtn');
+        if (textarea.value.trim().length > 0 && CURRENT_HEARTS > 0) {
+            sendBtn.disabled = false;
+            sendBtn.style.backgroundColor = "#78e08f";
+            sendBtn.style.boxShadow = "0 2px 6px rgba(120, 224, 143, 0.3)";
+            sendBtn.style.cursor = "pointer";
+        } else {
+            sendBtn.disabled = true;
+            sendBtn.style.backgroundColor = "#dfe4ea";
+            sendBtn.style.boxShadow = "none";
+            sendBtn.style.cursor = "not-allowed";
+        }
+    }
+    
+    function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if(!document.getElementById('sendBtn').disabled) sendChatMessage(); } }
 
     async function sendChatMessage() {
         if (CURRENT_HEARTS <= 0) return;
@@ -829,8 +824,12 @@
         CURRENT_HEARTS--; localStorage.setItem("gemini_tutor_hearts", CURRENT_HEARTS); updateHeartUI();
 
         const { tipBox, tipBtn } = addStudentMessage(userText);
-        inputEl.value = ""; inputEl.style.height = '52px';
-        inputEl.placeholder = "마이크를 누르거나 텍스트를 입력하세요"; 
+        
+        // 전송 후 입력창 초기화 및 화살표 비활성화
+        inputEl.value = ""; inputEl.style.height = '48px';
+        inputEl.placeholder = "마이크를 누르거나 텍스트 입력..."; 
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true; sendBtn.style.backgroundColor = "#dfe4ea"; sendBtn.style.boxShadow = "none"; sendBtn.style.cursor = "not-allowed";
 
         chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
         if (chatHistory.length > 7) { 
