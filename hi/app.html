@@ -47,7 +47,6 @@
         }
         .btn-main:hover { box-shadow: 0 8px 20px rgba(255, 168, 1, 0.4); transform: translateY(-3px); }
 
-        /* 목소리 선택 버튼 CSS */
         .voice-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
         .btn-voice { 
             background: #f1f2f6; border: 2px solid transparent; border-radius: 16px; padding: 10px 10px; 
@@ -72,6 +71,23 @@
         }
         .btn-note:hover { background-color: #ffeaa7; }
 
+        /* [추가] 앱 상단 네비게이션 바 (뒤로가기 / 설정) */
+        .chat-top-nav { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-nav {
+            background: #ffffff; border: 1px solid #dfe4ea; border-radius: 14px; padding: 10px;
+            font-size: 14px; font-weight: 700; color: #57606f; cursor: pointer; flex: 1;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: all 0.2s;
+        }
+        .btn-nav:hover { background: #f8efd4; border-color: #ffda79; color: #d35400; }
+
+        /* [추가] 설정 메뉴 리스트 스타일 */
+        .menu-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 0; border-bottom: 1px solid #f1f2f6;
+        }
+        .menu-item:last-child { border-bottom: none; }
+
         #loading { display: none; margin-top: 20px; color: #ff9f43; text-align: center; font-weight: 700; font-size: 15px; }
         #scriptResult { 
             margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; 
@@ -79,7 +95,7 @@
         }
         #scriptResult b { color: #e15f41; font-size: 16px; background-color: #ffeaa7; padding: 2px 6px; border-radius: 6px; }
 
-        #chatSection { display: none; margin-top: 30px; }
+        #chatSection { display: none; margin-top: 10px; }
         .chat-box { 
             background-color: #f8efd4; border-radius: 20px; padding: 20px 15px; height: 400px; 
             overflow-y: auto; display: flex; flex-direction: column; gap: 16px; 
@@ -105,8 +121,8 @@
         .btn-start-chat:hover { box-shadow: 0 8px 20px rgba(120, 224, 143, 0.4); transform: translateY(-3px); }
         
         .btn-restart { background-color: #f1f2f6; color: #57606f; padding: 12px; margin-bottom: 15px; font-size: 14px; }
-        .btn-reset-key { background-color: transparent; color: #a4b0be; border: 1px solid #a4b0be; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: auto; font-weight: normal; }
-        .btn-reset-key:hover { background-color: #ff7f50; color: white; border-color: #ff7f50; }
+        .btn-reset-key { background-color: #ff7675; color: white; border: none; padding: 8px 14px; border-radius: 12px; font-size: 12px; width: auto; font-weight: bold; cursor: pointer; }
+        .btn-reset-key:hover { background-color: #d63031; }
 
         .chat-input-area { background-color: white; padding: 12px; border-radius: 20px; box-shadow: 0 4px 15px rgba(255, 177, 66, 0.1); margin-bottom: 15px; }
         .input-row { display: flex; gap: 8px; align-items: flex-end; }
@@ -200,11 +216,9 @@
     
     <!-- [1단계] 대화 준비 -->
     <div class="section-box" id="step1" style="display: none;">
-        <h3>1단계: 대화 준비 📝 
-            <button class="btn-reset-key" onclick="resetApiKey()">설정 초기화</button>
-        </h3>
+        <!-- [변경됨] 설정 초기화 버튼을 메뉴 모달로 이동하고 텍스트 깔끔하게 정리 -->
+        <h3>1단계: 대화 준비 📝</h3>
         
-        <!-- [변경됨] 목소리 선택을 직관적인 버튼 스타일로 교체 -->
         <div class="input-group" style="margin-top: 15px;">
             <label>🗣️ 튜터 목소리 선택</label>
             <div class="voice-options" id="voiceOptions">
@@ -237,6 +251,12 @@
 
     <!-- [2단계] 실전 대화 (채팅형) -->
     <div class="section-box" id="chatSection">
+        <!-- [추가] 앱 상단 네비게이션 바 -->
+        <div class="chat-top-nav">
+            <button class="btn-nav" onclick="goBackToSetup()">⬅️ 뒤로 가기</button>
+            <button class="btn-nav" onclick="openAppMenu()">☰ 앱 설정</button>
+        </div>
+
         <h3>2단계: AI 튜터와 회화 연습 🗣️</h3>
         <button class="btn-restart" onclick="restartConversation()">🔄 대화 다시 시작하기</button>
         
@@ -258,7 +278,7 @@
     </div>
     
     <div class="footer-info">
-        v2.7.0 | AI English Tutor. All rights reserved.
+        v2.8.0 | AI English Tutor. All rights reserved.
     </div>
 </div> 
 
@@ -283,6 +303,38 @@
     </div>
 </div>
 
+<!-- [추가] 앱 전체 설정/메뉴 모달 -->
+<div id="appMenuModal" class="modal-overlay">
+    <div class="modal-content" style="text-align: left;">
+        <button class="modal-close" onclick="closeAppMenu()">✖</button>
+        <h3 style="margin-top: 0; color: #d35400; border-bottom: 2px solid #ffeaa7; padding-bottom: 15px;">⚙️ 앱 설정</h3>
+        
+        <div class="menu-item">
+            <div>
+                <div style="font-weight: bold; color: #4a4a4a;">👤 내 프로필</div>
+                <div style="font-size: 13px; color: #a4b0be;" id="menuStudentName">이름 불러오는 중...</div>
+            </div>
+        </div>
+        
+        <div class="menu-item">
+            <div>
+                <div style="font-weight: bold; color: #4a4a4a;">❤️ 남은 하트 (이용권)</div>
+                <div style="font-size: 13px; color: #a4b0be;" id="menuHeartStatus">0 / 20</div>
+            </div>
+            <!-- 결제 기능 대비 버튼 미리 추가 -->
+            <button class="btn-quick" style="margin: 0; background: #fff3cd; color: #d35400; border-color: #ffda79;" onclick="alert('결제 기능은 곧 추가될 예정입니다!')">충전하기</button>
+        </div>
+
+        <div class="menu-item">
+            <div>
+                <div style="font-weight: bold; color: #4a4a4a;">🔑 기기 설정</div>
+                <div style="font-size: 13px; color: #a4b0be;">저장된 API 키 정보 초기화</div>
+            </div>
+            <button class="btn-reset-key" style="margin: 0;" onclick="resetApiKey()">초기화</button>
+        </div>
+    </div>
+</div>
+
 <script>
     let USER_API_KEY = ""; 
     let OPENAI_API_KEY = ""; 
@@ -291,7 +343,6 @@
     let chatHistory = []; 
     let availableVoices = []; 
     
-    // [변경됨] 선택된 목소리 프로필 상태 저장
     let currentVoiceProfile = 'female'; 
     let currentChatMode = 'script'; 
     
@@ -343,12 +394,37 @@
         micBtn.addEventListener('touchstart', startRecording, {passive: true});
         micBtn.addEventListener('touchend', stopRecording);
         
-        // 목소리 리스트 미리 로드
         availableVoices = window.speechSynthesis.getVoices();
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = () => { availableVoices = window.speechSynthesis.getVoices(); };
         }
     };
+
+    // ==========================================
+    // 앱 네비게이션 및 메뉴 로직 [신규 추가]
+    // ==========================================
+    function goBackToSetup() {
+        // 채팅창을 숨기고 설정(1단계) 화면을 다시 띄움
+        document.getElementById('chatSection').style.display = "none";
+        document.getElementById('step1').style.display = "block";
+        
+        // 뒤로 돌아갈 때 말하고 있던 소리가 있다면 끔
+        if(window.speechSynthesis) window.speechSynthesis.cancel();
+        
+        // 부드럽게 위로 스크롤
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openAppMenu() {
+        // 메뉴창 띄우기 전 최신 데이터 업데이트
+        document.getElementById('menuStudentName').innerText = STUDENT_NAME + " 님";
+        document.getElementById('menuHeartStatus').innerText = CURRENT_HEARTS + " / " + USER_PLAN;
+        document.getElementById('appMenuModal').style.display = "flex";
+    }
+
+    function closeAppMenu() {
+        document.getElementById('appMenuModal').style.display = "none";
+    }
 
     // ==========================================
     // 🎤 마이크 로직
@@ -466,10 +542,8 @@
     function getModelUrl() { return "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + USER_API_KEY; }
 
     // ==========================================
-    // 🗣️ TTS (목소리 매핑 및 재생 로직)
+    // 🗣️ TTS (목소리 매핑 및 재생 로직 - 최적화 적용)
     // ==========================================
-    
-    // [변경됨] 버튼 클릭 시 프로필 변경 및 샘플 재생
     function selectVoice(profile, btnElement) {
         currentVoiceProfile = profile;
         const buttons = document.querySelectorAll('.btn-voice');
@@ -484,47 +558,37 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    // [수정] 기기에 진짜 남성 목소리가 있는지 더 꼼꼼히 찾고, 없으면 갈라지는 소리 대신 안전한 기본음 사용
     function getBestVoiceForProfile(profile) {
         if (!availableVoices || availableVoices.length === 0) return null;
         
         let enVoices = availableVoices.filter(v => v.lang.startsWith('en'));
-        if (enVoices.length === 0) return availableVoices[0]; // 영어가 아예 없으면 기기 기본 목소리
+        if (enVoices.length === 0) return availableVoices[0]; 
 
         const findByWords = (words) => enVoices.find(v => words.some(w => v.name.toLowerCase().includes(w)));
 
         if (profile === 'female' || profile === 'girl') {
-            // 유명한 여성 목소리 키워드
             return findByWords(['samantha', 'zira', 'female', 'karen', 'victoria', 'susan', 'ava']) || 
                    enVoices.find(v => v.name.toLowerCase().includes('google us english')) || 
                    enVoices.find(v => v.default) || 
                    enVoices[0];
         } else { 
-            // 유명한 남성 목소리 키워드 대폭 추가
             let maleVoice = findByWords(['david', 'alex', 'daniel', 'arthur', 'fred', 'male', 'george', 'gordon']);
-            
-            // 핵심 수정: 남성 목소리가 없으면 억지로 이상한 목소리를 쓰지 말고 가장 깨끗한 '기본(default)' 목소리로 폴백
             return maleVoice || enVoices.find(v => v.default) || enVoices[0]; 
         }
     }
 
-    // [수정] 억지 피치(pitch) 조작을 최소화하여 기계음 원천 차단
     function applyVoiceProfile(utterance, profile, baseRate) {
         const voice = getBestVoiceForProfile(profile);
         if (voice) utterance.voice = voice;
         
         if (profile === 'female') {
-            utterance.pitch = 1.0; 
-            utterance.rate = baseRate;
+            utterance.pitch = 1.0; utterance.rate = baseRate;
         } else if (profile === 'male') {
-            utterance.pitch = 1.0; 
-            utterance.rate = baseRate; 
+            utterance.pitch = 1.0; utterance.rate = baseRate; 
         } else if (profile === 'girl') {
-            utterance.pitch = 1.2; // 1.4 -> 1.2로 대폭 낮춤 (살짝만 귀엽게)
-            utterance.rate = baseRate * 1.05; 
+            utterance.pitch = 1.2; utterance.rate = baseRate * 1.05; 
         } else if (profile === 'boy') {
-            utterance.pitch = 1.1; // 1.2 -> 1.1로 낮춤 (살짝만 톤업, 기계음 안 나게)
-            utterance.rate = baseRate * 1.05;
+            utterance.pitch = 1.1; utterance.rate = baseRate * 1.05;
         }
     }
 
