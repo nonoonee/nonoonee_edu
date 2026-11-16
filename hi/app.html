@@ -107,7 +107,6 @@
         .tip-container.show { display: block; animation: slideDown 0.35s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* [개편] 하단 고정 입력 패널 (메신저 스타일) */
         .chat-input-panel { 
             background: white; border-radius: 28px 28px 0 0; 
             padding: 12px 15px calc(15px + env(safe-area-inset-bottom)) 15px; 
@@ -118,7 +117,6 @@
             display: flex; align-items: flex-end; gap: 10px;
         }
         
-        /* 둥근 마이크 버튼 */
         .btn-round-mic {
             width: 48px; height: 48px; border-radius: 50%; 
             background: #ffc048; color: white; font-size: 22px; 
@@ -130,7 +128,6 @@
         @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.7); transform: scale(0.95); } 70% { box-shadow: 0 0 0 20px rgba(255, 118, 117, 0); transform: scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); transform: scale(0.95); } }
         .btn-round-mic.recording { background-color: #ff7675; animation: pulse-ring 1.2s infinite; }
 
-        /* 텍스트 박스 래퍼 (테두리 및 위 화살표 포함) */
         .text-input-wrap {
             flex-grow: 1; position: relative; display: flex; align-items: flex-end;
             background: #ffffff; border: 1.5px solid #dfe4ea; border-radius: 24px;
@@ -139,14 +136,13 @@
         .text-input-wrap:focus-within { border-color: #78e08f; }
         
         .text-input-wrap textarea {
-            width: 100%; padding: 12px 48px 12px 16px; /* 우측 화살표 공간 확보 */
+            width: 100%; padding: 12px 48px 12px 16px; 
             border: none; background: transparent; 
             margin: 0; resize: none; height: 48px; min-height: 48px; max-height: 120px;
             font-family: inherit; font-size: 15px; line-height: 1.5; 
             outline: none; box-sizing: border-box;
         }
         
-        /* 위로 향한 전송 화살표 버튼 */
         .btn-send-arrow {
             position: absolute; right: 6px; bottom: 6px;
             width: 36px; height: 36px; border-radius: 50%;
@@ -193,13 +189,10 @@
 
         .footer-info { text-align: center; font-size: 12px; color: #ced6e0; margin: 30px 0 10px 0; font-family: 'Nunito', sans-serif; flex-shrink: 0;}
         #scriptResult { margin-top: 20px; padding: 18px; background-color: #f1f2f6; border-radius: 16px; border-left: 5px solid #ffda79; white-space: pre-wrap; line-height: 1.7; display: none; font-size: 15px; text-align: left;}
-        
-        .btn-start-chat { background: linear-gradient(135deg, #78e08f, #38ada9); color: white; padding: 16px; margin-top: 20px; box-shadow: 0 6px 15px rgba(120, 224, 143, 0.3); text-shadow: 1px 1px 1px rgba(0,0,0,0.1); display: none; }
     </style>
 </head>
 <body>
 
-<!-- 사이드 드로어 메뉴 -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeMenu()"></div>
 <div class="drawer-menu" id="drawerMenu">
     <div class="drawer-header">
@@ -213,7 +206,7 @@
         </div>
         
         <div class="menu-section">
-            <div class="menu-title">🗣️ 튜터 목소 변경</div>
+            <div class="menu-title">🗣️ 튜터 목소리 변경</div>
             <div class="voice-options">
                 <button class="btn-voice selected" onclick="selectVoice('female', this)">👩 성인 여자</button>
                 <button class="btn-voice" onclick="selectVoice('male', this)">👨 성인 남자</button>
@@ -239,8 +232,6 @@
 </div>
 
 <div class="container">
-    
-    <!-- [0단계] API 키 설정 -->
     <div id="step0">
         <h2 style="margin-top:20px;">💡 AI 튜터 시작하기</h2>
         <div class="section-box">
@@ -267,10 +258,9 @@
             </div>
             <button class="btn-main" onclick="saveApiKey()">✅ 저장하고 시작하기</button>
         </div>
-        <div class="footer-info">v5.0.0 | AI English Tutor App</div>
+        <div class="footer-info">v5.1.0 | AI English Tutor App</div>
     </div>
     
-    <!-- [1단계] 대화 준비 -->
     <div id="step1">
         <div class="app-header">
             <button class="icon-btn" onclick="openMenu()">☰</button>
@@ -313,12 +303,11 @@
                 <div class="spinner"></div> 대본을 생성 중입니다...
             </div>
             <div id="scriptResult"></div>
-            <button id="startChatBtn" class="btn-start-chat" onclick="openChatSection('script')">🎤 준비된 대본으로 시작하기 ▶️</button>
+            <button id="startChatBtn" class="btn-main" style="margin-top: 15px; display: none;" onclick="openChatSection('script')">🎤 준비된 대본으로 시작하기 ▶️</button>
         </div>
-        <div class="footer-info" style="margin-top:auto;">v5.0.0 | AI English Tutor App</div>
+        <div class="footer-info" style="margin-top:auto;">v5.1.0 | AI English Tutor App</div>
     </div>
 
-    <!-- [2단계] 채팅 UI (독립 스크롤 & 1줄 메신저형 입력창) -->
     <div id="chatSection">
         <div class="app-header">
             <button class="icon-btn" onclick="goBackToSetup()">⬅️</button>
@@ -330,13 +319,10 @@
             <div id="heartStatus" style="font-weight: 700; color: #ff7675; font-size: 14px;">❤️ 20 / 20</div>
         </div>
 
-        <!-- 독립 스크롤 영역 -->
         <div class="chat-box" id="chatBox"></div>
         
-        <!-- 바닥에 고정되는 1줄 압축 입력 패널 -->
         <div class="chat-input-panel">
             <button id="micBtn" class="btn-round-mic" title="누르고 말하기">🎤</button>
-            
             <div class="text-input-wrap">
                 <textarea id="studentChatInput" placeholder="마이크나 텍스트 입력..." maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
                 <button class="btn-send-arrow" id="sendBtn" onclick="sendChatMessage()" title="전송" disabled>⬆️</button>
@@ -345,7 +331,6 @@
     </div>
 </div> 
 
-<!-- 교정 노트 모달 -->
 <div id="noteModal" class="modal-overlay">
     <div class="modal-content">
         <button class="modal-close" onclick="closeNoteModal()">✖</button>
@@ -400,9 +385,6 @@
         if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = () => { availableVoices = window.speechSynthesis.getVoices(); }; }
     };
 
-    // ==========================================
-    // 앱 네비게이션 & 드로어 메뉴 & 노트
-    // ==========================================
     function goBackToSetup() {
         document.getElementById('chatSection').style.display = "none"; 
         document.getElementById('step1').style.display = "flex";
@@ -474,9 +456,6 @@
         navigator.clipboard.writeText(textToCopy).then(() => alert("클립보드에 복사되었습니다!")).catch(err => alert("복사에 실패했습니다."));
     }
 
-    // ==========================================
-    // 🎤 1줄 메신저형 입력 패널 기능
-    // ==========================================
     async function startRecording(e) {
         if(e.type === 'mousedown' && e.button !== 0) return; 
         const micBtn = document.getElementById('micBtn');
@@ -527,7 +506,7 @@
             const data = await response.json();
             if (data.text) { 
                 inputEl.value = data.text; 
-                autoResize(inputEl); // 활성화 트리거
+                autoResize(inputEl); 
                 inputEl.placeholder = "텍스트를 수정하거나 ⬆️ 화살표를 누르세요";
             } 
             else { throw new Error(data.error?.message || "변환 실패"); }
@@ -703,13 +682,15 @@
         
         let systemPrompt = "";
         if (mode === 'script') {
-            systemPrompt = `너는 왕초보 '${STUDENT_NAME}'을 돕는 AI 튜터야. 주제는 '${currentUserInput}'. 첫인사 무조건 'Hi ${STUDENT_NAME}! How was your day?'. 틀리면 고쳐주고 'Can you say?' 유도. 짧게 1~2문장.`;
+            // [중요 규칙 추가됨] 한국어 뜻 괄호 출력 원천 차단
+            systemPrompt = `너는 왕초보 '${STUDENT_NAME}'을 돕는 AI 튜터야. 주제는 '${currentUserInput}'. 첫인사 무조건 'Hi ${STUDENT_NAME}! How was your day?'. 틀리면 올바른 영어 표현을 제시하며 'Can you say [올바른 문장]?'이라고 영어로만 유도해. [중요 규칙]: 모든 대화는 100% 영어로만 출력해. 괄호() 안에 한국어 뜻이나 설명을 절대 적지 마. 무조건 1~2문장으로 짧게 대답해.`;
             chatHistory = [ { "role": "user", "parts": [{ "text": systemPrompt }] }, { "role": "model", "parts": [{ "text": `Hi ${STUDENT_NAME}! How was your day?` }] } ];
             document.getElementById('chatLoading').remove();
             addTeacherMessage(`Hi ${STUDENT_NAME}! How was your day?`);
             speakText(`Hi ${STUDENT_NAME}! How was your day?`);
         } else {
-            systemPrompt = `너는 왕초보 '${STUDENT_NAME}'을 돕는 친절한 외국인(카페/호텔/친구) 역할이야. 주제 '${currentUserInput}'에 몰입해서 첫 질문 던져. 틀리면 고쳐주고 'Can you say?' 유도. 짧게 1~2문장.`;
+            // [중요 규칙 추가됨] 한국어 뜻 괄호 출력 원천 차단
+            systemPrompt = `너는 왕초보 '${STUDENT_NAME}'을 돕는 친절한 외국인(카페/호텔/친구) 역할이야. 주제 '${currentUserInput}'에 몰입해서 첫 질문을 영어로 던져. 틀리면 올바른 영어 표현을 제시하며 'Can you say [올바른 문장]?'이라고 영어로만 유도해. [중요 규칙]: 모든 대화는 100% 영어로만 출력해. 괄호() 안에 한국어 뜻이나 설명을 절대 적지 마. 무조건 1~2문장으로 짧게 대답해.`;
             chatHistory = [];
             try {
                 const response = await fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ "role": "user", "parts": [{ "text": systemPrompt }] }] }) });
@@ -794,22 +775,15 @@
         return { tipBox, tipBtn }; 
     }
 
-    // [수정] 텍스트 입력 시 화살표 활성화 토글
     function autoResize(textarea) { 
         textarea.style.height = '48px'; 
         textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; 
         
         const sendBtn = document.getElementById('sendBtn');
         if (textarea.value.trim().length > 0 && CURRENT_HEARTS > 0) {
-            sendBtn.disabled = false;
-            sendBtn.style.backgroundColor = "#78e08f";
-            sendBtn.style.boxShadow = "0 2px 6px rgba(120, 224, 143, 0.3)";
-            sendBtn.style.cursor = "pointer";
+            sendBtn.disabled = false; sendBtn.style.backgroundColor = "#78e08f"; sendBtn.style.boxShadow = "0 2px 6px rgba(120, 224, 143, 0.3)"; sendBtn.style.cursor = "pointer";
         } else {
-            sendBtn.disabled = true;
-            sendBtn.style.backgroundColor = "#dfe4ea";
-            sendBtn.style.boxShadow = "none";
-            sendBtn.style.cursor = "not-allowed";
+            sendBtn.disabled = true; sendBtn.style.backgroundColor = "#dfe4ea"; sendBtn.style.boxShadow = "none"; sendBtn.style.cursor = "not-allowed";
         }
     }
     
@@ -825,7 +799,6 @@
 
         const { tipBox, tipBtn } = addStudentMessage(userText);
         
-        // 전송 후 입력창 초기화 및 화살표 비활성화
         inputEl.value = ""; inputEl.style.height = '48px';
         inputEl.placeholder = "마이크를 누르거나 텍스트 입력..."; 
         const sendBtn = document.getElementById('sendBtn');
