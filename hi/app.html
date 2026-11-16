@@ -279,7 +279,7 @@
             </div>
             <button class="btn-main" onclick="saveApiKey()">✅ 저장하고 시작하기</button>
         </div>
-        <div class="footer-info">v8.0.0 (PWA Ready) | AI English Tutor</div>
+        <div class="footer-info">v8.1.0 (Tap-to-Talk) | AI English Tutor</div>
     </div>
     
     <div id="step1">
@@ -328,7 +328,7 @@
             <div id="scriptResult"></div>
             <button id="startChatBtn" class="btn-main" style="margin-top: 15px; display: none;" onclick="openChatSection('script')">🎤 준비된 대본으로 시작하기 ▶️</button>
         </div>
-        <div class="footer-info" style="margin-top:auto;">v8.0.0 (PWA Ready) | AI English Tutor</div>
+        <div class="footer-info" style="margin-top:auto;">v8.1.0 (Tap-to-Talk) | AI English Tutor</div>
     </div>
 
     <div id="chatSection">
@@ -348,7 +348,7 @@
                 <textarea id="studentChatInput" placeholder="마이크나 텍스트 입력..." maxlength="150" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
                 <button class="btn-send-arrow" id="sendBtn" onclick="sendChatMessage()" title="전송" disabled>⬆️</button>
             </div>
-            <button id="micBtn" class="btn-round-mic" title="누르고 말하기">🎤</button>
+            <button id="micBtn" class="btn-round-mic" title="누르고 녹음하기">🎤</button>
         </div>
     </div>
     
@@ -374,6 +374,9 @@
     let USER_PLAN = 20; let CURRENT_HEARTS = 20;
     let mediaRecorder; let audioChunks = [];
     let previousSection = 'step1';
+    
+    // [추가] 녹음 상태 관리 변수
+    let isRecording = false; 
 
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
@@ -407,10 +410,9 @@
             document.getElementById('step1').style.display = "flex"; 
         }
         
+        // [개편] 마이크 버튼 이벤트 변경 (원터치 토글 방식)
         const micBtn = document.getElementById('micBtn');
-        micBtn.addEventListener('mousedown', startRecording); micBtn.addEventListener('mouseup', stopRecording);
-        micBtn.addEventListener('mouseleave', stopRecording); micBtn.addEventListener('touchstart', startRecording, {passive: true});
-        micBtn.addEventListener('touchend', stopRecording);
+        micBtn.addEventListener('click', toggleRecording);
         
         availableVoices = window.speechSynthesis.getVoices();
         if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = () => { availableVoices = window.speechSynthesis.getVoices(); }; }
@@ -517,15 +519,27 @@
         navigator.clipboard.writeText(textToCopy).then(() => alert("클립보드에 복사되었습니다!")).catch(err => alert("복사에 실패했습니다."));
     }
 
-    async function startRecording(e) {
-        if(e.type === 'mousedown' && e.button !== 0) return; 
+    // ==========================================
+    // 🎤 [개편] 마이크 원터치 토글 및 리셋 방식
+    // ==========================================
+    async function toggleRecording(e) {
+        if (e) e.preventDefault();
+        
+        // 이미 녹음 중이면 종료(stop)시키고, 아니면 시작(start)시킵니다.
+        if (isRecording) {
+            stopRecording();
+        } else {
+            await startRecording();
+        }
+    }
+
+    async function startRecording() {
         const micBtn = document.getElementById('micBtn');
         const inputEl = document.getElementById('studentChatInput');
-        const sendBtn = document.getElementById('sendBtn');
         
-        inputEl.value = ""; inputEl.style.height = '48px';
-        sendBtn.disabled = true; sendBtn.style.backgroundColor = "#dfe4ea"; sendBtn.style.boxShadow = "none";
-        sendBtn.style.cursor = "not-allowed";
+        // 새로 누르면 무조건 텍스트 박스를 싹 지우고 초기화(리셋) 합니다.
+        inputEl.value = ""; 
+        autoResize(inputEl); 
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -537,19 +551,27 @@
                 await sendToWhisper(audioBlob);
             };
             mediaRecorder.start();
+            isRecording = true;
             micBtn.classList.add('recording');
             playBeep('start');
             if (navigator.vibrate) navigator.vibrate(50); 
-            inputEl.placeholder = "듣고 있어요! 손을 떼면 변환합니다...";
-        } catch (err) { alert("마이크 사용 권한을 허용해주세요!"); }
+            inputEl.placeholder = "듣고 있어요! 완료하려면 마이크를 다시 누르세요...";
+        } catch (err) { 
+            alert("마이크 사용 권한을 허용해주세요!"); 
+            isRecording = false; 
+        }
     }
 
-    function stopRecording(e) {
+    function stopRecording() {
         if(mediaRecorder && mediaRecorder.state === "recording") {
             const micBtn = document.getElementById('micBtn');
             const inputEl = document.getElementById('studentChatInput');
-            mediaRecorder.stop(); mediaRecorder.stream.getTracks().forEach(track => track.stop());
-            micBtn.classList.remove('recording'); playBeep('stop');
+            mediaRecorder.stop(); 
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            
+            isRecording = false;
+            micBtn.classList.remove('recording'); 
+            playBeep('stop');
             if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
             inputEl.placeholder = "⏳ 텍스트로 변환 중입니다...";
         }
@@ -766,9 +788,6 @@
         }
     }
     
-    // ==========================================
-    // 💬 말풍선 생성 및 전송 로직
-    // ==========================================
     function addTeacherMessage(text) {
         const chatBox = document.getElementById('chatBox');
         const card = document.createElement('div'); card.className = 'chat-card card-tutor';
@@ -914,16 +933,11 @@
         }
     }
     
-    // PWA 서비스 워커 등록 로직
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then(registration => {
-                    console.log('Service Worker 등록 성공:', registration.scope);
-                })
-                .catch(error => {
-                    console.log('Service Worker 등록 실패:', error);
-                });
+                .then(registration => { console.log('Service Worker 등록 성공:', registration.scope); })
+                .catch(error => { console.log('Service Worker 등록 실패:', error); });
         });
     }
 </script>
