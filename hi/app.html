@@ -90,9 +90,11 @@
         .tool-btn { 
             background: #f8efd4; border: none; padding: 8px 12px; border-radius: 12px; 
             font-size: 13px; color: #d35400; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; width: auto;
+            transition: background 0.2s;
         }
         .tool-btn:hover { background: #ffeaa7; }
 
+        /* 인라인 힌트/노트 박스 공통 CSS */
         .tip-container {
             display: none; background-color: #f6fff8; border: 1px dashed #78e08f; padding: 15px;
             border-radius: 12px; font-size: 15px; margin-top: 15px; color: #2f3640; line-height: 1.6; text-align: left;
@@ -119,7 +121,7 @@
         .input-row textarea:focus { border-color: #78e08f; background-color: #fff; }
         .btn-send-msg { background-color: #78e08f; color: white; border: none; border-radius: 20px; width: 52px; height: 52px; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(120, 224, 143, 0.3); flex-shrink: 0; }
 
-        /* [신규] 로딩 스피너 애니메이션 CSS */
+        /* 로딩 스피너 애니메이션 CSS */
         .loading-wrap { display: flex; justify-content: center; align-items: center; color: #ff9f43; font-weight: 700; font-size: 15px; margin: 20px 0; }
         .spinner {
             border: 4px solid rgba(255, 177, 66, 0.2); border-top: 4px solid #ff9f43; border-radius: 50%;
@@ -273,7 +275,6 @@
                 <button style="flex: 1; background: #f8efd4; color:#d35400; padding:14px; font-size:15px; border-radius:18px;" onclick="skipScriptAndChat()">🚀 바로 프리토킹</button>
             </div>
             
-            <!-- [추가] 대본 생성 시 스피너 로딩 바 -->
             <div id="loading" class="loading-wrap" style="display: none;">
                 <div class="spinner"></div> 대본을 생성 중입니다...
             </div>
@@ -310,19 +311,11 @@
     </div>
     
     <div class="footer-info">
-        v3.3.0 | AI English Tutor App. All rights reserved.
+        v3.4.0 | AI English Tutor App. All rights reserved.
     </div>
 </div> 
 
-<!-- 힌트 모달 -->
-<div id="hintModal" class="modal-overlay">
-    <div class="modal-content" style="max-height: 60vh;">
-        <button class="modal-close" onclick="closeHintModal()">✖</button>
-        <div id="hintModalBody"></div>
-    </div>
-</div>
-
-<!-- 교정 노트 모달 -->
+<!-- 교정 노트 모달 (힌트 모달은 삭제됨) -->
 <div id="noteModal" class="modal-overlay">
     <div class="modal-content">
         <button class="modal-close" onclick="closeNoteModal()">✖</button>
@@ -467,7 +460,6 @@
         const micBtn = document.getElementById('micBtn');
         const inputEl = document.getElementById('studentChatInput');
         
-        // [변경] 마이크를 누르면 기존에 작성된 텍스트를 깨끗하게 지웁니다.
         inputEl.value = "";
         inputEl.style.height = '52px';
 
@@ -512,7 +504,6 @@
             });
             const data = await response.json();
             if (data.text) { 
-                // [변경] 바로 전송하지 않고 텍스트 박스에 뿌려준 뒤 사용자의 확인을 기다립니다.
                 inputEl.value = data.text; 
                 autoResize(inputEl);
                 inputEl.placeholder = "텍스트를 수정하거나 ✈️ 전송 버튼을 누르세요";
@@ -524,9 +515,6 @@
         }
     }
 
-    // ==========================================
-    // ❤️ 하트 관리 및 기본 설정
-    // ==========================================
     function checkAndResetHearts() {
         const savedPlan = localStorage.getItem("gemini_tutor_plan");
         if (savedPlan) USER_PLAN = parseInt(savedPlan);
@@ -627,10 +615,6 @@
     }
     function speakText(text) { replayText(text, 0.9); }
 
-    // ==========================================
-    // 대본 생성 및 대화 시작 로직
-    // ==========================================
-    
     function startQuickScenario(scenario) {
         const inputEl = document.getElementById('userInput');
         inputEl.value = scenario;
@@ -648,7 +632,7 @@
         currentUserInput = userInput; 
         document.getElementById('scriptResult').style.display = "none";
         document.getElementById('startChatBtn').style.display = "none";
-        document.getElementById('loading').style.display = "flex"; // 스피너 로딩 표시
+        document.getElementById('loading').style.display = "flex"; 
         
         const promptText = `다음은 초보자인 '${STUDENT_NAME}'과 AI 튜터의 스몰토크 대본입니다. 규칙: 영어 문장은 <b> 태그로 감싸주세요. 발음은 적지 마세요.
         1. 첫 질문("Hi ${STUDENT_NAME}! How was~?")에 대한 대답 / 2. 튜터 꼬리 질문 2개와 대답 2개 / 3. 튜터에게 되묻기 1개
@@ -688,7 +672,6 @@
         if(window.speechSynthesis) window.speechSynthesis.cancel();
         
         const chatBox = document.getElementById('chatBox');
-        // [추가] 채팅 진입 시 튜터 인사 대기 스피너
         chatBox.innerHTML = `
             <div id='chatLoading' class='chat-card' style='text-align:center; padding: 25px;'>
                 <div class="loading-wrap" style="margin:0; color:#57606f;">
@@ -744,10 +727,45 @@
             else { body.classList.add('blurred-text'); showBtn.innerHTML = "👁️ 보기"; isBlurred = true; }
         };
 
-        const hintBtn = document.createElement('button'); hintBtn.className = 'tool-btn'; hintBtn.innerHTML = "📝 해석/힌트"; hintBtn.onclick = () => showHintModal(text);
+        const hintBtn = document.createElement('button'); hintBtn.className = 'tool-btn'; hintBtn.innerHTML = "📝 해석/힌트"; 
+        
+        // [수정] 인라인 힌트 박스 생성
+        const hintBox = document.createElement('div');
+        hintBox.className = 'tip-container';
+        hintBox.innerHTML = `
+            <div class="loading-wrap" style="margin:10px 0;">
+                <div class="spinner"></div> 의미 파악 및 추천 답변 생성 중...
+            </div>`;
+        
+        let isHintLoaded = false;
+        hintBtn.onclick = async () => {
+            if (hintBox.classList.contains('show')) { 
+                hintBox.classList.remove('show'); 
+                hintBtn.style.background = "#f8efd4"; 
+            } else { 
+                hintBox.classList.add('show'); 
+                hintBtn.style.background = "#ffeaa7"; 
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                if (!isHintLoaded) {
+                    isHintLoaded = true;
+                    const hintPrompt = `튜터가 한 영어 문장: "${text}"\n한국어로 해석해주고, 초보자가 대답할 수 있는 쉽고 짧은 대답 2가지를 추천해줘. \n양식: [해석]: (내용) / [추천 대답 1]: (영어)-(뜻) / [추천 대답 2]: (영어)-(뜻)`;
+                    try {
+                        const response = await fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: hintPrompt }] }] }) });
+                        const data = await response.json(); 
+                        hintBox.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                    } catch (error) { 
+                        hintBox.innerHTML = "정보를 불러오지 못했습니다."; 
+                        isHintLoaded = false;
+                    }
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            }
+        };
         
         leftTools.append(replayBtn, turtleBtn, showBtn); tools.append(leftTools, hintBtn);
-        card.append(header, body, tools); chatBox.appendChild(card); chatBox.scrollTop = chatBox.scrollHeight;
+        // [수정] card에 hintBox도 추가
+        card.append(header, body, tools, hintBox); chatBox.appendChild(card); chatBox.scrollTop = chatBox.scrollHeight;
         document.getElementById('studentChatInput').focus();
     }
 
@@ -760,7 +778,11 @@
         const tools = document.createElement('div'); tools.className = 'card-tools'; tools.style.borderTop = "none"; tools.style.paddingTop = "0"; 
         
         const tipBtn = document.createElement('button'); tipBtn.className = 'tool-btn'; tipBtn.innerHTML = "💡 AI 교정 팁 보기"; tipBtn.style.width = "100%"; tipBtn.style.justifyContent = "center";
-        const tipBox = document.createElement('div'); tipBox.className = 'tip-container'; tipBox.innerHTML = "⏳ 다정한 친구가 피드백을 적고 있어요...";
+        const tipBox = document.createElement('div'); tipBox.className = 'tip-container'; 
+        tipBox.innerHTML = `
+            <div class="loading-wrap" style="margin:10px 0;">
+                <div class="spinner green"></div> 다정한 친구가 피드백을 적고 있어요...
+            </div>`;
 
         tipBtn.onclick = () => {
             if (tipBox.classList.contains('show')) { tipBox.classList.remove('show'); tipBtn.style.background = "#f8efd4"; } 
@@ -785,7 +807,7 @@
 
         const { tipBox, tipBtn } = addStudentMessage(userText);
         inputEl.value = ""; inputEl.style.height = '52px';
-        inputEl.placeholder = "마이크를 누르거나 직접 타이핑하세요"; // 전송 후 기본 문구 복귀
+        inputEl.placeholder = "마이크를 누르거나 직접 타이핑하세요"; 
 
         chatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
         if (chatHistory.length > 7) { 
@@ -797,7 +819,6 @@
         const typingIndicator = document.createElement('div');
         typingIndicator.id = "typingIndicator"; typingIndicator.className = 'chat-card card-tutor'; typingIndicator.style.padding = "20px";
         
-        // [추가] 튜터 입력 대기 중 스피너 + 타이핑 효과 결합
         typingIndicator.innerHTML = `
             <div class="typing-indicator">
                 <div class="spinner green" style="width:14px; height:14px; border-width:3px;"></div>
@@ -834,26 +855,6 @@
             if(document.getElementById('typingIndicator')) document.getElementById('typingIndicator').remove();
         }
     }
-
-    async function showHintModal(teacherText) {
-        const modal = document.getElementById('hintModal'); const modalBody = document.getElementById('hintModalBody');
-        modal.style.display = "flex"; 
-        
-        // [추가] 힌트 생성 대기 스피너
-        modalBody.innerHTML = `
-            <div class="loading-wrap" style="margin:10px 0;">
-                <div class="spinner"></div> 의미 파악 및 추천 답변 생성 중...
-            </div>`;
-            
-        const hintPrompt = `튜터가 한 영어 문장: "${teacherText}"
-한국어로 해석해주고, 초보자가 대답할 수 있는 쉽고 짧은 대답 2가지를 추천해줘. 
-양식: [해석]: (내용) / [추천 대답 1]: (영어)-(뜻) / [추천 대답 2]: (영어)-(뜻)`;
-        try {
-            const response = await fetch(getModelUrl(), { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: hintPrompt }] }] }) });
-            const data = await response.json(); modalBody.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-        } catch (error) { modalBody.innerHTML = "정보를 불러오지 못했습니다."; }
-    }
-    function closeHintModal() { document.getElementById('hintModal').style.display = "none"; }
 </script>
 </body>
 </html>
