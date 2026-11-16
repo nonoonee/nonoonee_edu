@@ -10,12 +10,11 @@
             font-family: 'Nunito', 'Noto Sans KR', sans-serif; 
             background-color: #fff9ec; 
             margin: 0; 
-            padding: 0; /* 앱 룩을 위해 바디 패딩 제거 */
+            padding: 0; 
             color: #2f3640; 
         } 
         .container { max-width: 500px; margin: 0 auto; position: relative; padding: 0 15px 20px 15px; }
         
-        /* [앱 상단 네비게이션 바] */
         .app-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 0; margin-bottom: 10px; position: sticky; top: 0; 
@@ -55,14 +54,24 @@
         }
         .btn-main:hover { box-shadow: 0 8px 20px rgba(255, 168, 1, 0.4); transform: translateY(-3px); }
 
-        .quick-starters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        /* [개편] 상황 선택 스크롤 박스 UI */
+        .quick-starters-box {
+            background: #fafbfc; border: 2px solid #f1f2f6; border-radius: 16px; 
+            padding: 12px; margin-bottom: 15px; max-height: 145px; overflow-y: auto;
+        }
+        /* 스크롤바 디자인 */
+        .quick-starters-box::-webkit-scrollbar { width: 6px; }
+        .quick-starters-box::-webkit-scrollbar-track { background: transparent; }
+        .quick-starters-box::-webkit-scrollbar-thumb { background: #dfe4ea; border-radius: 3px; }
+        
+        .quick-starters { display: flex; flex-wrap: wrap; gap: 8px; }
         .btn-quick { 
-            background: #f1f2f6; border: 1px solid #dfe4ea; border-radius: 20px; padding: 10px 14px; 
+            background: #ffffff; border: 1px solid #dfe4ea; border-radius: 20px; padding: 8px 12px; 
             font-size: 13px; font-weight: 600; cursor: pointer; color: #57606f; display: flex; align-items: center; gap: 6px; width: auto; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
         .btn-quick:hover { background: #ffeaa7; border-color: #ffda79; color: #d35400; }
 
-        /* 채팅 공간 (파파고 스타일 배경) */
         #chatSection { display: none; }
         .chat-box { 
             background-color: #f1f2f6; border-radius: 24px; padding: 20px 15px; height: 460px; 
@@ -70,7 +79,6 @@
             margin-bottom: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* 카드형 말풍선 UI */
         .chat-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.04); width: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
         .card-tutor { border-top: 6px solid #78e08f; }
         .card-student { background: #fffdf7; border-top: 6px solid #ffda79; }
@@ -94,7 +102,6 @@
         .tip-container.show { display: block; animation: slideDown 0.35s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 입력 패널 (초대형 마이크) */
         .chat-input-panel { background: white; border-radius: 28px; padding: 20px; box-shadow: 0 -5px 25px rgba(0,0,0,0.06); text-align: center; }
         .mic-huge-wrap { display: flex; justify-content: center; margin-top: -50px; margin-bottom: 12px; position: relative; z-index: 10;}
         .btn-huge-mic {
@@ -114,13 +121,11 @@
         .input-row textarea:focus { border-color: #78e08f; background-color: #fff; }
         .btn-send-msg { background-color: #78e08f; color: white; border: none; border-radius: 20px; width: 52px; height: 52px; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(120, 224, 143, 0.3); flex-shrink: 0; }
 
-        /* 타이핑 인디케이터 */
         .typing-indicator { display: inline-flex; gap: 5px; align-items: center; }
         .typing-dot { width: 7px; height: 7px; background: #a4b0be; border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; } .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* [신규] 사이드 드로어 메뉴 (앱 설정) */
         .drawer-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; backdrop-filter: blur(2px); }
         .drawer-menu { position: fixed; top: 0; left: -320px; width: 280px; height: 100%; background: white; z-index: 1001; transition: left 0.3s ease; box-shadow: 2px 0 20px rgba(0,0,0,0.15); overflow-y: auto; display: flex; flex-direction: column; }
         .drawer-menu.open { left: 0; }
@@ -137,7 +142,6 @@
         .btn-menu-action { background: #f8efd4; color: #d35400; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 14px; text-align: left; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; }
         .btn-menu-action:hover { background: #ffeaa7; }
 
-        /* 중앙 모달 (힌트 및 노트) */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(3px); }
         .modal-content { background: white; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative; line-height: 1.6; font-size: 15px; color: #4a4a4a; text-align: center; max-height: 80vh; display: flex; flex-direction: column; }
         .modal-close { position: absolute; top: 15px; right: 15px; background: #f1f2f6; border: none; font-size: 14px; cursor: pointer; color: #57606f; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
@@ -157,7 +161,7 @@
 </head>
 <body>
 
-<!-- [신규] 사이드 드로어 메뉴 -->
+<!-- 사이드 드로어 메뉴 -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeMenu()"></div>
 <div class="drawer-menu" id="drawerMenu">
     <div class="drawer-header">
@@ -234,28 +238,41 @@
         </div>
 
         <div class="section-box">
-            <h3>대화 상황 선택 💬</h3>
-            <p style="font-size: 13px; color: #a4b0be; margin-top:-5px; margin-bottom: 15px;">아래 버튼을 누르거나 직접 입력해서 대화를 시작하세요.</p>
+            <h3 style="margin-bottom: 5px;">대화 상황 선택 💬</h3>
+            <p style="font-size: 13px; color: #a4b0be; margin-top:0; margin-bottom: 15px;">버튼을 누르거나 직접 입력창에 작성해 주세요.</p>
             
-            <div class="quick-starters">
-                <button class="btn-quick" onclick="startQuickScenario('카페에서 커피 주문하기')">☕ 카페 주문</button>
-                <button class="btn-quick" onclick="startQuickScenario('여행지 호텔 체크인하기')">🏨 호텔 체크인</button>
-                <button class="btn-quick" onclick="startQuickScenario('직장 동료와 주말 이야기')">💼 주말 스몰토크</button>
-                <button class="btn-quick" onclick="startQuickScenario('식당에서 메뉴 추천받기')">🍝 식당 주문</button>
-                <button class="btn-quick" onclick="startQuickScenario('공항 입국 심사받기')">✈️ 입국 심사</button>
+            <!-- [개편] 상황 버튼 대폭 추가 및 스크롤 박스화 -->
+            <div class="quick-starters-box">
+                <div class="quick-starters">
+                    <button class="btn-quick" onclick="startQuickScenario('카페에서 커피 주문하기')">☕ 카페 주문</button>
+                    <button class="btn-quick" onclick="startQuickScenario('여행지 호텔 체크인하기')">🏨 호텔 체크인</button>
+                    <button class="btn-quick" onclick="startQuickScenario('식당에서 메뉴 추천받기')">🍝 식당 주문</button>
+                    <button class="btn-quick" onclick="startQuickScenario('공항 입국 심사받기')">✈️ 입국 심사</button>
+                    <button class="btn-quick" onclick="startQuickScenario('길거리에서 위치 묻기')">🗺️ 길 찾기</button>
+                    <button class="btn-quick" onclick="startQuickScenario('택시 타고 목적지 말하기')">🚕 택시 타기</button>
+                    <button class="btn-quick" onclick="startQuickScenario('옷가게에서 사이즈 교환하기')">🛍️ 쇼핑/교환</button>
+                    <button class="btn-quick" onclick="startQuickScenario('편의점에서 물건 결제하기')">🏪 편의점 결제</button>
+                    <button class="btn-quick" onclick="startQuickScenario('병원에서 증상 설명하기')">🏥 병원 진료</button>
+                    <button class="btn-quick" onclick="startQuickScenario('잃어버린 물건 분실물 센터 찾기')">🎒 분실물 신고</button>
+                    <button class="btn-quick" onclick="startQuickScenario('외국인에게 사진 찍어달라 부탁하기')">📸 사진 요청</button>
+                    <button class="btn-quick" onclick="startQuickScenario('직장 동료와 주말 이야기')">💼 주말 스몰토크</button>
+                    <button class="btn-quick" onclick="startQuickScenario('요즘 취미나 운동 이야기')">🏃‍♂️ 취미/운동</button>
+                    <button class="btn-quick" onclick="startQuickScenario('어제 본 영화나 드라마 이야기')">🎬 영화 감상</button>
+                    <button class="btn-quick" onclick="startQuickScenario('좋아하는 음식 이야기')">🍕 음식 이야기</button>
+                </div>
             </div>
             
             <input type="text" id="userInput" placeholder="직접 입력 (예: 어제 본 영화 이야기)">
             
-            <!-- 옵션 버튼들 -->
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn-main" style="flex: 1; padding: 14px; font-size:15px;" onclick="skipScriptAndChat()">🚀 바로 프리토킹 시작</button>
-                <button style="flex: 1; background: #f8efd4; color:#d35400; padding:14px; font-size:15px; border-radius:18px;" onclick="generateScript()">📝 대본 먼저 짜기</button>
+            <!-- [개편] 버튼 위치 및 색상 변경 (초보자용 대본 짜기를 메인으로) -->
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-main" style="flex: 1; padding: 14px; font-size:15px;" onclick="generateScript()">📝 대본 먼저 짜기</button>
+                <button style="flex: 1; background: #f8efd4; color:#d35400; padding:14px; font-size:15px; border-radius:18px;" onclick="skipScriptAndChat()">🚀 바로 프리토킹</button>
             </div>
             
             <div id="loading">대본을 생성 중입니다... ⏳</div>
             <div id="scriptResult"></div>
-            <button id="startChatBtn" class="btn-start-chat" onclick="openChatSection('script')">🎤 대본으로 채팅 시작하기 ▶️</button>
+            <button id="startChatBtn" class="btn-start-chat" onclick="openChatSection('script')">🎤 준비된 대본으로 시작하기 ▶️</button>
         </div>
     </div>
 
@@ -290,7 +307,7 @@
     </div>
     
     <div class="footer-info">
-        v3.1.0 | AI English Tutor App. All rights reserved.
+        v3.2.0 | AI English Tutor App. All rights reserved.
     </div>
 </div> 
 
@@ -387,7 +404,6 @@
         }
     }
 
-    // [개편] 일자별 교정 노트 로직 (localStorage 저장 및 불러오기)
     function saveNoteToStorage(original, correction) {
         const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
         let allNotes = JSON.parse(localStorage.getItem('gemini_tutor_daily_notes') || '{}');
@@ -397,13 +413,13 @@
     }
 
     function openCorrectionNote() {
-        closeMenu(); // 메뉴창 닫기
+        closeMenu(); 
         const modal = document.getElementById('noteModal');
         const noteList = document.getElementById('noteList');
         noteList.innerHTML = "";
         
         let allNotes = JSON.parse(localStorage.getItem('gemini_tutor_daily_notes') || '{}');
-        const dates = Object.keys(allNotes).reverse(); // 최신 날짜순
+        const dates = Object.keys(allNotes).reverse(); 
         
         if (dates.length === 0) {
             noteList.innerHTML = "<div style='text-align:center; color:#a4b0be; padding:30px 10px;'>기록된 노트가 없습니다.<br>대화를 시작해보세요!</div>";
@@ -441,7 +457,7 @@
     }
 
     // ==========================================
-    // 🎤 마이크 (초대형 마이크 연동)
+    // 🎤 마이크 & 설정
     // ==========================================
     async function startRecording(e) {
         if(e.type === 'mousedown' && e.button !== 0) return; 
@@ -595,14 +611,27 @@
     }
     function speakText(text) { replayText(text, 0.9); }
 
+    // ==========================================
+    // [개편] 대본 생성 및 대화 시작 로직
+    // ==========================================
+    
+    // 버튼 클릭 시 입력창만 채우고 애니메이션 효과 부여
     function startQuickScenario(scenario) {
-        document.getElementById('userInput').value = scenario;
-        skipScriptAndChat(); 
+        const inputEl = document.getElementById('userInput');
+        inputEl.value = scenario;
+        
+        // 입력되었다는 시각적 피드백 (살짝 커졌다 작아짐)
+        inputEl.style.transform = "scale(1.02)";
+        inputEl.style.borderColor = "#78e08f";
+        setTimeout(() => {
+            inputEl.style.transform = "scale(1)";
+            inputEl.style.borderColor = "#ffda79";
+        }, 200);
     }
 
     async function generateScript() {
         const userInput = document.getElementById('userInput').value;
-        if (!userInput.trim()) { alert("대화 주제를 입력해주세요!"); return; }
+        if (!userInput.trim()) { alert("대화 주제를 입력하거나 상황 버튼을 선택해주세요!"); return; }
         currentUserInput = userInput; 
         document.getElementById('scriptResult').style.display = "none";
         document.getElementById('startChatBtn').style.display = "none";
@@ -618,13 +647,15 @@
             document.getElementById('scriptResult').innerHTML = data.candidates[0].content.parts[0].text;
             document.getElementById('scriptResult').style.display = "block";
             document.getElementById('startChatBtn').style.display = "block";
+            // 렌더링 후 살짝 아래로 스크롤
+            setTimeout(() => { document.getElementById('startChatBtn').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
         } catch (error) { document.getElementById('scriptResult').innerHTML = "오류 발생: " + error.message; document.getElementById('scriptResult').style.display = "block"; } 
         finally { document.getElementById('loading').style.display = "none"; }
     }
     
     function skipScriptAndChat() {
         const val = document.getElementById('userInput').value.trim();
-        if(!val) { alert("대화 주제를 입력하거나 버튼을 눌러주세요."); return; }
+        if(!val) { alert("대화 주제를 입력하거나 상황 버튼을 선택해주세요!"); return; }
         currentUserInput = val;
         document.getElementById('scriptResult').style.display = "none";
         document.getElementById('startChatBtn').style.display = "none";
@@ -633,10 +664,7 @@
     
     function openChatSection(mode) {
         currentChatMode = mode;
-        
-        // 채팅 상단 타이틀에 현재 주제 입력
         document.getElementById('chatHeaderTitle').innerText = currentUserInput;
-        
         document.getElementById('step1').style.display = "none";
         document.getElementById('chatSection').style.display = "block";
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -775,7 +803,6 @@
             tipBox.innerHTML = `<strong>💡 AI 친구의 제안:</strong><br>${feedbackText.replace(/\n/g, '<br>')}`;
             tipBtn.innerHTML = "💡✨ 교정 팁 확인하기"; 
             
-            // [개편] localStorage에 교정 노트 영구 저장
             saveNoteToStorage(userText, feedbackText);
 
             if (teacherData.error) throw new Error(teacherData.error.message);
