@@ -484,35 +484,43 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    // [변경됨] 기기의 내장 목소리 중 프로필에 가장 잘 맞는 것을 찾아 매핑
+    // [수정됨] 기기의 내장 목소리 중 프로필에 가장 잘 맞는 것을 찾아 매핑
     function getBestVoiceForProfile(profile) {
         if (!availableVoices || availableVoices.length === 0) return null;
-        let usVoices = availableVoices.filter(v => v.lang.includes('en-US') || v.lang.includes('en_US'));
-        if (usVoices.length === 0) usVoices = availableVoices.filter(v => v.lang.includes('en'));
-        if (usVoices.length === 0) return availableVoices[0]; // 영어 없으면 아무거나
+        
+        // 1순위: 미국 영어, 2순위: 영국/호주 등 영어 전체
+        let enVoices = availableVoices.filter(v => v.lang.includes('en-US') || v.lang.includes('en_US'));
+        if (enVoices.length === 0) enVoices = availableVoices.filter(v => v.lang.includes('en'));
+        if (enVoices.length === 0) return availableVoices[0]; 
 
-        const findByWords = (words) => usVoices.find(v => words.some(w => v.name.toLowerCase().includes(w)));
+        const findByWords = (words) => enVoices.find(v => words.some(w => v.name.toLowerCase().includes(w)));
 
         if (profile === 'female' || profile === 'girl') {
-            return findByWords(['samantha', 'zira', 'female', 'karen', 'victoria', 'google us english']) || usVoices[0];
-        } else { // male or boy
-            return findByWords(['alex', 'david', 'male', 'daniel', 'mark']) || usVoices[usVoices.length > 1 ? 1 : 0]; 
+            // 여성 목소리 선호 이름들 (구글, 애플, 마이크로소프트)
+            return findByWords(['samantha', 'zira', 'female', 'karen', 'victoria', 'google us english']) || enVoices[0];
+        } else { 
+            // 남성 목소리 선호 이름들
+            return findByWords(['alex', 'david', 'male', 'daniel', 'mark', 'arthur']) || enVoices[enVoices.length > 1 ? 1 : 0]; 
         }
     }
 
-    // [변경됨] 목소리 톤(pitch)과 속도(rate)를 프로필에 맞게 조절
+    // [수정됨] 기계음 방지를 위해 남성/어린이 피치(pitch) 값 최적화
     function applyVoiceProfile(utterance, profile, baseRate) {
         const voice = getBestVoiceForProfile(profile);
         if (voice) utterance.voice = voice;
         
         if (profile === 'female') {
-            utterance.pitch = 1.0; utterance.rate = baseRate;
+            utterance.pitch = 1.0; 
+            utterance.rate = baseRate;
         } else if (profile === 'male') {
-            utterance.pitch = 0.8; utterance.rate = baseRate * 0.95; 
+            utterance.pitch = 1.0; // 기존 0.8에서 1.0으로 복구 (인위적인 톤 다운 제거하여 기계음 방지)
+            utterance.rate = baseRate; 
         } else if (profile === 'girl') {
-            utterance.pitch = 1.6; utterance.rate = baseRate * 1.1; // 피치를 높여 아이 목소리 흉내
+            utterance.pitch = 1.4; // 기존 1.6에서 1.4로 완화 (귀엽지만 일그러지지 않게)
+            utterance.rate = baseRate * 1.05; 
         } else if (profile === 'boy') {
-            utterance.pitch = 1.35; utterance.rate = baseRate * 1.05;
+            utterance.pitch = 1.2; // 기존 1.35에서 1.2로 완화
+            utterance.rate = baseRate * 1.05;
         }
     }
 
