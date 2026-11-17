@@ -43,9 +43,7 @@
     <!-- 1. 랜딩 페이지 영역 (초기 화면)            -->
     <!-- ========================================== -->
     <div id="landing-page" class="absolute inset-0 z-50 bg-gradient-to-b from-indigo-50 to-white flex flex-col overflow-y-auto">
-        <!-- 상단 헤더 (회사 CI) -->
         <header class="w-full max-w-5xl mx-auto p-6 flex justify-between items-center">
-            <!-- 💡 mix-blend-multiply 추가됨 -->
             <img src="/images/nonoonee_ci2.jpg" alt="노느니 에듀테크" class="h-10 object-contain mix-blend-multiply">
             <nav class="space-x-6 text-sm font-bold text-gray-600 hidden md:block">
                 <a href="#" class="hover:text-indigo-600">소개</a>
@@ -54,17 +52,14 @@
             </nav>
         </header>
 
-        <!-- 메인 히어로 섹션 -->
         <main class="flex-1 flex flex-col items-center justify-center text-center p-6 mt-10 mb-20">
             <div class="relative inline-block mb-6">
-                <!-- 마법 로봇 BI 이미지 -->
                 <img src="/images/image_14c5cf6f.jpg" alt="뽀로롱 코딩 로봇" class="w-64 h-64 object-cover rounded-full shadow-2xl border-4 border-white transform hover:scale-105 transition-transform duration-300 mix-blend-multiply">
                 <div class="absolute -bottom-4 -right-4 bg-yellow-400 text-yellow-900 font-bold px-4 py-2 rounded-full shadow-lg transform rotate-12">
                     AI 마법사!
                 </div>
             </div>
 
-            <!-- 앱 이름 타이포그래피 BI -->
             <img src="/images/image_6070749e.jpg" alt="노느니 뾰로롱" class="h-24 md:h-32 object-contain mb-4 mix-blend-multiply">
             
             <h2 class="text-2xl md:text-3xl font-bold text-indigo-900 mb-4 mt-2">말로 하면 앱이 뚝딱! 나만의 코딩 마법학교</h2>
@@ -77,7 +72,6 @@
             </button>
         </main>
         
-        <!-- 하단 푸터 -->
         <footer class="w-full text-center py-6 text-xs text-gray-400 border-t border-gray-100 bg-white">
             &copy; 2026 nonoonee EDUTECH. All rights reserved.
         </footer>
@@ -88,9 +82,7 @@
     <!-- ========================================== -->
     <div id="app-container" class="hidden flex-1 h-screen overflow-hidden flex w-full relative">
         
-        <!-- 왼쪽 사이드바 (접기/펴기 가능) -->
         <aside id="sidebar" class="w-72 bg-white border-r border-indigo-100 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20 flex-shrink-0 sidebar-transition">
-            <!-- 사이드바 상단 로고 영역 -->
             <div class="p-4 border-b border-gray-100 flex flex-col items-center bg-gray-50">
                 <img src="/images/nonoonee_ci.jpg" alt="노느니 에듀테크 로고" class="h-10 object-contain mb-3 mix-blend-multiply">
                 <img src="/images/image_6070749e.jpg" alt="뽀로롱 코딩" class="h-12 object-contain mix-blend-multiply">
@@ -104,20 +96,15 @@
             </div>
 
             <ul id="curriculum-list" class="flex-1 overflow-y-auto p-3 space-y-2">
-                <!-- JS로 렌더링 됨 -->
             </ul>
         </aside>
 
-        <!-- 우측 메인 작업 영역 -->
         <main class="flex-1 flex flex-col md:flex-row min-w-0 bg-white z-10 relative">
             
-            <!-- 중앙: 채팅창 영역 -->
             <section class="flex-1 flex flex-col border-r border-indigo-100 bg-gray-50 max-w-full md:max-w-[50%]">
                 
-                <!-- 앱 상단 헤더 (메뉴 토글 및 API 키) -->
                 <div class="h-16 px-4 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm flex-shrink-0">
                     <div class="flex items-center">
-                        <!-- 메뉴 접기/펴기 버튼 -->
                         <button onclick="toggleSidebar()" class="w-8 h-8 flex items-center justify-center rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 mr-3 transition-colors" title="목차 열기/닫기">
                             <i class="fa-solid fa-bars text-sm"></i>
                         </button>
@@ -132,7 +119,6 @@
                     </div>
                 </div>
 
-                <!-- 채팅 기록 -->
                 <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4">
                     <div class="flex items-start">
                         <img src="/images/image_14c5cf6f.jpg" class="w-8 h-8 rounded-full mr-2 object-cover border border-indigo-100 mix-blend-multiply">
@@ -142,7 +128,6 @@
                     </div>
                 </div>
 
-                <!-- 로딩 인디케이터 -->
                 <div id="loading-indicator" class="hidden p-4">
                     <div class="flex items-start">
                         <img src="/images/image_14c5cf6f.jpg" class="w-8 h-8 rounded-full mr-2 object-cover border border-indigo-100 mix-blend-multiply">
@@ -156,7 +141,6 @@
                     </div>
                 </div>
 
-                <!-- 입력 영역 -->
                 <div class="bg-white p-4 border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)]">
                     <div id="hint-chips" class="flex overflow-x-auto space-x-2 mb-3 pb-1 hide-scrollbar">
                     </div>
@@ -170,9 +154,7 @@
                 </div>
             </section>
 
-            <!-- 우측: 결과 확인 영역 -->
             <section class="flex-1 flex flex-col bg-white">
-                <!-- 탭 헤더 및 도구 모음 -->
                 <div class="h-16 flex justify-between items-end border-b border-gray-200 bg-gray-50 pt-2 px-2 flex-shrink-0">
                     <div class="flex h-full items-end">
                         <button onclick="switchTab('preview')" id="tab-preview" class="tab-btn active px-4 md:px-5 py-2.5 text-sm font-bold text-indigo-700 bg-white border-t border-l border-r border-gray-200 rounded-t-lg -mb-px transition-colors">
@@ -187,7 +169,6 @@
                     </div>
                     
                     <div id="tab-tools" class="hidden pb-2 pr-2 flex space-x-2 items-center">
-                        <!-- 확대/축소 도구 -->
                         <div id="zoom-tools" class="hidden flex space-x-1 mr-2 border-r border-gray-300 pr-3">
                             <button onclick="zoomMermaid('out')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm" title="축소">
                                 <i class="fa-solid fa-minus text-xs"></i>
@@ -206,9 +187,7 @@
                     </div>
                 </div>
 
-                <!-- 탭 컨텐츠 -->
                 <div class="flex-1 relative bg-white">
-                    <!-- 1. 화면보기 (iframe) -->
                     <div id="content-preview" class="absolute inset-0 w-full h-full p-3 bg-gray-50">
                         <div class="w-full h-full border border-gray-300 rounded-xl overflow-hidden bg-white relative shadow-sm">
                             <iframe id="result-iframe" class="w-full h-full" sandbox="allow-scripts allow-modals"></iframe>
@@ -219,12 +198,10 @@
                         </div>
                     </div>
 
-                    <!-- 2. 소스보기 -->
                     <div id="content-code" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-[#1e1e2e] text-[#a6accd] font-mono text-sm">
                         <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
                     </div>
 
-                    <!-- 3. 생각순서도 -->
                     <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-white">
                         <div id="mermaid-container" class="text-center">
                             <p class="text-gray-400 mt-20"><i class="fa-solid fa-project-diagram mb-2 text-3xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
@@ -248,7 +225,6 @@
         </div>
     </div>
 
-    <!-- 스크립트: 로직 및 모듈 -->
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
         mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
@@ -573,7 +549,7 @@
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
-        // --- Gemini API 연동 ---
+        // --- 💡 Gemini API 연동 (교육 철학이 완벽히 반영된 시스템 프롬프트) ---
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
@@ -598,14 +574,24 @@
 
             const systemPrompt = `
 넌 11살 초등학생에게 웹 코딩(HTML/CSS/JS)을 가르치는 친절하고 다정한 마법사 AI 선생님이야. 앱 이름은 '뽀로롱 코딩'이야.
-아이들은 네게 자연어로 요구사항을 말할거야.
+이 마법학교의 핵심 목표는 아이가 한 번에 정답을 얻는 것이 아니라, 스스로 논리적인 순서(알고리즘)와 조건문을 설계하며 하나씩 깨우치도록 돕는 거야.
+
+[절대 규칙 - 반드시 지킬 것!]
+1. 전체 완성 금지: 아이가 "테트리스 만들어줘", "계산기 만들어줘"처럼 복잡한 앱을 요구해도 절대 한 번에 완성된 코드를 짜주지 마.
+2. 단계별 쪼개기 유도: 가장 기초적인 1단계(예: 빈 화면 띄우기, 네모 한 개 그리기, 버튼 하나 만들기 등)만 먼저 코드로 만들어줘.
+3. 💡 핵심 교육 (의도적인 빈틈과 질문 유도): 
+   - 아이가 로직을 짤 때, 경계선 처리(벽 뚫기 현상 등)나 예외 처리를 놓쳤다면 네가 알아서 완벽하게 고쳐주지 마!
+   - 일부러 버그(예: 블록이 화면 밖으로 나감)가 있는 상태로 코드를 주고, "앗, 블록이 벽을 뚫고 나가버리네? 왜 그럴까? 벽에 닿았을 때 어떻게 하라고 '조건'을 추가해 주면 좋을까?"라고 물어봐.
+   - 아이가 스스로 문제(버그)를 발견하고 조건문(if)을 추가하는 명령을 내리도록 유도해.
+4. 정답 떠먹여주기 금지: 코드가 꼬였을 때 정답 코드를 바로 주지 말고, 논리적인 원인을 찾도록 Socratic(문답법) 방식으로 힌트만 줘.
+
 반드시 JSON 형식으로만 응답해. 백틱(\`\`\`)을 포함한 마크다운 코드블럭으로 감싸지 말고 순수 JSON 문자열만 반환해.
 
 응답 JSON 구조:
 {
-  "chat": "아이에게 하는 친절한 설명, 칭찬, 그리고 다음 단계 제안 (2~3문장)",
-  "html": "요구사항이 반영된 완벽하게 동작하는 단일 HTML 파일 코드 (Tailwind CSS 허용, 스크립트 포함). <html>태그부터 끝까지 모두 작성해.",
-  "mermaid": "작성해준 html 코드의 핵심 로직을 표현하는 mermaid.js 문법의 순서도(flowchart TD). 복잡한 설정 없이 기본 문법만 사용해."
+  "chat": "친절한 설명, 칭찬, 그리고 스스로 생각하게 만드는 다음 단계 힌트나 문제 해결 질문 (3문장 이내)",
+  "html": "딱 이번 단계까지만 반영된 동작 가능한 단일 HTML 파일 코드 (Tailwind CSS 허용, 스크립트 포함). <html>태그부터 끝까지 모두 작성.",
+  "mermaid": "이번 단계까지 완성된 로직만 간단히 표현하는 mermaid.js 문법의 순서도(flowchart TD)."
 }
 `;
             
@@ -619,7 +605,7 @@ ${currentMermaid || "(아직 순서도가 없습니다. 새로 만들어주세�
 [아이의 새로운 명령]
 ${text}
 
-위 [현재 소스코드]와 [현재 순서도]를 바탕으로 [아이의 새로운 명령]을 반영하여 새로운 html 코드와 mermaid 순서도를 작성해주세요.`;
+위 [현재 소스코드]와 [현재 순서도]를 바탕으로 교육적 의도에 맞게 [아이의 새로운 명령]을 처리하여 새로운 html 코드와 mermaid 순서도를 작성해주세요.`;
 
             const payload = {
                 contents: [{ role: "user", parts: [{ text: userPrompt }] }],
