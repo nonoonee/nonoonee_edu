@@ -52,6 +52,7 @@
             height: 100%; 
             pointer-events: none; /* 클릭 방지 */
         }
+        .word-break-keep { word-break: keep-all; }
     </style>
 </head>
 <body class="antialiased">
@@ -88,7 +89,7 @@
     <!-- About Us 영상 섹션 -->
     <section class="max-w-6xl mx-auto px-4 mb-32">
         <div class="video-container shadow-2xl">
-            <!-- 유튜브 배경 자동 재생 (마우스 클릭 방지 적용) -->
+            <!-- 유튜브 배경 자동 재생 -->
             <iframe src="https://www.youtube.com/embed/O2QWkDTQsIs?autoplay=1&mute=1&loop=1&playlist=O2QWkDTQsIs&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
         </div>
         <div class="mt-12 text-center max-w-3xl mx-auto">
@@ -107,24 +108,35 @@
         <!-- 메인 앱 지그재그(교차) 세로형 Grid -->
         <div class="grid grid-cols-1 gap-8 mb-8">
             
-            <!-- 블라블라 토크 (다크 테마 / 아이콘 좌측) -->
+            <!-- 블라블라 토크 (다크 테마 / 아이콘 좌측 / 기능 설명 추가) -->
             <a href="https://nonoonee.com/hi/" target="_blank" class="block group">
                 <div class="bento-card bg-gray-900 text-white p-10 md:p-16 flex flex-col md:flex-row items-center text-center md:text-left gap-10 w-full">
                     <div class="flex-shrink-0">
                         <img src="/images/blahblah_icon.jpg" alt="블라블라 토크 아이콘" class="w-40 h-40 md:w-48 md:h-48 app-icon group-hover:shadow-blue-500/20 transition-shadow">
                     </div>
-                    <div>
+                    <div class="w-full">
                         <span class="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-wider">NEW</span>
                         <h3 class="text-3xl md:text-4xl font-bold mb-4">블라블라 토크</h3>
-                        <p class="text-gray-400 text-lg md:text-xl keep-all leading-relaxed">
-                            아이들의 눈높이에 맞춘 AI 기반 화상 영어 교구입니다.<br class="hidden md:block">
-                            학습자가 직접 구성한 대본으로 AI 원어민 튜터와 대화하며 실전 회화 감각을 익힙니다.
-                        </p>
+                        
+                        <div class="text-gray-300 text-base md:text-lg keep-all leading-relaxed space-y-3 mt-4 text-left">
+                            <p class="flex items-start">
+                                <span class="mr-2 shrink-0">👂</span>
+                                <span><strong>찰떡같은 음성 인식 :</strong> 최고 수준의 AI가 한국식 콩글리시 억양도 완벽하게 문맥을 파악해 텍스트로 적어줍니다.</span>
+                            </p>
+                            <p class="flex items-start">
+                                <span class="mr-2 shrink-0">💡</span>
+                                <span><strong>상처받지 않는 숨김형 교정 :</strong> 빨간펜 지적은 그만! 궁금할 때 팁 버튼을 누르면 폭풍 칭찬과 함께 원어민 표현을 스르륵 알려줍니다.</span>
+                            </p>
+                            <p class="flex items-start">
+                                <span class="mr-2 shrink-0">🎮</span>
+                                <span><strong>맞춤형 대화 :</strong> 떡볶이, 주말 영화, 내가 좋아하는 게임까지. 내가 직접 입력한 주제로 나만의 스몰토크 대본을 만들어줍니다.</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </a>
 
-            <!-- 뾰로롱 코딩 (라이트 테마 / 아이콘 우측 / 텍스트 우측 정렬) -->
+            <!-- 뾰로롱 코딩 (라이트 테마 / 아이콘 우측) -->
             <a href="/vibe/index.html" class="block group">
                 <div class="bento-card bg-white border border-gray-100 shadow-sm p-10 md:p-16 flex flex-col md:flex-row-reverse items-center text-center md:text-right gap-10 w-full">
                     <div class="flex-shrink-0">
@@ -187,7 +199,7 @@
                     <p class="mt-3">
                         고객센터 : 070-7604-1984 <span class="mx-2 text-gray-300">|</span> 
                         팩스 : 02-6716-1984 <span class="mx-2 text-gray-300">|</span> 
-                        이메일 : <a href="mailto:ceo@nonoonee.com" class="hover:text-black">ceo@nonoonee.com</a>
+                        이메일 : <a href="mailto:nonooneee@gmail.com" class="hover:text-black">nonooneee@gmail.com</a>
                     </p>
                 </div>
                 
