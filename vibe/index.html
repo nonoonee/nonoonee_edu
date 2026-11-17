@@ -3,27 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>뾰로롱 코딩 마법학교 🪄</title>
+    <!-- 앱 이름은 사용자 요청에 따라 '뽀로롱 코딩'으로 적용했습니다 -->
+    <title>뽀로롱 코딩 - 노느니 에듀테크</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@400;700&display=swap');
-        
-        /* 전체 기본 폰트는 읽기 편하게, 제목 등 강조할 부분은 귀여운 Jua 폰트 사용 */
-        body { font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif; }
-        .font-cute { font-family: 'Jua', sans-serif; }
+        body { font-family: 'Nunito', 'Jua', sans-serif; overflow: hidden; }
         
         /* 스크롤바 커스텀 */
         ::-webkit-scrollbar { width: 10px; height: 10px; }
-        ::-webkit-scrollbar-track { background: #fdf4ff; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 4px; border: 2px solid #fdf4ff; }
-        ::-webkit-scrollbar-thumb:hover { background: #c084fc; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; border: 2px solid #f1f1f1; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* 로딩 뾰로롱 애니메이션 */
-        .typing-dot {
-            animation: typing 1.4s infinite ease-in-out;
-            fill: #d946ef;
-        }
+        .typing-dot { animation: typing 1.4s infinite ease-in-out; fill: #8b5cf6; }
         .typing-dot:nth-child(1) { animation-delay: 0s; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
@@ -32,173 +26,224 @@
             50% { transform: translateY(-4px); }
         }
 
-        /* 순서도(Mermaid) CSS */
         #content-logic { scroll-behavior: smooth; }
-        #mermaid-container {
-            min-width: max-content; 
-            min-height: max-content;
-            margin: 0 auto;
-        }
+        #mermaid-container { min-width: max-content; min-height: max-content; margin: 0 auto; }
         #mermaid-container svg {
-            min-width: 600px !important;
-            max-width: none !important;
-            height: auto !important;
-            transform-origin: top center;
-            transition: transform 0.2s ease;
-            margin: 40px;
+            min-width: 600px !important; max-width: none !important; height: auto !important;
+            transform-origin: top center; transition: transform 0.2s ease; margin: 40px;
         }
+
+        /* 사이드바 애니메이션 */
+        .sidebar-transition { transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-closed { margin-left: -18rem; /* w-72 (18rem) 만큼 숨김 */ }
     </style>
 </head>
-<body class="bg-purple-50 h-screen overflow-hidden flex text-slate-800">
+<body class="bg-indigo-50 h-screen flex flex-col text-slate-800">
 
-    <!-- 왼쪽 사이드바: 목차 관리 -->
-    <aside class="w-72 bg-white border-r border-purple-100 flex flex-col shadow-lg z-10 flex-shrink-0 transition-all duration-300 hidden md:flex">
-        <!-- 마법 같은 핑크~보라 그라데이션 헤더 -->
-        <div class="p-5 bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500 text-white text-center shadow-inner">
-            <h1 class="text-3xl font-cute tracking-wide drop-shadow-md"><i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-300"></i>뾰로롱 코딩</h1>
-            <p class="text-sm opacity-90 mt-1 font-bold">나만의 마법 앱 만들기</p>
-        </div>
-        
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-purple-50/50">
-            <span class="font-bold text-purple-800"><i class="fa-solid fa-book-open mr-2 text-pink-400"></i>수업 목차</span>
-            <button onclick="openModal('add')" class="text-xs bg-purple-500 hover:bg-purple-600 text-white px-3 py-1.5 rounded-full transition-colors shadow-sm font-bold">
-                <i class="fa-solid fa-plus mr-1"></i>추가
+    <!-- ========================================== -->
+    <!-- 1. 랜딩 페이지 영역 (초기 화면)            -->
+    <!-- ========================================== -->
+    <div id="landing-page" class="absolute inset-0 z-50 bg-gradient-to-b from-indigo-50 to-white flex flex-col overflow-y-auto">
+        <!-- 상단 헤더 (회사 CI) -->
+        <header class="w-full max-w-5xl mx-auto p-6 flex justify-between items-center">
+            <img src="nonoonee_ci2.jpg" alt="노느니 에듀테크" class="h-10 object-contain">
+            <nav class="space-x-6 text-sm font-bold text-gray-600 hidden md:block">
+                <a href="#" class="hover:text-indigo-600">소개</a>
+                <a href="#" class="hover:text-indigo-600">사용법</a>
+                <a href="#" class="hover:text-indigo-600">고객센터</a>
+            </nav>
+        </header>
+
+        <!-- 메인 히어로 섹션 -->
+        <main class="flex-1 flex flex-col items-center justify-center text-center p-6 mt-10 mb-20">
+            <div class="relative inline-block mb-6">
+                <!-- 마법 로봇 BI 이미지 -->
+                <img src="image_14c5cf6f.jpg" alt="뽀로롱 코딩 로봇" class="w-64 h-64 object-cover rounded-full shadow-2xl border-4 border-white transform hover:scale-105 transition-transform duration-300">
+                <div class="absolute -bottom-4 -right-4 bg-yellow-400 text-yellow-900 font-bold px-4 py-2 rounded-full shadow-lg transform rotate-12">
+                    AI 마법사!
+                </div>
+            </div>
+
+            <!-- 앱 이름 타이포그래피 BI -->
+            <img src="image_6070749e.jpg" alt="노느니 뾰로롱" class="h-24 md:h-32 object-contain mb-4">
+            
+            <h2 class="text-2xl md:text-3xl font-bold text-indigo-900 mb-4 mt-2">말로 하면 앱이 뚝딱! 나만의 코딩 마법학교</h2>
+            <p class="text-gray-500 mb-10 max-w-md text-sm md:text-base leading-relaxed">
+                자연어로 명령하면 인공지능 선생님이 코드를 짜주고 순서도를 그려줍니다. 지금 바로 코딩 마법사가 되어보세요!
+            </p>
+
+            <button onclick="startApp()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-xl px-10 py-4 rounded-full shadow-xl transform hover:-translate-y-1 transition-all flex items-center">
+                <i class="fa-solid fa-wand-magic-sparkles mr-3"></i> 뽀로롱 코딩 시작하기
             </button>
-        </div>
-
-        <ul id="curriculum-list" class="flex-1 overflow-y-auto p-3 space-y-2">
-            <!-- JS로 렌더링 됨 -->
-        </ul>
-    </aside>
-
-    <!-- 메인 컨텐츠 영역 -->
-    <main class="flex-1 flex flex-col md:flex-row min-w-0">
+        </main>
         
-        <!-- 중앙: 채팅창 영역 -->
-        <section class="flex-1 flex flex-col border-r border-purple-100 bg-gray-50/50 max-w-full md:max-w-[50%]">
-            <!-- API 키 입력 헤더 -->
-            <div class="p-3 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm z-10">
-                <div class="flex items-center text-sm font-bold text-slate-700">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mimi&backgroundColor=fbcfe8" alt="AI 쌤" class="w-10 h-10 rounded-full mr-3 border-2 border-pink-200 shadow-sm">
-                    <span id="current-lesson-title" class="font-cute text-lg text-purple-700">마법학교에 오신 것을 환영해요!</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-key text-gray-300 text-xs"></i>
-                    <input type="password" id="api-key" placeholder="Gemini API Key" class="text-xs px-2 py-1.5 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50" onchange="saveApiKey(this.value)">
-                </div>
+        <!-- 하단 푸터 -->
+        <footer class="w-full text-center py-6 text-xs text-gray-400 border-t border-gray-100 bg-white">
+            &copy; 2026 nonoonee EDUTECH. All rights reserved.
+        </footer>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. 메인 앱 영역 (초기엔 숨김)              -->
+    <!-- ========================================== -->
+    <div id="app-container" class="hidden flex-1 h-screen overflow-hidden flex w-full relative">
+        
+        <!-- 왼쪽 사이드바 (접기/펴기 가능) -->
+        <aside id="sidebar" class="w-72 bg-white border-r border-indigo-100 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20 flex-shrink-0 sidebar-transition">
+            <!-- 사이드바 상단 로고 영역 -->
+            <div class="p-4 border-b border-gray-100 flex flex-col items-center bg-gray-50">
+                <img src="nonoonee_ci.jpg" alt="노느니 에듀테크 로고" class="h-10 object-contain mb-3">
+                <img src="image_6070749e.jpg" alt="뽀로롱 코딩" class="h-12 object-contain">
+            </div>
+            
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-white">
+                <span class="font-bold text-indigo-800 text-sm"><i class="fa-solid fa-book-open mr-2"></i>수업 목차</span>
+                <button onclick="openModal('add')" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-md transition-colors shadow-sm">
+                    <i class="fa-solid fa-plus mr-1"></i>추가
+                </button>
             </div>
 
-            <!-- 채팅 기록 -->
-            <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <div class="flex items-start">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mimi&backgroundColor=fbcfe8" class="w-8 h-8 rounded-full mr-2 shadow-sm">
-                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-pink-100 max-w-[85%]">
-                        <p class="text-sm">안녕, 꼬마 마법사! 왼쪽 목차에서 배우고 싶은 마법을 선택해 봐. 선생님이 마법 주문(프롬프트) 거는 법을 알려줄게! 뾰로롱~ 🪄</p>
-                    </div>
-                </div>
-            </div>
+            <ul id="curriculum-list" class="flex-1 overflow-y-auto p-3 space-y-2">
+                <!-- JS로 렌더링 됨 -->
+            </ul>
+        </aside>
 
-            <!-- 로딩 인디케이터 -->
-            <div id="loading-indicator" class="hidden p-4">
-                <div class="flex items-start">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mimi&backgroundColor=fbcfe8" class="w-8 h-8 rounded-full mr-2 shadow-sm">
-                    <div class="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm border border-pink-100 flex space-x-1 items-center">
-                        <svg width="24" height="12" viewBox="0 0 24 12">
-                            <circle cx="4" cy="6" r="3" class="typing-dot" />
-                            <circle cx="12" cy="6" r="3" class="typing-dot" />
-                            <circle cx="20" cy="6" r="3" class="typing-dot" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 입력 영역 -->
-            <div class="bg-white p-4 border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                <div id="hint-chips" class="flex overflow-x-auto space-x-2 mb-3 pb-1 hide-scrollbar">
-                </div>
+        <!-- 우측 메인 작업 영역 -->
+        <main class="flex-1 flex flex-col md:flex-row min-w-0 bg-white z-10 relative">
+            
+            <!-- 중앙: 채팅창 영역 -->
+            <section class="flex-1 flex flex-col border-r border-indigo-100 bg-gray-50 max-w-full md:max-w-[50%]">
                 
-                <div class="flex relative">
-                    <input type="text" id="chat-input" placeholder="여기에 마법 주문을 적어보세요..." class="flex-1 bg-purple-50 border border-purple-100 rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm placeholder-purple-300" onkeypress="handleKeyPress(event)">
-                    <button onclick="sendMessage()" class="absolute right-2 top-1.5 bottom-1.5 w-9 bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-md">
-                        <i class="fa-solid fa-paper-plane text-xs"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 우측: 결과 확인 영역 -->
-        <section class="flex-1 flex flex-col bg-white">
-            <!-- 탭 헤더 및 도구 모음 -->
-            <div class="flex justify-between items-end border-b border-gray-200 bg-purple-50/30 pt-2 px-2">
-                <div class="flex space-x-1">
-                    <button onclick="switchTab('preview')" id="tab-preview" class="tab-btn active px-5 py-2.5 text-sm font-bold text-purple-700 bg-white border-t border-l border-r border-gray-200 rounded-t-xl -mb-px shadow-[0_-2px_4px_rgba(0,0,0,0.02)]">
-                        <i class="fa-solid fa-display mr-2 text-pink-400"></i>화면보기
-                    </button>
-                    <button onclick="switchTab('code')" id="tab-code" class="tab-btn px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-purple-600 border-t border-l border-r border-transparent rounded-t-xl transition-colors">
-                        <i class="fa-solid fa-code mr-2 text-purple-400"></i>소스보기
-                    </button>
-                    <button onclick="switchTab('logic')" id="tab-logic" class="tab-btn px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-purple-600 border-t border-l border-r border-transparent rounded-t-xl transition-colors">
-                        <i class="fa-solid fa-diagram-project mr-2 text-fuchsia-400"></i>생각순서도
-                    </button>
-                </div>
-                
-                <div id="tab-tools" class="hidden pb-2 pr-2 flex space-x-2 items-center">
-                    <!-- 확대/축소 도구 -->
-                    <div id="zoom-tools" class="hidden flex space-x-1 mr-2 border-r border-gray-300 pr-3">
-                        <button onclick="zoomMermaid('out')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm transition-colors" title="축소">
-                            <i class="fa-solid fa-minus text-xs"></i>
+                <!-- 앱 상단 헤더 (메뉴 토글 및 API 키) -->
+                <div class="h-16 px-4 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm flex-shrink-0">
+                    <div class="flex items-center">
+                        <!-- 메뉴 접기/펴기 버튼 -->
+                        <button onclick="toggleSidebar()" class="w-8 h-8 flex items-center justify-center rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 mr-3 transition-colors" title="목차 열기/닫기">
+                            <i class="fa-solid fa-bars text-sm"></i>
                         </button>
-                        <button onclick="zoomMermaid('reset')" class="px-2 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 text-xs font-bold rounded-md shadow-sm transition-colors" title="원래 크기">
-                            100%
-                        </button>
-                        <button onclick="zoomMermaid('in')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm transition-colors" title="확대">
-                            <i class="fa-solid fa-plus text-xs"></i>
-                        </button>
+                        <div class="flex items-center text-sm font-bold text-slate-700">
+                            <img src="image_14c5cf6f.jpg" alt="AI 쌤" class="w-9 h-9 rounded-full mr-2 border border-indigo-100 object-cover">
+                            <span id="current-lesson-title" class="truncate max-w-[150px] md:max-w-[200px]">마법학교 환영해요!</span>
+                        </div>
                     </div>
-
-                    <button onclick="downloadCurrentTab()" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1.5 rounded-md transition-colors flex items-center font-bold shadow-sm">
-                        <i class="fa-solid fa-download mr-1"></i>다운로드
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-key text-gray-400 text-xs"></i>
+                        <input type="password" id="api-key" placeholder="Gemini API Key" class="text-xs px-2 py-1.5 border rounded-md w-28 md:w-32 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-gray-50" onchange="saveApiKey(this.value)">
+                    </div>
                 </div>
-            </div>
 
-            <!-- 탭 컨텐츠 -->
-            <div class="flex-1 relative bg-white">
-                <!-- 1. 화면보기 (iframe) -->
-                <div id="content-preview" class="absolute inset-0 w-full h-full p-3 bg-gray-50/50">
-                    <div class="w-full h-full border-2 border-dashed border-purple-200 rounded-2xl overflow-hidden bg-white relative shadow-sm">
-                        <iframe id="result-iframe" class="w-full h-full" sandbox="allow-scripts allow-modals"></iframe>
-                        <div id="iframe-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-purple-300 bg-white">
-                            <i class="fa-solid fa-wand-sparkles text-5xl mb-4 text-pink-300 drop-shadow-sm"></i>
-                            <p class="font-cute text-xl">주문을 외우면 여기에 마법이 나타나요!</p>
+                <!-- 채팅 기록 -->
+                <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="flex items-start">
+                        <img src="image_14c5cf6f.jpg" class="w-8 h-8 rounded-full mr-2 object-cover border border-indigo-100">
+                        <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 max-w-[85%]">
+                            <p class="text-sm">안녕, 꼬마 마법사! 왼쪽 목차에서 배우고 싶은 마법을 선택해 봐. 선생님이 마법 주문(프롬프트) 거는 법을 알려줄게! ✨</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. 소스보기 -->
-                <div id="content-code" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-[#1e1e2e] text-[#a6accd] font-mono text-sm">
-                    <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
-                </div>
-
-                <!-- 3. 생각순서도 (Mermaid) -->
-                <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-white">
-                    <div id="mermaid-container" class="text-center">
-                        <p class="text-gray-400 mt-10 font-cute text-lg"><i class="fa-solid fa-project-diagram mb-3 text-3xl text-purple-200"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
+                <!-- 로딩 인디케이터 -->
+                <div id="loading-indicator" class="hidden p-4">
+                    <div class="flex items-start">
+                        <img src="image_14c5cf6f.jpg" class="w-8 h-8 rounded-full mr-2 object-cover border border-indigo-100">
+                        <div class="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 flex space-x-1 items-center">
+                            <svg width="24" height="12" viewBox="0 0 24 12">
+                                <circle cx="4" cy="6" r="3" class="typing-dot" />
+                                <circle cx="12" cy="6" r="3" class="typing-dot" />
+                                <circle cx="20" cy="6" r="3" class="typing-dot" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
+
+                <!-- 입력 영역 -->
+                <div class="bg-white p-4 border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)]">
+                    <div id="hint-chips" class="flex overflow-x-auto space-x-2 mb-3 pb-1 hide-scrollbar">
+                    </div>
+                    
+                    <div class="flex relative">
+                        <input type="text" id="chat-input" placeholder="여기에 코딩 주문을 적어보세요..." class="flex-1 bg-gray-100 rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm" onkeypress="handleKeyPress(event)">
+                        <button onclick="sendMessage()" class="absolute right-2 top-1.5 bottom-1.5 w-9 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center transition-transform hover:scale-105">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 우측: 결과 확인 영역 -->
+            <section class="flex-1 flex flex-col bg-white">
+                <!-- 탭 헤더 및 도구 모음 -->
+                <div class="h-16 flex justify-between items-end border-b border-gray-200 bg-gray-50 pt-2 px-2 flex-shrink-0">
+                    <div class="flex h-full items-end">
+                        <button onclick="switchTab('preview')" id="tab-preview" class="tab-btn active px-4 md:px-5 py-2.5 text-sm font-bold text-indigo-700 bg-white border-t border-l border-r border-gray-200 rounded-t-lg -mb-px transition-colors">
+                            <i class="fa-solid fa-display mr-1.5 text-indigo-500"></i>화면보기
+                        </button>
+                        <button onclick="switchTab('code')" id="tab-code" class="tab-btn px-4 md:px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-indigo-600 border-t border-l border-r border-transparent rounded-t-lg transition-colors">
+                            <i class="fa-solid fa-code mr-1.5 text-indigo-500"></i>소스보기
+                        </button>
+                        <button onclick="switchTab('logic')" id="tab-logic" class="tab-btn px-4 md:px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-indigo-600 border-t border-l border-r border-transparent rounded-t-lg transition-colors">
+                            <i class="fa-solid fa-diagram-project mr-1.5 text-indigo-500"></i>생각순서도
+                        </button>
+                    </div>
+                    
+                    <div id="tab-tools" class="hidden pb-2 pr-2 flex space-x-2 items-center">
+                        <!-- 확대/축소 도구 -->
+                        <div id="zoom-tools" class="hidden flex space-x-1 mr-2 border-r border-gray-300 pr-3">
+                            <button onclick="zoomMermaid('out')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm" title="축소">
+                                <i class="fa-solid fa-minus text-xs"></i>
+                            </button>
+                            <button onclick="zoomMermaid('reset')" class="px-2 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 text-xs font-bold rounded-md shadow-sm" title="원래 크기">
+                                100%
+                            </button>
+                            <button onclick="zoomMermaid('in')" class="w-7 h-7 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-100 text-gray-600 rounded-md shadow-sm" title="확대">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                            </button>
+                        </div>
+
+                        <button onclick="downloadCurrentTab()" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1.5 rounded-md transition-colors flex items-center font-bold shadow-sm">
+                            <i class="fa-solid fa-download mr-1"></i>다운로드
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 탭 컨텐츠 -->
+                <div class="flex-1 relative bg-white">
+                    <!-- 1. 화면보기 (iframe) -->
+                    <div id="content-preview" class="absolute inset-0 w-full h-full p-3 bg-gray-50">
+                        <div class="w-full h-full border border-gray-300 rounded-xl overflow-hidden bg-white relative shadow-sm">
+                            <iframe id="result-iframe" class="w-full h-full" sandbox="allow-scripts allow-modals"></iframe>
+                            <div id="iframe-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-white">
+                                <img src="image_14c5cf6f.jpg" class="w-20 h-20 opacity-20 object-cover mb-4 rounded-full grayscale">
+                                <p class="text-sm font-bold">주문을 외우면 여기에 마법이 나타나요!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. 소스보기 -->
+                    <div id="content-code" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-[#1e1e2e] text-[#a6accd] font-mono text-sm">
+                        <pre><code id="code-block">/* 아직 생성된 코드가 없습니다. */</code></pre>
+                    </div>
+
+                    <!-- 3. 생각순서도 -->
+                    <div id="content-logic" class="absolute inset-0 w-full h-full hidden p-4 overflow-auto bg-white">
+                        <div id="mermaid-container" class="text-center">
+                            <p class="text-gray-400 mt-20"><i class="fa-solid fa-project-diagram mb-2 text-3xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <!-- 사용자 정의 모달창 -->
-    <div id="custom-modal" class="fixed inset-0 bg-purple-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-3xl p-7 w-96 shadow-2xl transform transition-all border-2 border-purple-100">
-            <h3 id="modal-title" class="text-xl font-cute text-purple-800 mb-2 flex items-center"><i class="fa-solid fa-star text-yellow-400 mr-2 text-sm"></i>목차 추가</h3>
-            <p id="modal-desc" class="text-sm text-gray-500 mb-5">새로운 마법 수업의 이름을 적어주세요.</p>
-            <input type="text" id="modal-input" class="w-full border-2 border-purple-100 rounded-xl p-3 focus:outline-none focus:border-pink-400 mb-6 bg-purple-50/30" placeholder="예: [완전초급] 도형 그리기">
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center hidden backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl p-6 w-96 shadow-2xl transform transition-all">
+            <h3 id="modal-title" class="text-lg font-bold text-gray-800 mb-2">목차 추가</h3>
+            <p id="modal-desc" class="text-sm text-gray-500 mb-4">새로운 마법 수업의 이름을 적어주세요.</p>
+            <input type="text" id="modal-input" class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 mb-5" placeholder="예: [완전초급] 도형 그리기">
             <div class="flex justify-end space-x-2">
-                <button onclick="closeModal()" class="px-5 py-2.5 rounded-xl text-gray-500 bg-gray-100 hover:bg-gray-200 text-sm font-bold transition-colors">취소</button>
-                <button id="modal-confirm-btn" class="px-5 py-2.5 rounded-xl text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-sm font-bold transition-colors shadow-md">확인</button>
+                <button onclick="closeModal()" class="px-4 py-2 rounded-lg text-gray-600 bg-gray-100 hover:bg-gray-200 text-sm font-bold transition-colors">취소</button>
+                <button id="modal-confirm-btn" class="px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 text-sm font-bold transition-colors">확인</button>
             </div>
         </div>
     </div>
@@ -214,13 +259,14 @@
             { id: 3, title: "[그림판] 완성 (지우개)", hints: ["펜 굵기를 조절하는 슬라이더와 화면을 하얗게 칠하는 지우개 버튼을 만들어줘"] },
             { id: 4, title: "[메모장] 기초 (추가하기)", hints: ["글씨를 쓰는 칸과 등록 버튼을 만들어. 누르면 아래에 글씨가 리스트로 나오게 해줘"] },
             { id: 5, title: "[메모장] 발전 (삭제하기)", hints: ["리스트 옆에 X 버튼을 달아서, 누르면 그 메모가 지워지게 해줘"] },
-            { id: 6, title: "[메모장] 완성 (체크박스)", hints: ["체크박스를 달아서 체크하면 취소선이 그어지게 하고, 새로고침해도 안 지워지게 저장해줘"] }
+            { id: 6, title: "[메모장] 완성 (체크박스)", hints: ["체크박스를 달아서 체크하면 취소선이 그어지게 하고, 로컬스토리지에 저장해줘"] }
         ];
 
         let curriculum = [];
         let currentLessonId = null;
         let currentTabName = 'preview'; 
         let currentZoom = 1.0;
+        let isSidebarOpen = true; // 사이드바 상태 변수
 
         function getLessonState(id) {
             const saved = localStorage.getItem(`vibe_lesson_${id}_state`);
@@ -246,6 +292,8 @@
                 document.getElementById('api-key').value = savedApiKey;
             }
             
+            window.startApp = startApp;
+            window.toggleSidebar = toggleSidebar;
             window.switchTab = switchTab;
             window.sendMessage = sendMessage;
             window.handleKeyPress = handleKeyPress;
@@ -257,6 +305,28 @@
             window.downloadCurrentTab = downloadCurrentTab; 
             window.saveApiKey = saveApiKey;
             window.zoomMermaid = zoomMermaid;
+        }
+
+        // 앱 시작 (랜딩 페이지 숨기기)
+        function startApp() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('app-container').classList.remove('hidden');
+            // 첫 번째 레슨 자동 로드
+            if(curriculum.length > 0 && !currentLessonId) {
+                loadLesson(curriculum[0].id);
+            }
+        }
+
+        // 사이드바 토글 로직
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            isSidebarOpen = !isSidebarOpen;
+            
+            if(isSidebarOpen) {
+                sidebar.classList.remove('sidebar-closed');
+            } else {
+                sidebar.classList.add('sidebar-closed');
+            }
         }
 
         function saveApiKey(val) {
@@ -273,18 +343,18 @@
             curriculum.forEach(item => {
                 const li = document.createElement('li');
                 const isActive = item.id === currentLessonId;
-                li.className = `group flex justify-between items-center p-3 rounded-2xl cursor-pointer transition-all border-2 ${isActive ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent shadow-md' : 'bg-white text-gray-700 border-transparent hover:border-pink-200 hover:bg-pink-50 hover:shadow-sm'}`;
+                li.className = `group flex justify-between items-center p-3 rounded-lg cursor-pointer transition-colors border ${isActive ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-transparent hover:bg-gray-50 hover:border-gray-200'}`;
                 
                 li.innerHTML = `
-                    <div class="flex-1 truncate text-sm font-bold flex items-center" onclick="loadLesson(${item.id})">
-                        <i class="fa-solid ${isActive ? 'fa-wand-magic-sparkles text-yellow-300' : 'fa-star text-pink-300'} w-6 text-center mr-1"></i>
+                    <div class="flex-1 truncate text-sm font-bold ${isActive ? 'text-indigo-700' : 'text-gray-700'}" onclick="loadLesson(${item.id})">
+                        <i class="fa-solid ${isActive ? 'fa-wand-magic-sparkles text-indigo-500' : 'fa-book text-gray-400'} w-5"></i>
                         ${item.title}
                     </div>
                     <div class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="openModal('edit', ${item.id})" class="p-1.5 text-xs rounded-lg ${isActive ? 'bg-white/20 hover:bg-white/40 text-white' : 'bg-gray-100 text-gray-500 hover:bg-purple-100 hover:text-purple-600'}">
+                        <button onclick="openModal('edit', ${item.id})" class="p-1.5 text-xs rounded-md bg-gray-100 text-gray-500 hover:bg-indigo-100 hover:text-indigo-600">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <button onclick="deleteLesson(${item.id}, event)" class="p-1.5 text-xs rounded-lg ${isActive ? 'bg-white/20 hover:bg-red-400 text-white' : 'bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-500'}">
+                        <button onclick="deleteLesson(${item.id}, event)" class="p-1.5 text-xs rounded-md bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-500">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -306,7 +376,7 @@
             if (lesson.hints && lesson.hints.length > 0) {
                 lesson.hints.forEach(hint => {
                     const btn = document.createElement('button');
-                    btn.className = "whitespace-nowrap px-4 py-2 bg-pink-50 hover:bg-pink-100 text-pink-600 border border-pink-200 rounded-full text-xs font-bold transition-transform hover:scale-105 flex-shrink-0 shadow-sm";
+                    btn.className = "whitespace-nowrap px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-full text-xs font-bold transition-transform hover:scale-105 flex-shrink-0";
                     btn.innerHTML = `<i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> ${hint}`;
                     btn.onclick = () => useHint(hint);
                     hintContainer.appendChild(btn);
@@ -315,7 +385,7 @@
 
             const chatHistory = document.getElementById('chat-history');
             chatHistory.innerHTML = '';
-            appendMessage('ai', `안녕! <b>${lesson.title}</b> 수업을 시작할게. 아래 마법 주문 버튼을 누르거나 직접 입력해 봐!`);
+            appendMessage('ai', `안녕! <b>${lesson.title}</b> 수업을 시작할게. 아래 마법 주문 버튼을 누르거나 직접 코딩 주문을 외워봐! 뾰로롱~ ✨`);
             
             const state = getLessonState(id);
             
@@ -332,10 +402,15 @@
             if (state.mermaid) {
                 renderMermaid(state.mermaid);
             } else {
-                document.getElementById('mermaid-container').innerHTML = '<p class="text-gray-400 mt-10 font-cute text-lg"><i class="fa-solid fa-project-diagram mb-3 text-3xl text-purple-200"></i><br>코드가 생성되면 순서도가 그려집니다.</p>';
+                document.getElementById('mermaid-container').innerHTML = '<p class="text-gray-400 mt-20"><i class="fa-solid fa-project-diagram mb-2 text-3xl"></i><br>코드가 생성되면 순서도가 그려집니다.</p>';
             }
             
             switchTab('preview');
+            
+            // 모바일 화면일 경우 레슨 선택 시 사이드바 자동 닫기
+            if(window.innerWidth < 768 && isSidebarOpen) {
+                toggleSidebar();
+            }
         }
 
         function deleteLesson(id, event) {
@@ -362,17 +437,17 @@
             input.value = '';
 
             if (action === 'add') {
-                title.innerHTML = '<i class="fa-solid fa-star text-yellow-400 mr-2 text-sm"></i>새 마법수업 추가';
+                title.innerText = "새 수업 추가";
                 input.placeholder = "새로운 수업 이름을 적어주세요.";
                 btn.onclick = () => handleModalConfirm();
             } else if (action === 'edit') {
-                title.innerHTML = '<i class="fa-solid fa-pen text-pink-400 mr-2 text-sm"></i>마법수업 이름 수정';
+                title.innerText = "수업 이름 수정";
                 const lesson = curriculum.find(l => l.id === id);
                 input.value = lesson ? lesson.title : '';
                 btn.onclick = () => handleModalConfirm();
             }
             else if (action === 'msg') {
-                title.innerHTML = '<i class="fa-solid fa-bell text-yellow-400 mr-2 text-sm"></i>알림';
+                title.innerText = "알림";
                 input.classList.add('hidden');
                 btn.onclick = closeModal;
             }
@@ -402,7 +477,7 @@
         }
 
         function showMessageModal(titleText, descText) {
-            document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-bell text-yellow-400 mr-2 text-sm"></i>${titleText}`;
+            document.getElementById('modal-title').innerText = titleText;
             document.getElementById('modal-desc').innerText = descText;
             openModal('msg');
         }
@@ -418,20 +493,19 @@
             }
         }
 
-        // --- UI 인터랙션 (탭 및 도구) ---
         function switchTab(tabName) {
             currentTabName = tabName;
             
             ['preview', 'code', 'logic'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tabName) {
-                    btn.classList.replace('text-gray-500', 'text-purple-700');
-                    btn.classList.replace('bg-transparent', 'bg-white');
+                    btn.classList.replace('text-gray-500', 'text-indigo-700');
+                    btn.classList.replace('bg-white', 'bg-gray-50'); // 활성화된 탭 배경
                     btn.classList.add('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
                     btn.classList.remove('border-transparent');
                 } else {
-                    btn.classList.replace('text-purple-700', 'text-gray-500');
-                    btn.classList.replace('bg-white', 'bg-transparent');
+                    btn.classList.replace('text-indigo-700', 'text-gray-500');
+                    btn.classList.replace('bg-gray-50', 'bg-white');
                     btn.classList.remove('border-t', 'border-l', 'border-r', 'border-gray-200', '-mb-px');
                     btn.classList.add('border-transparent');
                 }
@@ -446,18 +520,16 @@
         }
 
         function downloadCurrentTab() {
-            const lessonTitle = document.getElementById('current-lesson-title').innerText || '뾰로롱코딩';
+            const lessonTitle = document.getElementById('current-lesson-title').innerText || '뽀로롱코딩';
             
             if (currentTabName === 'code') {
                 const code = document.getElementById('code-block').innerText;
                 if (!code || code.includes('아직 생성된 코드가 없습니다')) return alert('다운로드할 코드가 없습니다.');
-                
                 downloadFile(code, `${lessonTitle}.html`, 'text/html');
                 
             } else if (currentTabName === 'logic') {
                 const svgElement = document.querySelector('#mermaid-container svg');
                 if (!svgElement) return alert('다운로드할 순서도가 없습니다.');
-                
                 const svgData = new XMLSerializer().serializeToString(svgElement);
                 downloadFile(svgData, `${lessonTitle}_순서도.svg`, 'image/svg+xml;charset=utf-8');
             }
@@ -490,12 +562,12 @@
             div.className = "flex items-start " + (role === 'user' ? "flex-row-reverse" : "");
             
             const avatar = role === 'user' 
-                ? `<img src="https://api.dicebear.com/7.x/notionists/svg?seed=Kids" class="w-8 h-8 rounded-full ${role === 'user' ? 'ml-2' : 'mr-2'} bg-yellow-100 shadow-sm">`
-                : `<img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mimi&backgroundColor=fbcfe8" class="w-8 h-8 rounded-full mr-2 border border-pink-200 shadow-sm">`;
+                ? `<img src="https://api.dicebear.com/7.x/notionists/svg?seed=Kids" class="w-8 h-8 rounded-full ${role === 'user' ? 'ml-2' : 'mr-2'} bg-yellow-100 object-cover">`
+                : `<img src="image_14c5cf6f.jpg" class="w-8 h-8 rounded-full mr-2 border border-indigo-100 object-cover">`;
             
             const bubbleClasses = role === 'user'
-                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%] text-sm"
-                : "bg-white text-gray-800 p-3 rounded-2xl rounded-tl-none shadow-sm border border-pink-100 max-w-[85%] text-sm";
+                ? "bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-[85%] text-sm"
+                : "bg-white text-gray-800 p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 max-w-[85%] text-sm";
                 
             div.innerHTML = `
                 ${avatar}
@@ -529,8 +601,8 @@
             const currentMermaid = state.mermaid || "";
 
             const systemPrompt = `
-넌 11살 초등학생에게 웹 코딩(HTML/CSS/JS)을 가르치는 친절하고 다정한 마법사 AI 선생님 '바이브'야. 
-아이들은 네게 자연어로 요구사항을 말할거야 (바이브 코딩).
+넌 11살 초등학생에게 웹 코딩(HTML/CSS/JS)을 가르치는 친절하고 다정한 마법사 AI 선생님이야. 앱 이름은 '뽀로롱 코딩'이야.
+아이들은 네게 자연어로 요구사항을 말할거야.
 반드시 JSON 형식으로만 응답해. 백틱(\`\`\`)을 포함한 마크다운 코드블럭으로 감싸지 말고 순수 JSON 문자열만 반환해.
 
 응답 JSON 구조:
@@ -597,7 +669,7 @@ ${text}
                     saveLessonState(currentLessonId, updatedHtml, updatedMermaid);
 
                 } else {
-                    appendMessage('ai', "앗, 마법 주문이 꼬여버렸어. 다시 한 번 말해줄래?");
+                    appendMessage('ai', "앗, 코딩 주문이 꼬여버렸어. 다시 한 번 말해줄래?");
                 }
             } catch (error) {
                 console.error(error);
@@ -616,7 +688,7 @@ ${text}
                 container.innerHTML = svg;
                 zoomMermaid('keep'); 
             } catch (e) {
-                container.innerHTML = `<p class="text-pink-500 mt-10 font-cute text-lg"><i class="fa-solid fa-triangle-exclamation mb-2 text-2xl"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400 font-sans">${e.message}</span></p>`;
+                container.innerHTML = `<p class="text-red-500 mt-20"><i class="fa-solid fa-triangle-exclamation mb-2 text-3xl"></i><br>앗, 이번 주문은 순서도로 그리기 조금 복잡했나봐!<br><span class="text-xs text-gray-400">${e.message}</span></p>`;
             }
         }
 
