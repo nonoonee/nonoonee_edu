@@ -27,7 +27,7 @@
             transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease; 
         }
         .bento-card:hover { 
-            transform: scale(1.02); 
+            transform: scale(1.01); 
             box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
         }
         /* 앱 아이콘 스타일 */
@@ -60,14 +60,13 @@
     <header class="glass-nav fixed top-0 w-full z-50 border-b border-black/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <!-- 로고 (수정된 경로 반영) -->
+                <!-- 로고 -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="/"><img class="h-10 w-auto" src="/images/nonoonee_ci2.jpg" alt="노느니에듀테크 로고"></a>
                 </div>
                 <nav class="hidden md:flex space-x-8 text-[15px] font-semibold text-gray-800 items-center">
                     <a href="#" class="hover:text-black transition-colors">회사소개</a>
                     <a href="#" class="hover:text-black transition-colors">교육 프로그램</a>
-                    <!-- 뾰로롱 코딩으로 수정 -->
                     <a href="/vibe/index.html" class="hover:text-black transition-colors">뾰로롱 코딩</a>
                     <a href="https://nonoonee.com/hi/" class="text-blue-600 hover:text-blue-700 transition-colors">블라블라 토크</a>
                     <a href="#" class="hover:text-black transition-colors">고객센터</a>
@@ -105,32 +104,40 @@
     <section class="max-w-6xl mx-auto px-4 mb-32">
         <h2 class="text-4xl font-bold text-center mb-12 tracking-tight text-black">주요 교육 프로그램</h2>
         
-        <!-- 메인 앱 2개 Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- 메인 앱 세로형(1열) Grid -->
+        <div class="grid grid-cols-1 gap-8 mb-8">
             
-            <!-- 블라블라 토크 (다크 테마) -->
+            <!-- 블라블라 토크 (다크 테마 배너형) -->
             <a href="https://nonoonee.com/hi/" target="_blank" class="block group">
-                <div class="bento-card bg-gray-900 text-white p-12 flex flex-col items-center text-center h-full">
-                    <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-8 tracking-wider">NEW</span>
-                    <!-- 아이콘 경로 수정 -->
-                    <img src="/images/blahblah_icon.jpg" alt="블라블라 토크 아이콘" class="w-36 h-36 app-icon mb-8 group-hover:shadow-blue-500/20 transition-shadow">
-                    <h3 class="text-3xl font-bold mb-4">블라블라 토크</h3>
-                    <p class="text-gray-400 text-lg keep-all">
-                        아이들의 눈높이에 맞춘 AI 기반 화상 영어 교구입니다. 학습자가 직접 구성한 대본으로 AI 원어민 튜터와 대화하며 실전 회화 감각을 익힙니다.
-                    </p>
+                <div class="bento-card bg-gray-900 text-white p-10 md:p-16 flex flex-col md:flex-row items-center text-center md:text-left gap-10 w-full">
+                    <div class="flex-shrink-0">
+                        <img src="/images/blahblah_icon.jpg" alt="블라블라 토크 아이콘" class="w-40 h-40 md:w-48 md:h-48 app-icon group-hover:shadow-blue-500/20 transition-shadow">
+                    </div>
+                    <div>
+                        <span class="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-wider">NEW</span>
+                        <h3 class="text-3xl md:text-4xl font-bold mb-4">블라블라 토크</h3>
+                        <p class="text-gray-400 text-lg md:text-xl keep-all leading-relaxed">
+                            아이들의 눈높이에 맞춘 AI 기반 화상 영어 교구입니다.<br class="hidden md:block">
+                            학습자가 직접 구성한 대본으로 AI 원어민 튜터와 대화하며 실전 회화 감각을 익힙니다.
+                        </p>
+                    </div>
                 </div>
             </a>
 
-            <!-- 뾰로롱 코딩 (라이트 테마, 이름 수정) -->
+            <!-- 뾰로롱 코딩 (라이트 테마 배너형) -->
             <a href="/vibe/index.html" class="block group">
-                <div class="bento-card bg-white border border-gray-100 shadow-sm p-12 flex flex-col items-center text-center h-full">
-                    <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full mb-8 tracking-wider">HOT</span>
-                    <!-- 아이콘 경로 수정 -->
-                    <img src="/images/bbyorong_icon.png" alt="뾰로롱 코딩 아이콘" class="w-36 h-36 app-icon mb-8 group-hover:shadow-purple-500/10 transition-shadow">
-                    <h3 class="text-3xl font-bold mb-4 text-black">뾰로롱 코딩</h3>
-                    <p class="text-gray-500 text-lg keep-all">
-                        생성형 AI 시대에 맞춘 새로운 코딩 교육. 일상 언어로 논리를 전개하며 컴퓨팅 사고력과 문제 해결력을 체계적으로 배울 수 있습니다.
-                    </p>
+                <div class="bento-card bg-white border border-gray-100 shadow-sm p-10 md:p-16 flex flex-col md:flex-row items-center text-center md:text-left gap-10 w-full">
+                    <div class="flex-shrink-0">
+                        <img src="/images/bbyorong_icon.jpg" alt="뾰로롱 코딩 아이콘" class="w-40 h-40 md:w-48 md:h-48 app-icon group-hover:shadow-purple-500/10 transition-shadow">
+                    </div>
+                    <div>
+                        <span class="inline-block bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-wider">HOT</span>
+                        <h3 class="text-3xl md:text-4xl font-bold mb-4 text-black">뾰로롱 코딩</h3>
+                        <p class="text-gray-500 text-lg md:text-xl keep-all leading-relaxed">
+                            생성형 AI 시대에 맞춘 새로운 코딩 교육.<br class="hidden md:block">
+                            일상 언어로 논리를 전개하며 컴퓨팅 사고력과 문제 해결력을 체계적으로 배울 수 있습니다.
+                        </p>
+                    </div>
                 </div>
             </a>
 
@@ -156,7 +163,7 @@
         </div>
     </section>
 
-    <!-- 하단 푸터 (법인명 및 주소 정보 반영) -->
+    <!-- 하단 푸터 -->
     <footer class="bg-[#f5f5f7] pt-16 pb-24 text-[13px] text-gray-500">
         <div class="max-w-6xl mx-auto px-4">
             <!-- 푸터 링크 -->
