@@ -94,8 +94,8 @@
   <div id="app" class="min-h-screen flex flex-col justify-between">
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-28 opacity-0 transition-all duration-300 ease-in-out pointer-events-none">
-      <div id="toast-content" class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl bg-slate-800 border border-slate-700 text-sm font-medium text-white"></div>
+    <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-28 opacity-0 transition-all duration-300 ease-in-out pointer-events-none max-w-md">
+      <div id="toast-content" class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl bg-slate-800 border border-slate-700 text-sm font-medium text-white leading-snug"></div>
     </div>
 
     <main class="flex-grow flex flex-col">
@@ -873,7 +873,7 @@
 
       function getActiveApiKey() {
         try {
-          return (localStorage.getItem(LOCAL_API_KEY) || '').trim();
+          return (localStorage.getItem(LOCAL_API_KEY) || '').replace(/\s+/g, '');
         } catch (err) {
           return '';
         }
@@ -898,7 +898,7 @@
         if (type === 'success') badge = '✅';
         if (type === 'error') badge = '⚠️';
 
-        content.innerHTML = '<span>' + badge + '</span><span>' + escapeHtml(message) + '</span>';
+        content.innerHTML = '<span class="shrink-0">' + badge + '</span><span>' + escapeHtml(message) + '</span>';
         toast.classList.remove('-translate-y-28', 'opacity-0');
         toast.classList.add('translate-y-0', 'opacity-100');
 
@@ -906,7 +906,7 @@
         window.__toastTimer = setTimeout(function () {
           toast.classList.remove('translate-y-0', 'opacity-100');
           toast.classList.add('-translate-y-28', 'opacity-0');
-        }, 3400);
+        }, 4500);
       }
 
       // Loading Modal
@@ -1012,7 +1012,7 @@
         await generateBookViaAI(bookTitle, 1);
       }
 
-      // Exponential Backoff Fetch for Gemini API
+      // Gemini API Fetch with Status-Aware Error Handling & Retry
       async function callGeminiApi(payload) {
         const apiKey = getActiveApiKey();
         if (!apiKey) {
@@ -1031,19 +1031,63 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload)
             });
+
             if (!response.ok) {
-              const errText = await response.text();
-              throw new Error('HTTP ' + response.status + ': ' + errText);
+              let errDetail = '';
+              try {
+                const errJson = await response.json();
+                errDetail = errJson?.error?.message || JSON.stringify(errJson);
+              } catch (_) {
+                errDetail = await response.text();
+              }
+              const httpErr = new Error('HTTP ' + response.status + ': ' + errDetail);
+              httpErr.status = response.status;
+              httpErr.detail = errDetail;
+
+              // 400, 403, 404 에러는 재시도해도 동일하므로 즉시 중단
+              if (response.status === 400 || response.status === 403 || response.status === 404) {
+                throw httpErr;
+              }
+              throw httpErr;
             }
             return await response.json();
           } catch (err) {
             lastErr = err;
+            if (err.status === 400 || err.status === 403 || err.status === 404) {
+              break;
+            }
             if (attempt < 2) {
-              await new Promise(function (r) { setTimeout(r, 900 * Math.pow(2, attempt)); });
+              await new Promise(function (r) { setTimeout(r, 1000 * Math.pow(2, attempt)); });
             }
           }
         }
         throw lastErr;
+      }
+
+      // Extract Non-Thought Text from Gemini Response
+      function extractTextFromGeminiResult(result) {
+        const parts = result?.candidates?.[0]?.content?.parts || [];
+        const nonThoughtParts = parts.filter(function (p) {
+          return !p.thought && typeof p.text === 'string';
+        });
+        if (nonThoughtParts.length > 0) {
+          return nonThoughtParts[nonThoughtParts.length - 1].text;
+        }
+        return parts[0]?.text || '';
+      }
+
+      // Safe JSON Extractor (Skips Thinking Parts & Slices Outer Braces)
+      function extractValidJsonFromResult(result) {
+        let raw = extractTextFromGeminiResult(result);
+        raw = raw.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+
+        const firstBrace = raw.indexOf('{');
+        const lastBrace = raw.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+          raw = raw.slice(firstBrace, lastBrace + 1);
+        }
+        if (!raw) throw new Error('EMPTY_AI_RESPONSE');
+        return JSON.parse(raw);
       }
 
       // Generate Chapter Guide via Gemini AI & Save to LocalStorage DB
@@ -1059,11 +1103,12 @@
         const systemPrompt = [
           'You are an expert English Education Specialist for Nonene EdTech (노느니 에듀테크).',
           'Create a copyright-safe chapter study guide for Korean elementary/middle school students reading English novels.',
-          'STRICT COPYRIGHT RULES:',
+          'STRICT RULES:',
           '1. NEVER reproduce verbatim sentences or long quotes from the original novel.',
           '2. Write a 2-sentence chapter context summary in Korean.',
           '3. Create 100% original, everyday student example sentences for vocabulary.',
-          '4. Return ONLY valid JSON matching the requested schema.'
+          '4. Avoid unescaped double quotes inside string values (use single quotes if quoting inside strings).',
+          '5. Return ONLY valid JSON matching the requested schema.'
         ].join('\n');
 
         const userPrompt = `Book Title: "${bookTitle}"
@@ -1149,14 +1194,19 @@ Return strictly valid JSON with this exact structure:
           const result = await callGeminiApi({
             contents: [{ parts: [{ text: userPrompt }] }],
             systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: { responseMimeType: 'application/json' }
+            generationConfig: {
+              responseMimeType: 'application/json',
+              temperature: 0.4,
+              maxOutputTokens: 8192
+            }
           });
 
-          let rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          rawJson = rawJson.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-          if (!rawJson) throw new Error('Empty AI JSON response');
+          const finishReason = result?.candidates?.[0]?.finishReason;
+          if (finishReason === 'MAX_TOKENS') {
+            throw new Error('MAX_TOKENS_EXCEEDED');
+          }
 
-          const generatedChapter = JSON.parse(rawJson);
+          const generatedChapter = extractValidJsonFromResult(result);
           updateLoadingProgress('3단계: 로컬 DB에 영구 저장 중...', 92);
 
           const normKey = normalizeTitle(bookTitle);
@@ -1185,9 +1235,22 @@ Return strictly valid JSON with this exact structure:
           showToast("✨ '" + updatedBook.title + "' Ch." + chapterNum + " 생성 및 DB 저장 완료!", 'success');
           openStudyWorkspace(updatedBook, chapterNum, false);
         } catch (err) {
-          console.error('AI Generation Error:', err);
+          console.error('AI Generation Error Detail:', err);
           showLoadingModal(false);
-          showToast('AI 생성 중 오류가 발생했습니다. API 키가 유효한지 설정에서 확인해 주세요.', 'error');
+
+          let errMsg = '오류: ' + (err.message || '알 수 없는 오류가 발생했습니다.');
+          if (err instanceof SyntaxError || err.message === 'MAX_TOKENS_EXCEEDED') {
+            errMsg = 'AI 응답 데이터 형식이 길어서 끊겼습니다. 다시 한 번 검색 버튼을 눌러주세요!';
+          } else if (err.status === 403) {
+            errMsg = '403 차단됨: API 키의 웹사이트(HTTP 리퍼러) 제한 설정이나 API 활성화 여부를 확인해 주세요.';
+          } else if (err.status === 429) {
+            errMsg = '429 호출 한도 초과: 잠시(약 30초) 기다렸다가 다시 시도해 주세요.';
+          } else if (err.status === 404) {
+            errMsg = '404 모델 오류: 현재 지정된 모델명(' + GEMINI_MODEL + ')을 찾을 수 없습니다.';
+          } else if (err.status === 400) {
+            errMsg = '400 요청 오류: ' + (err.detail || 'API 키 형식을 확인해 주세요.');
+          }
+          showToast(errMsg, 'error');
         }
       }
 
@@ -1669,17 +1732,24 @@ Return strictly valid JSON with this exact structure:
             }),
             systemInstruction: {
               parts: [{ text: systemPrompt + '\nChapter Summary: ' + (chData?.summary || '') }]
+            },
+            generationConfig: {
+              maxOutputTokens: 2048
             }
           });
 
-          const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const reply = extractTextFromGeminiResult(result).trim();
           if (!reply) throw new Error('Empty reply');
           loadingBubble.innerHTML = escapeHtml(reply).replace(/\n/g, '<br>');
           discussionHistory.push({ role: 'model', text: reply });
         } catch (err) {
+          console.error('Discussion AI Error:', err);
           if (err && err.code === 'NO_API_KEY') {
             loadingBubble.innerHTML =
               '좋은 생각이에요! 👍 <br><span class="text-amber-300 text-xs">(실시간 AI 코치 응답을 받으려면 우측 상단 [⚙️ 설정]에서 Gemini API 키를 입력해 주세요. 방금 작성한 생각은 4단계 에세이 메모에 자동 저장되었습니다!)</span>';
+          } else if (err && err.status === 403) {
+            loadingBubble.innerHTML =
+              '<span class="text-rose-300">API 키의 도메인(HTTP 리퍼러) 제한으로 요청이 차단되었습니다(403). 설정을 확인해 주세요! (작성한 메모는 4단계에 저장되었습니다.)</span>';
           } else {
             loadingBubble.innerHTML =
               '정말 멋진 관점이에요! 👍 왜 그렇게 생각했는지 책 속 장면을 하나 덧붙여 보면 4단계 에세이가 훨씬 탄탄해질 거예요.';
@@ -1781,16 +1851,22 @@ Respond in friendly Korean with these 3 concise sections:
         try {
           const result = await callGeminiApi({
             contents: [{ parts: [{ text: userQuery }] }],
-            systemInstruction: { parts: [{ text: systemPrompt }] }
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            generationConfig: {
+              maxOutputTokens: 2048
+            }
           });
-          const feedback = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const feedback = extractTextFromGeminiResult(result).trim();
           if (!feedback) throw new Error('Empty feedback');
           feedbackText.innerHTML = escapeHtml(feedback).replace(/\n/g, '<br>');
         } catch (err) {
+          console.error('Essay Feedback AI Error:', err);
           if (err && err.code === 'NO_API_KEY') {
             feedbackText.innerHTML = '<span class="text-amber-300">우측 상단 <strong>[⚙️ 설정]</strong>에서 Gemini API 키를 저장하시면 실시간 AI 에세이 첨삭 피드백을 바로 받아보실 수 있습니다!</span>';
+          } else if (err && err.status === 403) {
+            feedbackText.innerHTML = '<span class="text-rose-300">403 차단됨: API 키의 웹사이트(HTTP 리퍼러) 제한 설정을 확인해 주세요.</span>';
           } else {
-            feedbackText.innerHTML = '<span class="text-rose-300">AI 서버 연결이 일시적으로 지연되었습니다. 잠시 후 다시 눌러주세요!</span>';
+            feedbackText.innerHTML = '<span class="text-rose-300">AI 응답 지연(' + escapeHtml(err.message || '연결 오류') + '): 잠시 후 다시 눌러주세요!</span>';
           }
         }
       }
@@ -1870,7 +1946,7 @@ Respond in friendly Korean with these 3 concise sections:
       }
 
       function saveApiKey() {
-        const val = document.getElementById('api-key-input').value.trim();
+        const val = document.getElementById('api-key-input').value.replace(/\s+/g, '');
         try {
           if (val) {
             localStorage.setItem(LOCAL_API_KEY, val);
