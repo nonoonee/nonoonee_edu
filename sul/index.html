@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>노느니 술술술 리딩 - 영어 원서 AI 학습 가이드</title>
+  <link rel="icon" type="image/png" href="/images/sulsulsul_icon.png">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -31,6 +32,10 @@
       font-family: 'Inter', 'Noto Sans KR', sans-serif;
       background-color: #0B1120;
       color: #f3f4f6;
+    }
+
+    .app-icon {
+      border-radius: 22.5%;
     }
 
     /* 3D Flashcard Flip */
@@ -107,11 +112,15 @@
 
         <!-- Top Status Bar -->
         <div class="w-full max-w-5xl flex flex-wrap justify-between items-center gap-3 mb-8">
-          <div class="flex items-center space-x-2">
-            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              노느니 에듀테크
-            </span>
-            <span id="storage-mode-label" class="text-xs text-slate-400">LocalStorage 영구 저장 모드</span>
+          <div class="flex items-center space-x-2.5">
+            <a
+              href="/"
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-white border border-indigo-500/30 transition-colors"
+              title="노느니에듀테크 메인 홈페이지로 이동"
+            >
+              <span>← 노느니에듀테크 홈</span>
+            </a>
+            <span id="storage-mode-label" class="text-xs text-slate-400 hidden sm:inline">LocalStorage 영구 저장 모드</span>
           </div>
           <div class="flex items-center gap-2">
             <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300">
@@ -134,11 +143,19 @@
 
         <!-- Center Search Area -->
         <div class="w-full max-w-2xl flex flex-col items-center my-auto py-8">
-          <div id="brand-logo-home" class="text-center mb-8 group cursor-pointer">
-            <div class="inline-flex items-center justify-center p-3.5 mb-3 bg-gradient-to-tr from-indigo-600 to-emerald-500 rounded-2xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-              </svg>
+          <a
+            id="brand-logo-home"
+            href="/"
+            title="노느니에듀테크 메인 홈페이지로 이동"
+            class="text-center mb-8 group cursor-pointer block focus:outline-none"
+          >
+            <div class="relative mx-auto mb-5 w-28 h-28 sm:w-36 sm:h-36 flex items-center justify-center">
+              <div class="absolute inset-0 bg-emerald-500/30 blur-2xl rounded-full scale-110 group-hover:scale-125 transition-transform duration-500"></div>
+              <img
+                src="/images/sulsulsul_icon.png"
+                alt="노느니 술술술 리딩 아이콘"
+                class="relative w-full h-full app-icon bg-white/5 object-contain ring-1 ring-white/15 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1"
+              />
             </div>
             <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-white mb-2">
               노느니 <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400">술술술 리딩</span>
@@ -146,7 +163,7 @@
             <p class="text-slate-400 text-sm sm:text-base">
               원서 읽기가 막힘없이 술술! 4단계 AI 독해 가이드 &amp; 에세이 코칭
             </p>
-          </div>
+          </a>
 
           <!-- Google-style Search Input -->
           <form id="search-form" class="w-full mb-6">
@@ -196,7 +213,7 @@
 
         <!-- Copyright Disclaimer Footer -->
         <footer class="w-full max-w-5xl border-t border-slate-800/60 pt-6 text-center text-xs text-slate-400 leading-relaxed">
-          <p class="mb-1">© 2026 노느니 에듀테크 (Nonene EdTech). All rights reserved.</p>
+          <p class="mb-1">© 2026 <a href="/" class="hover:text-white underline underline-offset-2 transition-colors">노느니 에듀테크 (Nonene EdTech)</a>. All rights reserved.</p>
           <p>
             <strong>저작권 안전 안내:</strong> 본 서비스는 종이책·전자책 원서를 보유한 학습자를 위한 <em>독립 교육 보조 가이드</em>이며, 원작자 및 출판사와 공식 제휴 관계가 아닙니다. 원문 본문을 복제하지 않고 자체 제작 요약과 창작 예문만을 제공합니다.
           </p>
@@ -210,13 +227,20 @@
 
         <!-- Sticky Top Header -->
         <header class="no-print sticky top-0 z-40 bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center space-x-3 sm:space-x-4">
+          <div class="flex items-center space-x-2.5 sm:space-x-3.5">
+            <a
+              href="/"
+              title="노느니에듀테크 메인 홈페이지로 이동"
+              class="flex items-center gap-1.5 pr-1 hover:opacity-85 transition-opacity shrink-0"
+            >
+              <img src="/images/sulsulsul_icon.png" alt="홈으로" class="w-8 h-8 app-icon bg-white/5 object-contain ring-1 ring-white/15" />
+            </a>
             <button
               type="button"
               id="btn-back-home"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors"
             >
-              <span>← 홈 서재</span>
+              <span>← 원서 서재</span>
             </button>
             <div class="h-4 w-px bg-slate-800"></div>
             <div>
@@ -585,7 +609,7 @@
 
         <div class="space-y-2">
           <label for="api-key-input" class="block text-xs font-bold text-slate-200">
-            Gemini API 키 <span class="font-normal text-slate-400">(새 책 생성·AI 토론·첨삭용)</span>
+            Gemini API 키 <span class="font-normal text-slate-400">(블라블라 토크와 자동 연동)</span>
           </label>
           <div class="flex gap-2">
             <input
@@ -604,7 +628,7 @@
             </button>
           </div>
           <p class="text-[11px] text-slate-400 leading-relaxed">
-            입력한 키는 본인 브라우저(<code>localStorage</code>)에만 저장됩니다.
+            입력한 키는 본인 브라우저(<code>localStorage</code>)에만 저장되며, 같은 도메인의 블라블라 토크 키도 자동으로 인식합니다.
           </p>
         </div>
 
@@ -647,7 +671,8 @@
 
       const LOCAL_DB_KEY = 'nonene_reading_books_v1';
       const LOCAL_API_KEY = 'nonene_gemini_api_key';
-      const GEMINI_MODEL = 'gemini-2.5-flash';
+      const BLAHBLAH_API_KEY = 'gemini_tutor_api_key'; // 블라블라 토크 공유 키
+      const GEMINI_MODEL = 'gemini-3.8-flash'; // 블라블라 토크와 동일한 작동 검증 모델
 
       const RECOMMENDED_BOOKS = [
         { title: "Number the Stars" },
@@ -871,12 +896,20 @@
         saveLocalDb(dbObj);
       }
 
+      // 블라블라 토크에 저장된 API 키까지 자동으로 연동해서 불러오기
       function getActiveApiKey() {
         try {
-          return (localStorage.getItem(LOCAL_API_KEY) || '').replace(/\s+/g, '');
+          const ownKey = (localStorage.getItem(LOCAL_API_KEY) || '').trim();
+          if (ownKey) return ownKey;
+          const sharedKey = (localStorage.getItem(BLAHBLAH_API_KEY) || '').trim();
+          return sharedKey;
         } catch (err) {
           return '';
         }
+      }
+
+      function getModelUrl() {
+        return 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + getActiveApiKey();
       }
 
       function updateApiKeyIndicator() {
@@ -1012,8 +1045,8 @@
         await generateBookViaAI(bookTitle, 1);
       }
 
-      // Gemini API Fetch with Status-Aware Error Handling & Retry
-      async function callGeminiApi(payload) {
+      // 블라블라 토크와 100% 동일한 방식으로 호출 (불필요한 헤더 및 옵션 제거)
+      async function callGeminiContents(contentsArray) {
         const apiKey = getActiveApiKey();
         if (!apiKey) {
           const noKeyErr = new Error('NO_API_KEY');
@@ -1021,52 +1054,23 @@
           throw noKeyErr;
         }
 
-        const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + encodeURIComponent(apiKey);
-        let lastErr = null;
+        const response = await fetch(getModelUrl(), {
+          method: 'POST',
+          body: JSON.stringify({ contents: contentsArray })
+        });
 
-        for (let attempt = 0; attempt < 3; attempt++) {
-          try {
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-              let errDetail = '';
-              try {
-                const errJson = await response.json();
-                errDetail = errJson?.error?.message || JSON.stringify(errJson);
-              } catch (_) {
-                errDetail = await response.text();
-              }
-              const httpErr = new Error('HTTP ' + response.status + ': ' + errDetail);
-              httpErr.status = response.status;
-              httpErr.detail = errDetail;
-
-              // 400, 403, 404 에러는 재시도해도 동일하므로 즉시 중단
-              if (response.status === 400 || response.status === 403 || response.status === 404) {
-                throw httpErr;
-              }
-              throw httpErr;
-            }
-            return await response.json();
-          } catch (err) {
-            lastErr = err;
-            if (err.status === 400 || err.status === 403 || err.status === 404) {
-              break;
-            }
-            if (attempt < 2) {
-              await new Promise(function (r) { setTimeout(r, 1000 * Math.pow(2, attempt)); });
-            }
-          }
+        const data = await response.json();
+        if (data.error) {
+          const apiErr = new Error(data.error.message || 'API 호출 오류');
+          apiErr.status = data.error.code || response.status;
+          throw apiErr;
         }
-        throw lastErr;
+        return data;
       }
 
       // Extract Non-Thought Text from Gemini Response
-      function extractTextFromGeminiResult(result) {
-        const parts = result?.candidates?.[0]?.content?.parts || [];
+      function extractTextFromGeminiResult(data) {
+        const parts = data?.candidates?.[0]?.content?.parts || [];
         const nonThoughtParts = parts.filter(function (p) {
           return !p.thought && typeof p.text === 'string';
         });
@@ -1076,17 +1080,17 @@
         return parts[0]?.text || '';
       }
 
-      // Safe JSON Extractor (Skips Thinking Parts & Slices Outer Braces)
-      function extractValidJsonFromResult(result) {
-        let raw = extractTextFromGeminiResult(result);
-        raw = raw.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+      // Safe JSON Extractor (코드블록/설명 문구가 섞여 있어도 순수 JSON 객체만 정확히 파싱)
+      function extractValidJsonFromResult(data) {
+        let raw = extractTextFromGeminiResult(data);
+        raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
 
         const firstBrace = raw.indexOf('{');
         const lastBrace = raw.lastIndexOf('}');
         if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
           raw = raw.slice(firstBrace, lastBrace + 1);
         }
-        if (!raw) throw new Error('EMPTY_AI_RESPONSE');
+        if (!raw) throw new Error('응답이 비어 있습니다.');
         return JSON.parse(raw);
       }
 
@@ -1100,37 +1104,35 @@
 
         showLoadingModal(true, '1단계: DB 미등록 확인 → AI 가이드 생성 요청', "'" + bookTitle + "' Ch." + chapterNum + " 학습 데이터를 구축하고 있습니다.");
 
-        const systemPrompt = [
-          'You are an expert English Education Specialist for Nonene EdTech (노느니 에듀테크).',
-          'Create a copyright-safe chapter study guide for Korean elementary/middle school students reading English novels.',
-          'STRICT RULES:',
-          '1. NEVER reproduce verbatim sentences or long quotes from the original novel.',
-          '2. Write a 2-sentence chapter context summary in Korean.',
-          '3. Create 100% original, everyday student example sentences for vocabulary.',
-          '4. Avoid unescaped double quotes inside string values (use single quotes if quoting inside strings).',
-          '5. Return ONLY valid JSON matching the requested schema.'
-        ].join('\n');
+        // 블라블라 토크처럼 단일 프롬프트(contents -> parts -> text)로 깔끔하게 요청
+        const promptText = `너는 노느니 에듀테크(Nonene EdTech)의 초·중등 영어 원서 전문 교육 기획자야.
+아래 영어 원서와 챕터 번호에 맞는 4단계 학습 가이드를 만들어 줘.
 
-        const userPrompt = `Book Title: "${bookTitle}"
-Chapter Number: ${chapterNum}
+[중요 저작권 및 출력 규칙]
+1. 원서 본문 문장을 절대 그대로 베끼지 말고, 핵심 상황을 한국어 2문장으로 자체 요약할 것.
+2. 영단어 예문은 100% 일상적인 학생 창작 예문으로 직접 만들 것.
+3. JSON 문자열 값 내부에는 큰따옴표(") 대신 작은따옴표(')만 사용할 것.
+4. 다른 인사말이나 마크다운 코드블록(\`\`\`) 없이 오직 아래 형식의 순수 JSON 객체만 출력할 것.
 
-Return strictly valid JSON with this exact structure:
+원서 제목: "${bookTitle}"
+챕터 번호: ${chapterNum}
+
 {
   "title": "${bookTitle}",
-  "author": "Author Name",
+  "author": "작가 이름(영문)",
   "arLevel": "4.5",
   "chapterNumber": ${chapterNum},
-  "chapterTitle": "Short Chapter Theme or Title",
-  "summary": "2-sentence Korean context summary",
+  "chapterTitle": "챕터 소제목 또는 핵심 테마(영문)",
+  "summary": "챕터 배경과 핵심 사건을 설명하는 자연스러운 한국어 2문장 요약",
   "vocabulary": [
-    { "word": "word1", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" },
-    { "word": "word2", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" },
-    { "word": "word3", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" },
-    { "word": "word4", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" }
+    { "word": "영단어1", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" },
+    { "word": "영단어2", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" },
+    { "word": "영단어3", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" },
+    { "word": "영단어4", "pronunciation": "[한글발음]", "meaning": "한국어 뜻", "example": "Original everyday English sentence.", "exampleKo": "한국어 해석" }
   ],
   "polysemyTraps": [
     {
-      "word": "polysemic word 1",
+      "word": "다의어1",
       "commonMeaning": "학생들이 흔히 아는 기본 뜻",
       "contextMeaning": "이 챕터 문맥 속 진짜 뜻",
       "quizQuestion": "문맥 속 의미를 묻는 한국어 객관식 문제",
@@ -1139,7 +1141,7 @@ Return strictly valid JSON with this exact structure:
       "explanation": "정답인 이유에 대한 친절한 한국어 해설"
     },
     {
-      "word": "polysemic word 2",
+      "word": "다의어2",
       "commonMeaning": "학생들이 흔히 아는 기본 뜻",
       "contextMeaning": "이 챕터 문맥 속 진짜 뜻",
       "quizQuestion": "문맥 속 의미를 묻는 한국어 객관식 문제",
@@ -1149,8 +1151,8 @@ Return strictly valid JSON with this exact structure:
     }
   ],
   "interpretationPoints": [
-    { "expression": "idiom or phrase 1", "meaning": "자연스러운 한국어 뜻", "tip": "직독직해/문법 팁 설명" },
-    { "expression": "idiom or phrase 2", "meaning": "자연스러운 한국어 뜻", "tip": "직독직해/문법 팁 설명" }
+    { "expression": "핵심 숙어나 구문 1", "meaning": "자연스러운 한국어 뜻", "tip": "직독직해/문법 팁 설명" },
+    { "expression": "핵심 숙어나 구문 2", "meaning": "자연스러운 한국어 뜻", "tip": "직독직해/문법 팁 설명" }
   ],
   "comprehensionQuestions": [
     {
@@ -1191,22 +1193,9 @@ Return strictly valid JSON with this exact structure:
         try {
           updateLoadingProgress('2단계: Gemini AI가 4단계 학습지를 작성 중...', 65);
 
-          const result = await callGeminiApi({
-            contents: [{ parts: [{ text: userPrompt }] }],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: {
-              responseMimeType: 'application/json',
-              temperature: 0.4,
-              maxOutputTokens: 8192
-            }
-          });
+          const data = await callGeminiContents([{ parts: [{ text: promptText }] }]);
+          const generatedChapter = extractValidJsonFromResult(data);
 
-          const finishReason = result?.candidates?.[0]?.finishReason;
-          if (finishReason === 'MAX_TOKENS') {
-            throw new Error('MAX_TOKENS_EXCEEDED');
-          }
-
-          const generatedChapter = extractValidJsonFromResult(result);
           updateLoadingProgress('3단계: 로컬 DB에 영구 저장 중...', 92);
 
           const normKey = normalizeTitle(bookTitle);
@@ -1238,17 +1227,9 @@ Return strictly valid JSON with this exact structure:
           console.error('AI Generation Error Detail:', err);
           showLoadingModal(false);
 
-          let errMsg = '오류: ' + (err.message || '알 수 없는 오류가 발생했습니다.');
-          if (err instanceof SyntaxError || err.message === 'MAX_TOKENS_EXCEEDED') {
-            errMsg = 'AI 응답 데이터 형식이 길어서 끊겼습니다. 다시 한 번 검색 버튼을 눌러주세요!';
-          } else if (err.status === 403) {
-            errMsg = '403 차단됨: API 키의 웹사이트(HTTP 리퍼러) 제한 설정이나 API 활성화 여부를 확인해 주세요.';
-          } else if (err.status === 429) {
-            errMsg = '429 호출 한도 초과: 잠시(약 30초) 기다렸다가 다시 시도해 주세요.';
-          } else if (err.status === 404) {
-            errMsg = '404 모델 오류: 현재 지정된 모델명(' + GEMINI_MODEL + ')을 찾을 수 없습니다.';
-          } else if (err.status === 400) {
-            errMsg = '400 요청 오류: ' + (err.detail || 'API 키 형식을 확인해 주세요.');
+          let errMsg = '오류 발생: ' + (err.message || '잠시 후 다시 시도해 주세요.');
+          if (err instanceof SyntaxError) {
+            errMsg = 'AI 응답 형식을 정리하는 중 작은 오차가 생겼습니다. 검색 버튼을 한 번 더 눌러주세요!';
           }
           showToast(errMsg, 'error');
         }
@@ -1602,12 +1583,13 @@ Return strictly valid JSON with this exact structure:
         updateStepperUI();
       }
 
-      // Step 3: AI Discussion Talk (with Translation Toggle)
+      // Step 3: AI Discussion Talk (블라블라 토크와 동일한 chatHistory role 교차 구조 적용)
       function renderDiscussionStep(discQs, bookTitle, chTitle) {
         const topicCard = document.getElementById('discussion-topic-card');
         const chatLog = document.getElementById('discussion-chat-log');
         const quickContainer = document.getElementById('discussion-quick-replies');
         const turnBadge = document.getElementById('discussion-turn-badge');
+        const chData = currentBookData?.chapters?.[String(currentChapterNum)];
 
         const mainDisc = discQs[0] || {
           questionEn: 'What was the most memorable moment in ' + chTitle + ', and why?',
@@ -1630,7 +1612,21 @@ Return strictly valid JSON with this exact structure:
             '<p class="mt-1.5 p-2.5 rounded-lg bg-slate-900 text-[11px] text-slate-300 leading-relaxed">' + escapeHtml(mainDisc.parentTip || '') + '</p>' +
           '</details>';
 
-        discussionHistory = [];
+        const systemInstructionText = [
+          '너는 한국 학생과 영어 원서 "' + bookTitle + '"에 대해 대화하는 다정한 AI 리딩 코치야.',
+          '챕터 요약: ' + (chData?.summary || ''),
+          '규칙:',
+          '1. 학생의 생각을 친절한 한국어로 구체적으로 칭찬해 줘.',
+          '2. 이유나 예시를 덧붙일 수 있도록 짧은 꼬리 질문 1개를 던져 줘.',
+          '3. 4단계 에세이에 바로 쓸 수 있는 짧은 영어 추천 표현 1개를 "💡 에세이 추천 표현: "으로 제시해 줘.',
+          '4. 전체 답변은 3~4문장으로 간결하게 작성해.'
+        ].join('\n');
+
+        // 블라블라 토크와 똑같은 user(시스템 설정) -> model(첫 질문) 히스토리 초기화
+        discussionHistory = [
+          { role: 'user', parts: [{ text: systemInstructionText }] },
+          { role: 'model', parts: [{ text: mainDisc.questionEn }] }
+        ];
         discussionTurnCount = 0;
         turnBadge.innerText = '대화 횟수: 0회';
         chatLog.innerHTML = '';
@@ -1646,7 +1642,6 @@ Return strictly valid JSON with this exact structure:
           '<div class="mt-2">영어든 한국어든 편하게 네 생각을 들려줘!</div>';
 
         appendChatBubble('ai', greetingHtml, true);
-        discussionHistory.push({ role: 'model', text: mainDisc.questionEn });
 
         const quickReplies = [
           'I think it was safer because...',
@@ -1701,7 +1696,7 @@ Return strictly valid JSON with this exact structure:
 
         input.value = '';
         appendChatBubble('user', userMsg, false);
-        discussionHistory.push({ role: 'user', text: userMsg });
+        discussionHistory.push({ role: 'user', parts: [{ text: userMsg }], isStudentInput: true });
         discussionTurnCount += 1;
         document.getElementById('discussion-turn-badge').innerText = '대화 횟수: ' + discussionTurnCount + '회';
 
@@ -1713,43 +1708,21 @@ Return strictly valid JSON with this exact structure:
         sendBtn.disabled = true;
         const loadingBubble = appendChatBubble('ai', '<span class="text-indigo-300 animate-pulse">AI 코치가 답변을 생각하는 중...</span>', true);
 
-        const chData = currentBookData?.chapters?.[String(currentChapterNum)];
-        const systemPrompt = [
-          'You are a warm, encouraging AI Reading Coach talking with a Korean student about "' + (currentBookData?.title || 'an English novel') + '".',
-          '1. Specifically praise the student\'s thought in friendly Korean.',
-          '2. Ask ONE short follow-up question to help them add a reason or example.',
-          '3. Suggest ONE short, useful English sentence or phrase they can use in Step 4 Essay (prefix with "💡 에세이 추천 표현: ").',
-          '4. Keep total length concise (3~4 sentences).'
-        ].join('\n');
-
         try {
-          const result = await callGeminiApi({
-            contents: discussionHistory.map(function (m) {
-              return {
-                role: m.role === 'user' ? 'user' : 'model',
-                parts: [{ text: m.text }]
-              };
-            }),
-            systemInstruction: {
-              parts: [{ text: systemPrompt + '\nChapter Summary: ' + (chData?.summary || '') }]
-            },
-            generationConfig: {
-              maxOutputTokens: 2048
-            }
+          const cleanContents = discussionHistory.map(function (m) {
+            return { role: m.role, parts: m.parts };
           });
-
-          const reply = extractTextFromGeminiResult(result).trim();
+          const data = await callGeminiContents(cleanContents);
+          const reply = extractTextFromGeminiResult(data).trim();
           if (!reply) throw new Error('Empty reply');
+
           loadingBubble.innerHTML = escapeHtml(reply).replace(/\n/g, '<br>');
-          discussionHistory.push({ role: 'model', text: reply });
+          discussionHistory.push({ role: 'model', parts: [{ text: reply }] });
         } catch (err) {
           console.error('Discussion AI Error:', err);
           if (err && err.code === 'NO_API_KEY') {
             loadingBubble.innerHTML =
               '좋은 생각이에요! 👍 <br><span class="text-amber-300 text-xs">(실시간 AI 코치 응답을 받으려면 우측 상단 [⚙️ 설정]에서 Gemini API 키를 입력해 주세요. 방금 작성한 생각은 4단계 에세이 메모에 자동 저장되었습니다!)</span>';
-          } else if (err && err.status === 403) {
-            loadingBubble.innerHTML =
-              '<span class="text-rose-300">API 키의 도메인(HTTP 리퍼러) 제한으로 요청이 차단되었습니다(403). 설정을 확인해 주세요! (작성한 메모는 4단계에 저장되었습니다.)</span>';
           } else {
             loadingBubble.innerHTML =
               '정말 멋진 관점이에요! 👍 왜 그렇게 생각했는지 책 속 장면을 하나 덧붙여 보면 4단계 에세이가 훨씬 탄탄해질 거예요.';
@@ -1764,7 +1737,9 @@ Return strictly valid JSON with this exact structure:
       function syncDiscussionNotesToEssay() {
         const box = document.getElementById('essay-discussion-notes');
         const list = document.getElementById('essay-discussion-notes-list');
-        const userIdeas = discussionHistory.filter(function (m) { return m.role === 'user'; }).map(function (m) { return m.text; });
+        const userIdeas = discussionHistory
+          .filter(function (m) { return m.isStudentInput === true; })
+          .map(function (m) { return m.parts[0].text; });
 
         if (userIdeas.length === 0) {
           box.classList.add('hidden');
@@ -1834,39 +1809,29 @@ Return strictly valid JSON with this exact structure:
         feedbackBox.classList.remove('hidden');
         feedbackText.innerHTML = '<span class="text-indigo-300 animate-pulse">AI 코치가 에세이를 꼼꼼히 읽고 힌트를 정리하고 있어요...</span>';
 
-        const systemPrompt = [
-          'You are an encouraging English writing coach for Korean elementary/middle school students.',
-          'RULE: Do NOT rewrite the entire essay for them. Give hint-based coaching in friendly Korean so the student revises on their own.'
-        ].join('\n');
+        const promptText = `너는 한국 초·중등 학생의 영어 글쓰기를 돕는 다정한 에세이 코치야.
+학생의 글을 대신 통째로 새로 써주지 말고, 학생 스스로 고쳐볼 수 있도록 힌트형 코칭만 제공해 줘.
 
-        const userQuery = `Book: "${currentBookData ? currentBookData.title : 'English Novel'}"
-Essay Prompt: "${currentBookData?.chapters?.[String(currentChapterNum)]?.essayPrompt?.topicEn || ''}"
-Student Essay: "${userEssay}"
+원서 제목: "${currentBookData ? currentBookData.title : 'English Novel'}"
+에세이 주제: "${currentBookData?.chapters?.[String(currentChapterNum)]?.essayPrompt?.topicEn || ''}"
+학생이 쓴 글: "${userEssay}"
 
-Respond in friendly Korean with these 3 concise sections:
+친절한 한국어로 아래 3가지 항목만 간결하게 작성해 줘:
 1. 🌟 잘 쓴 점 칭찬
 2. 💡 스스로 고쳐볼 문법·표현 힌트 1~2가지
 3. ✨ 에세이를 더 빛내줄 추천 영단어/표현 1가지`;
 
         try {
-          const result = await callGeminiApi({
-            contents: [{ parts: [{ text: userQuery }] }],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: {
-              maxOutputTokens: 2048
-            }
-          });
-          const feedback = extractTextFromGeminiResult(result).trim();
+          const data = await callGeminiContents([{ parts: [{ text: promptText }] }]);
+          const feedback = extractTextFromGeminiResult(data).trim();
           if (!feedback) throw new Error('Empty feedback');
           feedbackText.innerHTML = escapeHtml(feedback).replace(/\n/g, '<br>');
         } catch (err) {
           console.error('Essay Feedback AI Error:', err);
           if (err && err.code === 'NO_API_KEY') {
             feedbackText.innerHTML = '<span class="text-amber-300">우측 상단 <strong>[⚙️ 설정]</strong>에서 Gemini API 키를 저장하시면 실시간 AI 에세이 첨삭 피드백을 바로 받아보실 수 있습니다!</span>';
-          } else if (err && err.status === 403) {
-            feedbackText.innerHTML = '<span class="text-rose-300">403 차단됨: API 키의 웹사이트(HTTP 리퍼러) 제한 설정을 확인해 주세요.</span>';
           } else {
-            feedbackText.innerHTML = '<span class="text-rose-300">AI 응답 지연(' + escapeHtml(err.message || '연결 오류') + '): 잠시 후 다시 눌러주세요!</span>';
+            feedbackText.innerHTML = '<span class="text-rose-300">오류 발생: ' + escapeHtml(err.message || '잠시 후 다시 눌러주세요!') + '</span>';
           }
         }
       }
@@ -1946,7 +1911,7 @@ Respond in friendly Korean with these 3 concise sections:
       }
 
       function saveApiKey() {
-        const val = document.getElementById('api-key-input').value.replace(/\s+/g, '');
+        const val = document.getElementById('api-key-input').value.trim();
         try {
           if (val) {
             localStorage.setItem(LOCAL_API_KEY, val);
@@ -2025,7 +1990,7 @@ Respond in friendly Korean with these 3 concise sections:
         updateApiKeyIndicator();
         refreshCachedLibrary();
 
-        // Delegated Click Handler for All Translation Toggle Buttons (Safe & Conflict-Free)
+        // Delegated Click Handler for All Translation Toggle Buttons
         document.addEventListener('click', function (e) {
           const toggleBtn = e.target.closest('.trans-toggle-btn');
           if (!toggleBtn) return;
@@ -2060,7 +2025,6 @@ Respond in friendly Korean with these 3 concise sections:
           if (q) searchBook(q);
         });
 
-        document.getElementById('brand-logo-home').addEventListener('click', resetToHome);
         document.getElementById('btn-back-home').addEventListener('click', resetToHome);
 
         document.getElementById('btn-open-settings-landing').addEventListener('click', openSettingsModal);
