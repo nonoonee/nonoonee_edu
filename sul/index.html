@@ -316,7 +316,7 @@
                     <p class="text-xs text-slate-400">카드를 클릭하면 뜻과 창작 예문이 뒤집힙니다.</p>
                   </div>
                 </div>
-                <span class="text-xs text-slate-400">🔊 스피커 아이콘을 누르면 원어민 발음이 재생됩니다</span>
+                <span class="text-xs text-slate-400">🔊 발음 듣기 · 👁️ 예문 해석 보기 지원</span>
               </div>
               <div id="vocab-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </section>
@@ -370,7 +370,7 @@
                   <span class="p-2.5 bg-blue-500/10 rounded-xl text-blue-400 text-lg">✅</span>
                   <div>
                     <h3 class="text-lg font-bold text-white">2단계. 내용 이해 확인 퀴즈 (Comprehension Check)</h3>
-                    <p class="text-xs text-slate-400">모든 문제의 정답을 맞히면 3단계 AI 생각 열기 토론이 잠금 해제됩니다!</p>
+                    <p class="text-xs text-slate-400">영문 질문을 먼저 읽고 풀어보세요. 해석이 필요하면 👁️ 아이콘을 눌러 확인할 수 있습니다.</p>
                   </div>
                 </div>
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950 border border-slate-800 text-xs font-bold">
@@ -640,7 +640,7 @@
 
   </div>
 
-  <!-- Main Application Script (Zero External Module Blocking) -->
+  <!-- Main Application Script -->
   <script>
     (function () {
       'use strict';
@@ -799,6 +799,7 @@
       let discussionHistory = [];
       let discussionTurnCount = 0;
       let resetConfirmPending = false;
+      let transUidCounter = 0;
 
       // Utility: Safe HTML Escape
       function escapeHtml(str) {
@@ -808,6 +809,32 @@
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#39;');
+      }
+
+      // Utility: Build Hidden-by-Default Korean Translation Toggle Pair
+      function buildTranslationToggle(koText, textClass) {
+        const cleanKo = String(koText == null ? '' : koText).trim();
+        if (!cleanKo) {
+          return { buttonHtml: '', contentHtml: '' };
+        }
+        transUidCounter += 1;
+        const targetId = 'ko-trans-' + transUidCounter;
+        const cls = textClass || 'text-xs text-slate-400 mt-1.5';
+
+        const buttonHtml =
+          '<button type="button" data-trans-id="' + targetId + '" ' +
+          'class="trans-toggle-btn no-print inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-[11px] font-medium text-indigo-300 hover:text-white transition-colors shrink-0" ' +
+          'aria-expanded="false" title="한국어 해석 보기">' +
+            '<span class="trans-icon">👁️</span>' +
+            '<span class="trans-label">해석</span>' +
+          '</button>';
+
+        const contentHtml =
+          '<div id="' + targetId + '" class="hidden ' + cls + '">' +
+            escapeHtml(cleanKo) +
+          '</div>';
+
+        return { buttonHtml: buttonHtml, contentHtml: contentHtml };
       }
 
       // Utility: Normalize Title to Key
@@ -1254,14 +1281,16 @@ Return strictly valid JSON with this exact structure:
         window.speechSynthesis.speak(utter);
       }
 
-      // Step 1-2: Vocab Flashcards
+      // Step 1-2: Vocab Flashcards (with Translation Toggle on Example Sentence)
       function renderVocabCards(vocabList) {
         const grid = document.getElementById('vocab-cards-grid');
         grid.innerHTML = '';
 
         vocabList.forEach(function (v) {
           const card = document.createElement('div');
-          card.className = 'perspective-1000 h-44 cursor-pointer group';
+          card.className = 'perspective-1000 h-48 cursor-pointer group';
+
+          const exTrans = buildTranslationToggle(v.exampleKo, 'text-[11px] text-emerald-300/90 mt-1.5 leading-snug');
 
           card.innerHTML =
             '<div class="card-inner relative w-full h-full transition-transform duration-500 transform-style-3d">' +
@@ -1281,11 +1310,14 @@ Return strictly valid JSON with this exact structure:
                   '<span class="text-sm font-bold text-emerald-400 truncate">' + escapeHtml(v.word) + '</span>' +
                   '<span class="text-xs font-bold text-white bg-emerald-500/20 px-2.5 py-0.5 rounded-full shrink-0">' + escapeHtml(v.meaning) + '</span>' +
                 '</div>' +
-                '<div class="space-y-1">' +
-                  '<p class="text-xs text-slate-200 leading-relaxed font-medium">"' + escapeHtml(v.example || '') + '"</p>' +
-                  '<p class="text-[11px] text-slate-400">' + escapeHtml(v.exampleKo || '') + '</p>' +
+                '<div class="my-auto py-1">' +
+                  '<div class="flex items-start justify-between gap-2">' +
+                    '<p class="text-xs text-slate-200 leading-relaxed font-medium">"' + escapeHtml(v.example || '') + '"</p>' +
+                    exTrans.buttonHtml +
+                  '</div>' +
+                  exTrans.contentHtml +
                 '</div>' +
-                '<div class="text-right text-[11px] text-slate-500">다시 클릭하면 앞면 ↻</div>' +
+                '<div class="text-right text-[11px] text-slate-500">빈 곳을 클릭하면 앞면 ↻</div>' +
               '</div>' +
             '</div>';
 
@@ -1297,7 +1329,8 @@ Return strictly valid JSON with this exact structure:
             speakWord(v.word || '');
           });
 
-          card.addEventListener('click', function () {
+          card.addEventListener('click', function (e) {
+            if (e.target.closest('.trans-toggle-btn')) return;
             inner.classList.toggle('rotate-y-180');
           });
 
@@ -1305,12 +1338,12 @@ Return strictly valid JSON with this exact structure:
         });
       }
 
-      // Step 1-3: Polysemy Traps & Mini Quiz (Previously missing -> Now cleanly implemented)
+      // Step 1-3: Polysemy Traps & Mini Quiz
       function renderPolysemyTraps(traps) {
         const container = document.getElementById('polysemy-container');
         container.innerHTML = '';
 
-        traps.forEach(function (trap, tIdx) {
+        traps.forEach(function (trap) {
           const box = document.createElement('div');
           box.className = 'p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4';
 
@@ -1395,7 +1428,7 @@ Return strictly valid JSON with this exact structure:
         });
       }
 
-      // Step 2: Comprehension Check Quiz Gate
+      // Step 2: Comprehension Check Quiz Gate (with Translation Toggle)
       function renderComprehensionStep(compQs) {
         const container = document.getElementById('comprehension-container');
         container.innerHTML = '';
@@ -1414,17 +1447,27 @@ Return strictly valid JSON with this exact structure:
           const options = Array.isArray(q.options) ? q.options : [];
           const correctIdx = typeof q.correctIndex === 'number' ? q.correctIndex : 0;
 
+          const qTrans = buildTranslationToggle(q.questionKo, 'text-xs text-indigo-300/90 mt-1.5 pl-1');
+          const ansTrans = buildTranslationToggle(q.answerKo, 'text-xs text-slate-300 mt-1.5 pt-1.5 border-t border-emerald-800/40');
+
           item.innerHTML =
             '<div class="flex items-start justify-between gap-2">' +
-              '<div>' +
-                '<div class="font-bold text-white text-sm">Q' + (qIdx + 1) + '. ' + escapeHtml(q.questionEn) + '</div>' +
-                '<div class="text-slate-400 text-xs mt-0.5">(' + escapeHtml(q.questionKo || '') + ')</div>' +
+              '<div class="flex-1">' +
+                '<div class="flex flex-wrap items-center gap-2">' +
+                  '<span class="font-bold text-white text-sm">Q' + (qIdx + 1) + '. ' + escapeHtml(q.questionEn) + '</span>' +
+                  qTrans.buttonHtml +
+                '</div>' +
+                qTrans.contentHtml +
               '</div>' +
               '<span class="comp-status shrink-0 text-[11px] px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 font-semibold">미풀이</span>' +
             '</div>' +
             '<div class="comp-options space-y-2 pt-1"></div>' +
             '<div class="comp-explain hidden p-3 rounded-xl bg-emerald-950/40 border border-emerald-700/50 text-xs text-emerald-300 leading-relaxed">' +
-              '<strong>✅ 정답 확인:</strong> ' + escapeHtml(q.answerEn || '') + ' <span class="text-slate-300">(' + escapeHtml(q.answerKo || '') + ')</span>' +
+              '<div class="flex flex-wrap items-center justify-between gap-2">' +
+                '<span><strong>✅ 정답 확인:</strong> ' + escapeHtml(q.answerEn || '') + '</span>' +
+                ansTrans.buttonHtml +
+              '</div>' +
+              ansTrans.contentHtml +
             '</div>';
 
           const optBox = item.querySelector('.comp-options');
@@ -1496,7 +1539,7 @@ Return strictly valid JSON with this exact structure:
         updateStepperUI();
       }
 
-      // Step 3: AI Discussion Talk
+      // Step 3: AI Discussion Talk (with Translation Toggle)
       function renderDiscussionStep(discQs, bookTitle, chTitle) {
         const topicCard = document.getElementById('discussion-topic-card');
         const chatLog = document.getElementById('discussion-chat-log');
@@ -1509,10 +1552,16 @@ Return strictly valid JSON with this exact structure:
           parentTip: '아이가 느낀 감정을 한국어나 짧은 영어로 편하게 말해보도록 격려해 주세요.'
         };
 
+        const topicTrans = buildTranslationToggle(mainDisc.questionKo, 'text-xs text-rose-200/90 mt-1.5');
+        const greetTrans = buildTranslationToggle(mainDisc.questionKo, 'text-xs text-indigo-200/90 mt-1.5 bg-slate-900/70 px-2.5 py-1.5 rounded-lg');
+
         topicCard.innerHTML =
           '<div class="text-xs font-bold text-rose-400">오늘의 생각 열기 질문</div>' +
-          '<div class="text-sm sm:text-base font-bold text-white">' + escapeHtml(mainDisc.questionEn) + '</div>' +
-          '<div class="text-xs text-slate-400">(' + escapeHtml(mainDisc.questionKo || '') + ')</div>' +
+          '<div class="flex flex-wrap items-center justify-between gap-2">' +
+            '<span class="text-sm sm:text-base font-bold text-white">' + escapeHtml(mainDisc.questionEn) + '</span>' +
+            topicTrans.buttonHtml +
+          '</div>' +
+          topicTrans.contentHtml +
           '<details class="pt-1">' +
             '<summary class="text-[11px] text-indigo-400 cursor-pointer hover:underline select-none">👪 부모님 대화 가이드 보기</summary>' +
             '<p class="mt-1.5 p-2.5 rounded-lg bg-slate-900 text-[11px] text-slate-300 leading-relaxed">' + escapeHtml(mainDisc.parentTip || '') + '</p>' +
@@ -1526,12 +1575,15 @@ Return strictly valid JSON with this exact structure:
         const greetingHtml =
           '안녕! 나는 너의 AI 리딩 코치야 😊 방금 <strong>' + escapeHtml(bookTitle) + '</strong> 퀴즈를 모두 통과했구나!<br><br>' +
           '에세이를 쓰기 전에 잠깐 대화하면서 생각을 정리해 볼까?<br>' +
-          '<strong>"' + escapeHtml(mainDisc.questionEn) + '"</strong><br>' +
-          '<span class="text-slate-400">(' + escapeHtml(mainDisc.questionKo || '') + ')</span><br><br>' +
-          '영어든 한국어든 편하게 네 생각을 들려줘!';
+          '<span class="inline-flex flex-wrap items-center gap-2 mt-1">' +
+            '<strong>"' + escapeHtml(mainDisc.questionEn) + '"</strong>' +
+            greetTrans.buttonHtml +
+          '</span>' +
+          greetTrans.contentHtml +
+          '<div class="mt-2">영어든 한국어든 편하게 네 생각을 들려줘!</div>';
 
         appendChatBubble('ai', greetingHtml, true);
-        discussionHistory.push({ role: 'model', text: mainDisc.questionEn + ' (' + (mainDisc.questionKo || '') + ')' });
+        discussionHistory.push({ role: 'model', text: mainDisc.questionEn });
 
         const quickReplies = [
           'I think it was safer because...',
@@ -1658,13 +1710,18 @@ Return strictly valid JSON with this exact structure:
         box.classList.remove('hidden');
       }
 
-      // Step 4: Essay Builder & AI Hint Feedback
+      // Step 4: Essay Builder & AI Hint Feedback (with Translation Toggle)
       function renderEssayBuilder(essayPrompt) {
         const promptBox = document.getElementById('essay-prompt-box');
+        const essayTrans = buildTranslationToggle(essayPrompt.topicKo, 'text-xs text-indigo-300/90 mt-2 pt-2 border-t border-slate-800');
+
         promptBox.innerHTML =
-          '<div class="text-xs font-bold text-indigo-400 mb-1">에세이 주제</div>' +
-          '<div class="text-sm sm:text-base font-bold text-white mb-1">"' + escapeHtml(essayPrompt.topicEn || 'Write a short paragraph about this chapter.') + '"</div>' +
-          '<div class="text-xs text-slate-400">(' + escapeHtml(essayPrompt.topicKo || '') + ')</div>';
+          '<div class="flex items-center justify-between gap-2 mb-1">' +
+            '<span class="text-xs font-bold text-indigo-400">에세이 주제</span>' +
+            essayTrans.buttonHtml +
+          '</div>' +
+          '<div class="text-sm sm:text-base font-bold text-white">"' + escapeHtml(essayPrompt.topicEn || 'Write a short paragraph about this chapter.') + '"</div>' +
+          essayTrans.contentHtml;
 
         const startersContainer = document.getElementById('sentence-starters-container');
         startersContainer.innerHTML = '';
@@ -1891,6 +1948,34 @@ Respond in friendly Korean with these 3 concise sections:
 
         updateApiKeyIndicator();
         refreshCachedLibrary();
+
+        // Delegated Click Handler for All Translation Toggle Buttons (Safe & Conflict-Free)
+        document.addEventListener('click', function (e) {
+          const toggleBtn = e.target.closest('.trans-toggle-btn');
+          if (!toggleBtn) return;
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          const targetId = toggleBtn.getAttribute('data-trans-id');
+          const targetEl = targetId ? document.getElementById(targetId) : null;
+          if (!targetEl) return;
+
+          const isNowHidden = targetEl.classList.toggle('hidden');
+          const labelSpan = toggleBtn.querySelector('.trans-label');
+          const iconSpan = toggleBtn.querySelector('.trans-icon');
+
+          toggleBtn.setAttribute('aria-expanded', String(!isNowHidden));
+          if (!isNowHidden) {
+            if (iconSpan) iconSpan.innerText = '🙈';
+            if (labelSpan) labelSpan.innerText = '해석 닫기';
+            toggleBtn.classList.add('border-indigo-500/60', 'bg-indigo-950/70', 'text-indigo-200');
+          } else {
+            if (iconSpan) iconSpan.innerText = '👁️';
+            if (labelSpan) labelSpan.innerText = '해석';
+            toggleBtn.classList.remove('border-indigo-500/60', 'bg-indigo-950/70', 'text-indigo-200');
+          }
+        });
 
         // Bind UI Events
         document.getElementById('search-form').addEventListener('submit', function (e) {
