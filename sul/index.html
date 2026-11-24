@@ -221,36 +221,45 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- VIEW 2: 4-STEP STUDY WORKSPACE                           -->
+      <!-- VIEW 2: 4-STEP STUDY WORKSPACE (WITH LEFT CHAPTER LIST)  -->
       <!-- ======================================================== -->
       <section id="view-study" class="hidden flex-col min-h-screen">
 
         <!-- Sticky Top Header -->
-        <header class="no-print sticky top-0 z-40 bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center space-x-2.5 sm:space-x-3.5">
+        <header class="no-print sticky top-0 z-40 bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center space-x-2 sm:space-x-3">
+            <!-- Mobile Chapter Drawer Toggle Button -->
+            <button
+              type="button"
+              id="btn-mobile-chapters"
+              class="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition-colors shrink-0"
+            >
+              <span>📚 챕터 목록</span>
+            </button>
+
             <a
               href="/"
               title="노느니에듀테크 메인 홈페이지로 이동"
-              class="flex items-center gap-1.5 pr-1 hover:opacity-85 transition-opacity shrink-0"
+              class="hidden sm:flex items-center gap-1.5 pr-1 hover:opacity-85 transition-opacity shrink-0"
             >
               <img src="/images/sulsulsul_icon.png" alt="홈으로" class="w-8 h-8 app-icon bg-white/5 object-contain ring-1 ring-white/15" />
             </a>
             <button
               type="button"
               id="btn-back-home"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors shrink-0"
             >
               <span>← 원서 서재</span>
             </button>
-            <div class="h-4 w-px bg-slate-800"></div>
-            <div>
-              <h2 id="study-book-title" class="text-sm sm:text-base font-bold text-white">Book Title</h2>
-              <p id="study-book-author" class="text-xs text-slate-400">Author</p>
+            <div class="h-4 w-px bg-slate-800 hidden sm:block"></div>
+            <div class="min-w-0">
+              <h2 id="study-book-title" class="text-sm sm:text-base font-bold text-white truncate">Book Title</h2>
+              <p id="study-book-author" class="text-xs text-slate-400 truncate">Author</p>
             </div>
           </div>
 
           <div class="flex items-center space-x-2 sm:space-x-3">
-            <span id="study-cache-badge" class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span id="study-cache-badge" class="hidden md:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               ⚡ DB 캐시 로드됨
             </span>
             <button
@@ -270,310 +279,369 @@
           </div>
         </header>
 
-        <!-- Chapter Selector Bar -->
-        <div class="no-print bg-slate-900 border-b border-slate-800 px-4 sm:px-8 py-2.5 flex items-center justify-between overflow-x-auto">
-          <div class="flex items-center gap-2 min-w-max">
-            <span class="text-xs text-slate-400 font-semibold mr-1">챕터:</span>
-            <div id="chapter-buttons-container" class="flex items-center gap-1.5"></div>
-            <button
-              type="button"
-              id="btn-next-chapter"
-              class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-xs font-semibold transition-all ml-1"
-            >
-              + 다음 챕터 AI 생성
-            </button>
-          </div>
-          <div class="text-xs text-slate-400 hidden md:block">
-            권장 AR 지수: <span id="study-ar-level" class="font-bold text-amber-400">4.5</span>
-          </div>
-        </div>
+        <!-- Body Layout: Left Chapter Sidebar + Right Study Content -->
+        <div class="flex-grow flex relative">
 
-        <!-- 4-Step Progress Bar -->
-        <div class="no-print bg-[#0B1120] border-b border-slate-800/80 px-4 sm:px-8 py-3">
-          <div class="max-w-5xl mx-auto grid grid-cols-4 gap-2">
-            <button type="button" id="stepper-btn-1" data-step="1" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
-              <span id="stepper-badge-1" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">1</span>
-              <span class="hidden sm:inline truncate">책 읽기 가이드</span>
-            </button>
-            <button type="button" id="stepper-btn-2" data-step="2" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
-              <span id="stepper-badge-2" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">2</span>
-              <span class="hidden sm:inline truncate">이해 확인 퀴즈</span>
-            </button>
-            <button type="button" id="stepper-btn-3" data-step="3" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
-              <span id="stepper-badge-3" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">3</span>
-              <span class="hidden sm:inline truncate">AI 생각 토론</span>
-            </button>
-            <button type="button" id="stepper-btn-4" data-step="4" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
-              <span id="stepper-badge-4" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">4</span>
-              <span class="hidden sm:inline truncate">에세이 완성</span>
-            </button>
-          </div>
-        </div>
+          <!-- Mobile Sidebar Backdrop -->
+          <div id="chapter-sidebar-backdrop" class="no-print fixed inset-0 z-40 bg-slate-950/75 backdrop-blur-sm hidden lg:hidden"></div>
 
-        <!-- Step Panels Container -->
-        <div class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-8">
-
-          <!-- ====================================================== -->
-          <!-- STEP 1: BOOK READING GUIDE                             -->
-          <!-- ====================================================== -->
-          <div id="step-panel-1" class="step-panel space-y-8">
-
-            <!-- 1. Situation Summary -->
-            <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="p-2 bg-indigo-500/10 rounded-xl text-indigo-400 text-lg">📖</span>
-                <div>
-                  <h3 class="text-lg font-bold text-white">1. 챕터 상황 요약 (Situation Summary)</h3>
-                  <p class="text-xs text-slate-400">책을 펼치기 전에 어떤 상황인지 가볍게 배경만 파악해 보세요.</p>
+          <!-- LEFT SIDEBAR: CHAPTER LIST -->
+          <aside
+            id="chapter-sidebar"
+            class="no-print fixed lg:sticky top-0 lg:top-[61px] left-0 z-50 lg:z-20 w-72 sm:w-80 lg:w-72 xl:w-80 h-screen lg:h-[calc(100vh-61px)] bg-slate-950 lg:bg-slate-900/75 border-r border-slate-800 flex flex-col shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+          >
+            <!-- Sidebar Book Info Header -->
+            <div class="p-4 border-b border-slate-800 flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    AR <span id="study-ar-level">4.5</span>
+                  </span>
+                  <span class="text-[11px] text-slate-400 font-medium">
+                    총 <strong id="sidebar-chapter-count" class="text-emerald-400">1</strong>개 챕터
+                  </span>
                 </div>
-              </div>
-              <div id="summary-content" class="text-slate-200 text-sm leading-relaxed bg-slate-950/70 p-4 rounded-xl border border-slate-800"></div>
-            </section>
-
-            <!-- 2. Core Vocabulary Flashcards -->
-            <section>
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                <div class="flex items-center gap-3">
-                  <span class="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 text-lg">🃏</span>
-                  <div>
-                    <h3 class="text-lg font-bold text-white">2. 핵심 영단어 플래시카드 (Core Vocabulary)</h3>
-                    <p class="text-xs text-slate-400">카드를 클릭하면 뜻과 창작 예문이 뒤집힙니다.</p>
-                  </div>
-                </div>
-                <span class="text-xs text-slate-400">🔊 발음 듣기 · 👁️ 예문 해석 보기 지원</span>
-              </div>
-              <div id="vocab-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-            </section>
-
-            <!-- 3. Polysemy Traps -->
-            <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-              <div class="flex items-center gap-3 mb-5">
-                <span class="p-2 bg-amber-500/10 rounded-xl text-amber-400 text-lg">⚠️</span>
-                <div>
-                  <h3 class="text-lg font-bold text-white">3. 아는 단어의 반전: 다의어 함정 (Polysemy Traps)</h3>
-                  <p class="text-xs text-slate-400">내가 알던 뜻과 원서 속 진짜 문맥 뜻을 비교하고 미니 퀴즈를 풀어보세요.</p>
-                </div>
-              </div>
-              <div id="polysemy-container" class="space-y-5"></div>
-            </section>
-
-            <!-- 4. Interpretation Points -->
-            <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-              <div class="flex items-center gap-3 mb-4">
-                <span class="p-2 bg-purple-500/10 rounded-xl text-purple-400 text-lg">💡</span>
-                <div>
-                  <h3 class="text-lg font-bold text-white">4. 구문 &amp; 직독직해 포인트 (Key Expressions)</h3>
-                  <p class="text-xs text-slate-400">직역하면 어색해지기 쉬운 원서 속 핵심 숙어와 구문 팁입니다.</p>
-                </div>
-              </div>
-              <div id="interpretation-container" class="space-y-3"></div>
-            </section>
-
-            <!-- Step 1 -> Step 2 CTA -->
-            <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-4 bg-indigo-950/30 border border-indigo-500/30 rounded-2xl p-5">
-              <div class="text-xs sm:text-sm text-slate-300">
-                <strong class="text-indigo-300">📚 1단계 책 읽기 완료!</strong> 원서에서 이번 챕터를 다 읽었다면 내용 이해 퀴즈로 넘어가 볼까요?
+                <h3 id="sidebar-book-title" class="text-sm font-extrabold text-white truncate">Book Title</h3>
+                <p id="sidebar-book-author" class="text-xs text-slate-400 truncate mt-0.5">Author</p>
               </div>
               <button
                 type="button"
-                id="btn-complete-step1"
-                class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-sm font-bold rounded-xl shadow-lg transition-all shrink-0"
+                id="btn-close-sidebar"
+                class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-xs"
+                title="목록 닫기"
               >
-                2단계: 내용 이해 확인으로 넘어가기 →
+                ✕
               </button>
             </div>
-          </div>
 
-          <!-- ====================================================== -->
-          <!-- STEP 2: COMPREHENSION QUIZ GATE                        -->
-          <!-- ====================================================== -->
-          <div id="step-panel-2" class="step-panel hidden space-y-6">
-            <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
-                <div class="flex items-center gap-3">
-                  <span class="p-2.5 bg-blue-500/10 rounded-xl text-blue-400 text-lg">✅</span>
-                  <div>
-                    <h3 class="text-lg font-bold text-white">2단계. 내용 이해 확인 퀴즈 (Comprehension Check)</h3>
-                    <p class="text-xs text-slate-400">영문 질문을 먼저 읽고 풀어보세요. 해석이 필요하면 👁️ 아이콘을 눌러 확인할 수 있습니다.</p>
-                  </div>
-                </div>
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950 border border-slate-800 text-xs font-bold">
-                  <span class="text-slate-400">정답 현황:</span>
-                  <span id="comp-progress-text" class="text-blue-400">0 / 0 완료</span>
-                </div>
-              </div>
-
-              <div id="comprehension-container" class="space-y-5"></div>
-            </section>
-
-            <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-3">
-              <button
-                type="button"
-                id="btn-step2-prev"
-                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
-              >
-                ← 1단계: 책 읽기 가이드 다시 보기
-              </button>
-              <button
-                type="button"
-                id="step2-next-btn"
-                disabled
-                class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-sm font-bold cursor-not-allowed transition-all"
-              >
-                🔒 모든 문제를 맞히면 3단계가 열립니다
-              </button>
+            <!-- Scrollable Vertical Chapter List -->
+            <div class="px-3 pt-3 pb-1 flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-1">챕터 리스트 (Chapters)</span>
             </div>
-          </div>
+            <div id="chapter-buttons-container" class="flex-1 overflow-y-auto px-3 py-2 space-y-1.5"></div>
 
-          <!-- ====================================================== -->
-          <!-- STEP 3: AI SOCRATIC DISCUSSION TALK                    -->
-          <!-- ====================================================== -->
-          <div id="step-panel-3" class="step-panel hidden space-y-6">
-            <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
-                <div class="flex items-center gap-3">
-                  <span class="p-2.5 bg-rose-500/10 rounded-xl text-rose-400 text-lg">💬</span>
-                  <div>
-                    <h3 class="text-lg font-bold text-white">3단계. AI 리딩 코치와 생각 열기 토론 (AI Talk)</h3>
-                    <p class="text-xs text-slate-400">부모님과 이야기하듯 AI 코치와 대화하며 에세이에 쓸 내 생각을 정리해 보세요.</p>
-                  </div>
-                </div>
-                <span id="discussion-turn-badge" class="inline-flex items-center px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-xs font-bold text-rose-300">
-                  대화 횟수: 0회
-                </span>
-              </div>
+            <!-- Generate Next Chapter Button at Bottom of Sidebar -->
+            <div class="p-3.5 border-t border-slate-800 bg-slate-950/80 space-y-2">
+              <button
+                type="button"
+                id="btn-next-chapter"
+                class="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-bold shadow-lg shadow-indigo-500/15 transition-all"
+              >
+                <span>✨ + 다음 챕터 AI 생성</span>
+              </button>
 
-              <!-- Topic & Parent Guide -->
-              <div id="discussion-topic-card" class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2"></div>
-
-              <!-- Chat Log -->
-              <div id="discussion-chat-log" class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 h-80 overflow-y-auto space-y-3 flex flex-col"></div>
-
-              <!-- Quick Reply Chips -->
-              <div>
-                <span class="text-[11px] text-slate-400 font-semibold block mb-2">💡 말문 트기 칩 (클릭하면 입력창에 들어갑니다):</span>
-                <div id="discussion-quick-replies" class="flex flex-wrap gap-2"></div>
-              </div>
-
-              <!-- Chat Input -->
-              <form id="discussion-form" class="flex gap-2">
+              <!-- Direct Specific Chapter Number Input -->
+              <form id="custom-chapter-form" class="flex gap-1.5">
                 <input
-                  type="text"
-                  id="discussion-input"
-                  placeholder="내 생각을 영어 또는 한국어로 편하게 적어 보세요..."
-                  class="flex-1 px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
-                  autocomplete="off"
+                  type="number"
+                  id="custom-chapter-input"
+                  min="1"
+                  max="100"
+                  placeholder="원하는 챕터 번호 (예: 5)"
+                  class="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                 />
                 <button
                   type="submit"
-                  id="discussion-send-btn"
-                  class="px-5 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white text-sm font-bold shadow-md transition-all shrink-0"
+                  class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold shrink-0 transition-colors"
                 >
-                  전송 ✈️
+                  생성/이동
                 </button>
               </form>
-            </section>
-
-            <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-3">
-              <button
-                type="button"
-                id="btn-step3-prev"
-                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
-              >
-                ← 2단계: 이해 확인 퀴즈
-              </button>
-              <button
-                type="button"
-                id="btn-complete-step3"
-                class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white text-sm font-bold shadow-lg transition-all"
-              >
-                4단계: 토론 내용으로 에세이 완성하기 →
-              </button>
             </div>
-          </div>
+          </aside>
 
-          <!-- ====================================================== -->
-          <!-- STEP 4: ESSAY BUILDER & AI HINT FEEDBACK               -->
-          <!-- ====================================================== -->
-          <div id="step-panel-4" class="step-panel hidden space-y-6">
-            <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-              <div class="flex items-center gap-3 mb-4">
-                <span class="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400 text-lg">✍️</span>
-                <div>
-                  <h3 class="text-lg font-bold text-white">4단계. 짧은 영어 에세이 완성하기 (Essay Builder)</h3>
-                  <p class="text-xs text-slate-400">3단계 토론에서 정리한 내 생각을 바탕으로 짧은 영어 문단을 완성해 보세요.</p>
+          <!-- RIGHT MAIN AREA: 4-STEP PROGRESS + WORKSPACE -->
+          <div class="flex-1 min-w-0 flex flex-col">
+
+            <!-- 4-Step Progress Bar -->
+            <div class="no-print sticky top-[61px] z-30 bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3">
+              <div class="max-w-4xl mx-auto grid grid-cols-4 gap-2">
+                <button type="button" id="stepper-btn-1" data-step="1" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
+                  <span id="stepper-badge-1" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">1</span>
+                  <span class="hidden sm:inline truncate">책 읽기 가이드</span>
+                </button>
+                <button type="button" id="stepper-btn-2" data-step="2" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
+                  <span id="stepper-badge-2" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">2</span>
+                  <span class="hidden sm:inline truncate">이해 확인 퀴즈</span>
+                </button>
+                <button type="button" id="stepper-btn-3" data-step="3" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
+                  <span id="stepper-badge-3" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">3</span>
+                  <span class="hidden sm:inline truncate">AI 생각 토론</span>
+                </button>
+                <button type="button" id="stepper-btn-4" data-step="4" class="stepper-btn flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all">
+                  <span id="stepper-badge-4" class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0">4</span>
+                  <span class="hidden sm:inline truncate">에세이 완성</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Step Panels Container -->
+            <div class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-8">
+
+              <!-- ====================================================== -->
+              <!-- STEP 1: BOOK READING GUIDE                             -->
+              <!-- ====================================================== -->
+              <div id="step-panel-1" class="step-panel space-y-8">
+
+                <!-- 1. Situation Summary -->
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
+                  <div class="flex items-center gap-3 mb-3">
+                    <span class="p-2 bg-indigo-500/10 rounded-xl text-indigo-400 text-lg">📖</span>
+                    <div>
+                      <h3 class="text-lg font-bold text-white">1. 챕터 상황 요약 (Situation Summary)</h3>
+                      <p class="text-xs text-slate-400">책을 펼치기 전에 어떤 상황인지 가볍게 배경만 파악해 보세요.</p>
+                    </div>
+                  </div>
+                  <div id="summary-content" class="text-slate-200 text-sm leading-relaxed bg-slate-950/70 p-4 rounded-xl border border-slate-800"></div>
+                </section>
+
+                <!-- 2. Core Vocabulary Flashcards -->
+                <section>
+                  <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <div class="flex items-center gap-3">
+                      <span class="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 text-lg">🃏</span>
+                      <div>
+                        <h3 class="text-lg font-bold text-white">2. 핵심 영단어 플래시카드 (Core Vocabulary)</h3>
+                        <p class="text-xs text-slate-400">카드를 클릭하면 뜻과 창작 예문이 뒤집힙니다.</p>
+                      </div>
+                    </div>
+                    <span class="text-xs text-slate-400">🔊 발음 듣기 · 👁️ 예문 해석 보기 지원</span>
+                  </div>
+                  <div id="vocab-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </section>
+
+                <!-- 3. Polysemy Traps -->
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
+                  <div class="flex items-center gap-3 mb-5">
+                    <span class="p-2 bg-amber-500/10 rounded-xl text-amber-400 text-lg">⚠️</span>
+                    <div>
+                      <h3 class="text-lg font-bold text-white">3. 아는 단어의 반전: 다의어 함정 (Polysemy Traps)</h3>
+                      <p class="text-xs text-slate-400">내가 알던 뜻과 원서 속 진짜 문맥 뜻을 비교하고 미니 퀴즈를 풀어보세요.</p>
+                    </div>
+                  </div>
+                  <div id="polysemy-container" class="space-y-5"></div>
+                </section>
+
+                <!-- 4. Interpretation Points -->
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
+                  <div class="flex items-center gap-3 mb-4">
+                    <span class="p-2 bg-purple-500/10 rounded-xl text-purple-400 text-lg">💡</span>
+                    <div>
+                      <h3 class="text-lg font-bold text-white">4. 구문 &amp; 직독직해 포인트 (Key Expressions)</h3>
+                      <p class="text-xs text-slate-400">직역하면 어색해지기 쉬운 원서 속 핵심 숙어와 구문 팁입니다.</p>
+                    </div>
+                  </div>
+                  <div id="interpretation-container" class="space-y-3"></div>
+                </section>
+
+                <!-- Step 1 -> Step 2 CTA -->
+                <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-4 bg-indigo-950/30 border border-indigo-500/30 rounded-2xl p-5">
+                  <div class="text-xs sm:text-sm text-slate-300">
+                    <strong class="text-indigo-300">📚 1단계 책 읽기 완료!</strong> 원서에서 이번 챕터를 다 읽었다면 내용 이해 퀴즈로 넘어가 볼까요?
+                  </div>
+                  <button
+                    type="button"
+                    id="btn-complete-step1"
+                    class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-sm font-bold rounded-xl shadow-lg transition-all shrink-0"
+                  >
+                    2단계: 내용 이해 확인으로 넘어가기 →
+                  </button>
                 </div>
               </div>
 
-              <!-- Synced Discussion Ideas -->
-              <div id="essay-discussion-notes" class="hidden mb-4 bg-rose-950/25 border border-rose-500/30 rounded-xl p-4">
-                <div class="text-xs font-bold text-rose-300 mb-1.5">💬 3단계 AI 토론에서 말한 내 아이디어 메모</div>
-                <ul id="essay-discussion-notes-list" class="text-xs text-slate-300 space-y-1 list-disc list-inside"></ul>
-              </div>
+              <!-- ====================================================== -->
+              <!-- STEP 2: COMPREHENSION QUIZ GATE                        -->
+              <!-- ====================================================== -->
+              <div id="step-panel-2" class="step-panel hidden space-y-6">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                      <span class="p-2.5 bg-blue-500/10 rounded-xl text-blue-400 text-lg">✅</span>
+                      <div>
+                        <h3 class="text-lg font-bold text-white">2단계. 내용 이해 확인 퀴즈 (Comprehension Check)</h3>
+                        <p class="text-xs text-slate-400">영문 질문을 먼저 읽고 풀어보세요. 해석이 필요하면 👁️ 아이콘을 눌러 확인할 수 있습니다.</p>
+                      </div>
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950 border border-slate-800 text-xs font-bold">
+                      <span class="text-slate-400">정답 현황:</span>
+                      <span id="comp-progress-text" class="text-blue-400">0 / 0 완료</span>
+                    </div>
+                  </div>
 
-              <!-- Essay Topic -->
-              <div id="essay-prompt-box" class="mb-4 bg-slate-950 p-4 rounded-xl border border-slate-800"></div>
+                  <div id="comprehension-container" class="space-y-5"></div>
+                </section>
 
-              <!-- Sentence Starters -->
-              <div class="mb-3">
-                <span class="text-xs text-slate-400 font-semibold block mb-2">✨ 추천 첫 문장 칩 (클릭하면 에세이 창에 바로 추가됩니다):</span>
-                <div id="sentence-starters-container" class="flex flex-wrap gap-2"></div>
-              </div>
-
-              <!-- Essay Input -->
-              <div class="relative mb-4">
-                <textarea
-                  id="essay-input"
-                  rows="5"
-                  placeholder="여기에 영문 에세이를 작성해 보세요..."
-                  class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:border-indigo-500 transition-all placeholder-slate-600"
-                ></textarea>
-                <div class="absolute bottom-3 right-3 text-xs text-slate-400">
-                  단어 수: <span id="word-count" class="font-bold text-indigo-400">0</span> words
+                <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    id="btn-step2-prev"
+                    class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
+                  >
+                    ← 1단계: 책 읽기 가이드 다시 보기
+                  </button>
+                  <button
+                    type="button"
+                    id="step2-next-btn"
+                    disabled
+                    class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-sm font-bold cursor-not-allowed transition-all"
+                  >
+                    🔒 모든 문제를 맞히면 3단계가 열립니다
+                  </button>
                 </div>
               </div>
 
-              <div class="flex justify-end">
-                <button
-                  type="button"
-                  id="btn-essay-feedback"
-                  class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold rounded-xl shadow-lg transition-all"
-                >
-                  ✨ 힌트형 AI 첨삭 피드백 받기
-                </button>
+              <!-- ====================================================== -->
+              <!-- STEP 3: AI SOCRATIC DISCUSSION TALK                    -->
+              <!-- ====================================================== -->
+              <div id="step-panel-3" class="step-panel hidden space-y-6">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                      <span class="p-2.5 bg-rose-500/10 rounded-xl text-rose-400 text-lg">💬</span>
+                      <div>
+                        <h3 class="text-lg font-bold text-white">3단계. AI 리딩 코치와 생각 열기 토론 (AI Talk)</h3>
+                        <p class="text-xs text-slate-400">부모님과 이야기하듯 AI 코치와 대화하며 에세이에 쓸 내 생각을 정리해 보세요.</p>
+                      </div>
+                    </div>
+                    <span id="discussion-turn-badge" class="inline-flex items-center px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-xs font-bold text-rose-300">
+                      대화 횟수: 0회
+                    </span>
+                  </div>
+
+                  <!-- Topic & Parent Guide -->
+                  <div id="discussion-topic-card" class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2"></div>
+
+                  <!-- Chat Log -->
+                  <div id="discussion-chat-log" class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 h-80 overflow-y-auto space-y-3 flex flex-col"></div>
+
+                  <!-- Quick Reply Chips -->
+                  <div>
+                    <span class="text-[11px] text-slate-400 font-semibold block mb-2">💡 말문 트기 칩 (클릭하면 입력창에 들어갑니다):</span>
+                    <div id="discussion-quick-replies" class="flex flex-wrap gap-2"></div>
+                  </div>
+
+                  <!-- Chat Input -->
+                  <form id="discussion-form" class="flex gap-2">
+                    <input
+                      type="text"
+                      id="discussion-input"
+                      placeholder="내 생각을 영어 또는 한국어로 편하게 적어 보세요..."
+                      class="flex-1 px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                      autocomplete="off"
+                    />
+                    <button
+                      type="submit"
+                      id="discussion-send-btn"
+                      class="px-5 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white text-sm font-bold shadow-md transition-all shrink-0"
+                    >
+                      전송 ✈️
+                    </button>
+                  </form>
+                </section>
+
+                <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    id="btn-step3-prev"
+                    class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
+                  >
+                    ← 2단계: 이해 확인 퀴즈
+                  </button>
+                  <button
+                    type="button"
+                    id="btn-complete-step3"
+                    class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white text-sm font-bold shadow-lg transition-all"
+                  >
+                    4단계: 토론 내용으로 에세이 완성하기 →
+                  </button>
+                </div>
               </div>
 
-              <!-- AI Feedback Result -->
-              <div id="essay-feedback-box" class="hidden mt-4 bg-slate-950/90 border border-indigo-500/30 rounded-xl p-5 text-sm">
-                <div class="text-indigo-400 font-bold mb-2">💡 AI 코치의 힌트형 피드백</div>
-                <div id="essay-feedback-text" class="text-slate-200 leading-relaxed space-y-2"></div>
-              </div>
-            </section>
+              <!-- ====================================================== -->
+              <!-- STEP 4: ESSAY BUILDER & AI HINT FEEDBACK               -->
+              <!-- ====================================================== -->
+              <div id="step-panel-4" class="step-panel hidden space-y-6">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
+                  <div class="flex items-center gap-3 mb-4">
+                    <span class="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400 text-lg">✍️</span>
+                    <div>
+                      <h3 class="text-lg font-bold text-white">4단계. 짧은 영어 에세이 완성하기 (Essay Builder)</h3>
+                      <p class="text-xs text-slate-400">3단계 토론에서 정리한 내 생각을 바탕으로 짧은 영어 문단을 완성해 보세요.</p>
+                    </div>
+                  </div>
 
-            <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-3">
-              <button
-                type="button"
-                id="btn-step4-prev"
-                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
-              >
-                ← 3단계: AI 생각 토론 다시 하기
-              </button>
-              <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <button
-                  type="button"
-                  id="btn-step4-print"
-                  class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-sm font-semibold transition-colors"
-                >
-                  🖨️ 전체 학습지 인쇄/PDF
-                </button>
-                <button
-                  type="button"
-                  id="btn-step4-next-chapter"
-                  class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white text-sm font-bold shadow-lg transition-all"
-                >
-                  🎉 챕터 완료! 다음 챕터 생성 →
-                </button>
+                  <!-- Synced Discussion Ideas -->
+                  <div id="essay-discussion-notes" class="hidden mb-4 bg-rose-950/25 border border-rose-500/30 rounded-xl p-4">
+                    <div class="text-xs font-bold text-rose-300 mb-1.5">💬 3단계 AI 토론에서 말한 내 아이디어 메모</div>
+                    <ul id="essay-discussion-notes-list" class="text-xs text-slate-300 space-y-1 list-disc list-inside"></ul>
+                  </div>
+
+                  <!-- Essay Topic -->
+                  <div id="essay-prompt-box" class="mb-4 bg-slate-950 p-4 rounded-xl border border-slate-800"></div>
+
+                  <!-- Sentence Starters -->
+                  <div class="mb-3">
+                    <span class="text-xs text-slate-400 font-semibold block mb-2">✨ 추천 첫 문장 칩 (클릭하면 에세이 창에 바로 추가됩니다):</span>
+                    <div id="sentence-starters-container" class="flex flex-wrap gap-2"></div>
+                  </div>
+
+                  <!-- Essay Input -->
+                  <div class="relative mb-4">
+                    <textarea
+                      id="essay-input"
+                      rows="5"
+                      placeholder="여기에 영문 에세이를 작성해 보세요..."
+                      class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:border-indigo-500 transition-all placeholder-slate-600"
+                    ></textarea>
+                    <div class="absolute bottom-3 right-3 text-xs text-slate-400">
+                      단어 수: <span id="word-count" class="font-bold text-indigo-400">0</span> words
+                    </div>
+                  </div>
+
+                  <div class="flex justify-end">
+                    <button
+                      type="button"
+                      id="btn-essay-feedback"
+                      class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold rounded-xl shadow-lg transition-all"
+                    >
+                      ✨ 힌트형 AI 첨삭 피드백 받기
+                    </button>
+                  </div>
+
+                  <!-- AI Feedback Result -->
+                  <div id="essay-feedback-box" class="hidden mt-4 bg-slate-950/90 border border-indigo-500/30 rounded-xl p-5 text-sm">
+                    <div class="text-indigo-400 font-bold mb-2">💡 AI 코치의 힌트형 피드백</div>
+                    <div id="essay-feedback-text" class="text-slate-200 leading-relaxed space-y-2"></div>
+                  </div>
+                </section>
+
+                <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    id="btn-step4-prev"
+                    class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
+                  >
+                    ← 3단계: AI 생각 토론 다시 하기
+                  </button>
+                  <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <button
+                      type="button"
+                      id="btn-step4-print"
+                      class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-sm font-semibold transition-colors"
+                    >
+                      🖨️ 전체 학습지 인쇄/PDF
+                    </button>
+                    <button
+                      type="button"
+                      id="btn-step4-next-chapter"
+                      class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white text-sm font-bold shadow-lg transition-all"
+                    >
+                      🎉 챕터 완료! 다음 챕터 생성 →
+                    </button>
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
 
@@ -671,8 +739,8 @@
 
       const LOCAL_DB_KEY = 'nonene_reading_books_v1';
       const LOCAL_API_KEY = 'nonene_gemini_api_key';
-      const BLAHBLAH_API_KEY = 'gemini_tutor_api_key'; // 블라블라 토크 공유 키
-      const GEMINI_MODEL = 'gemini-3.8-flash'; // 블라블라 토크와 동일한 작동 검증 모델
+      const BLAHBLAH_API_KEY = 'gemini_tutor_api_key';
+      const GEMINI_MODEL = 'gemini-3.8-flash';
 
       const RECOMMENDED_BOOKS = [
         { title: "Number the Stars" },
@@ -896,7 +964,6 @@
         saveLocalDb(dbObj);
       }
 
-      // 블라블라 토크에 저장된 API 키까지 자동으로 연동해서 불러오기
       function getActiveApiKey() {
         try {
           const ownKey = (localStorage.getItem(LOCAL_API_KEY) || '').trim();
@@ -919,6 +986,21 @@
         dot.className = hasKey
           ? 'h-2 w-2 rounded-full bg-emerald-400'
           : 'h-2 w-2 rounded-full bg-amber-400';
+      }
+
+      // Mobile Chapter Sidebar Drawer Toggle
+      function openChapterSidebar() {
+        const sidebar = document.getElementById('chapter-sidebar');
+        const backdrop = document.getElementById('chapter-sidebar-backdrop');
+        if (sidebar) sidebar.classList.remove('-translate-x-full');
+        if (backdrop) backdrop.classList.remove('hidden');
+      }
+
+      function closeChapterSidebar() {
+        const sidebar = document.getElementById('chapter-sidebar');
+        const backdrop = document.getElementById('chapter-sidebar-backdrop');
+        if (sidebar) sidebar.classList.add('-translate-x-full');
+        if (backdrop) backdrop.classList.add('hidden');
       }
 
       // Toast Notification
@@ -970,7 +1052,6 @@
 
         document.getElementById('cached-count').innerText = String(cachedBookList.length);
 
-        // Suggested Chips
         const chipsContainer = document.getElementById('suggested-chips');
         chipsContainer.innerHTML = '';
 
@@ -997,7 +1078,6 @@
           chipsContainer.appendChild(chip);
         });
 
-        // Library Grid
         const grid = document.getElementById('cached-library-grid');
         grid.innerHTML = '';
 
@@ -1045,7 +1125,6 @@
         await generateBookViaAI(bookTitle, 1);
       }
 
-      // 블라블라 토크와 100% 동일한 방식으로 호출 (불필요한 헤더 및 옵션 제거)
       async function callGeminiContents(contentsArray) {
         const apiKey = getActiveApiKey();
         if (!apiKey) {
@@ -1068,7 +1147,6 @@
         return data;
       }
 
-      // Extract Non-Thought Text from Gemini Response
       function extractTextFromGeminiResult(data) {
         const parts = data?.candidates?.[0]?.content?.parts || [];
         const nonThoughtParts = parts.filter(function (p) {
@@ -1080,7 +1158,6 @@
         return parts[0]?.text || '';
       }
 
-      // Safe JSON Extractor (코드블록/설명 문구가 섞여 있어도 순수 JSON 객체만 정확히 파싱)
       function extractValidJsonFromResult(data) {
         let raw = extractTextFromGeminiResult(data);
         raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1102,9 +1179,9 @@
           return;
         }
 
+        closeChapterSidebar();
         showLoadingModal(true, '1단계: DB 미등록 확인 → AI 가이드 생성 요청', "'" + bookTitle + "' Ch." + chapterNum + " 학습 데이터를 구축하고 있습니다.");
 
-        // 블라블라 토크처럼 단일 프롬프트(contents -> parts -> text)로 깔끔하게 요청
         const promptText = `너는 노느니 에듀테크(Nonene EdTech)의 초·중등 영어 원서 전문 교육 기획자야.
 아래 영어 원서와 챕터 번호에 맞는 4단계 학습 가이드를 만들어 줘.
 
@@ -1235,11 +1312,12 @@
         }
       }
 
-      // Open Study Workspace & Render All 4 Steps
+      // Open Study Workspace & Render Left Sidebar + 4 Steps
       function openStudyWorkspace(bookObj, chapterNum, isFromCache) {
         currentBookData = bookObj;
         const chapters = bookObj.chapters || {};
-        const targetKey = chapters[String(chapterNum)] ? String(chapterNum) : Object.keys(chapters)[0];
+        const sortedKeys = Object.keys(chapters).sort(function (a, b) { return Number(a) - Number(b); });
+        const targetKey = chapters[String(chapterNum)] ? String(chapterNum) : sortedKeys[0];
         const chData = chapters[targetKey];
 
         if (!chData) {
@@ -1248,6 +1326,7 @@
         }
 
         currentChapterNum = Number(targetKey) || 1;
+        closeChapterSidebar();
 
         document.getElementById('view-landing').classList.add('hidden');
         const studyView = document.getElementById('view-study');
@@ -1255,21 +1334,25 @@
         studyView.classList.add('flex');
         window.scrollTo(0, 0);
 
-        // Header Info
-        document.getElementById('study-book-title').innerText = bookObj.title + ' — Ch.' + currentChapterNum;
-        document.getElementById('study-book-author').innerText = (bookObj.author || 'Author') + ' · ' + (chData.chapterTitle || '');
+        // Header & Left Sidebar Book Info
+        document.getElementById('study-book-title').innerText = bookObj.title + ' — Chapter ' + currentChapterNum;
+        document.getElementById('study-book-author').innerText = (bookObj.author || 'Author') + (chData.chapterTitle ? ' · ' + chData.chapterTitle : '');
         document.getElementById('study-ar-level').innerText = bookObj.arLevel || '4.5';
+
+        document.getElementById('sidebar-book-title').innerText = bookObj.title;
+        document.getElementById('sidebar-book-author').innerText = bookObj.author || 'Author';
+        document.getElementById('sidebar-chapter-count').innerText = String(sortedKeys.length);
 
         const badge = document.getElementById('study-cache-badge');
         if (isFromCache) {
           badge.innerText = '⚡ DB 캐시 로드됨';
-          badge.className = 'hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+          badge.className = 'hidden md:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
         } else {
           badge.innerText = '✨ AI 신규 생성 & 저장됨';
-          badge.className = 'hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20';
+          badge.className = 'hidden md:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20';
         }
 
-        // Render Chapter Selector
+        // Render Left Vertical Chapter List
         renderChapterButtons(bookObj);
 
         // Render Step 1 Sections
@@ -1291,20 +1374,37 @@
         goToStep(1);
       }
 
+      // Render Vertical Chapter List in Left Sidebar
       function renderChapterButtons(bookObj) {
         const container = document.getElementById('chapter-buttons-container');
         container.innerHTML = '';
-        const keys = Object.keys(bookObj.chapters || {}).sort(function (a, b) { return Number(a) - Number(b); });
+        const chapters = bookObj.chapters || {};
+        const keys = Object.keys(chapters).sort(function (a, b) { return Number(a) - Number(b); });
 
         keys.forEach(function (k) {
           const num = Number(k);
+          const chInfo = chapters[k] || {};
+          const chSubtitle = chInfo.chapterTitle || ('Chapter ' + num);
+          const isActive = num === Number(currentChapterNum);
+
           const btn = document.createElement('button');
           btn.type = 'button';
-          const isActive = num === Number(currentChapterNum);
           btn.className = isActive
-            ? 'px-3 py-1 rounded-lg bg-indigo-600 text-white text-xs font-bold shadow'
-            : 'px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors';
-          btn.innerText = 'Ch.' + num;
+            ? 'w-full text-left px-3 py-2.5 rounded-xl bg-indigo-600/20 border border-indigo-500/60 text-white shadow-md transition-all flex items-center gap-3'
+            : 'w-full text-left px-3 py-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800/90 border border-slate-800/80 hover:border-slate-700 text-slate-300 hover:text-white transition-all flex items-center gap-3 group';
+
+          const badgeCls = isActive
+            ? 'w-8 h-8 rounded-lg bg-indigo-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow'
+            : 'w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center shrink-0 transition-colors';
+
+          btn.innerHTML =
+            '<span class="' + badgeCls + '">Ch.' + num + '</span>' +
+            '<div class="min-w-0 flex-1">' +
+              '<div class="text-xs font-bold truncate ' + (isActive ? 'text-white' : 'text-slate-200') + '">Chapter ' + num + '</div>' +
+              '<div class="text-[11px] truncate ' + (isActive ? 'text-indigo-300' : 'text-slate-400') + '">' + escapeHtml(chSubtitle) + '</div>' +
+            '</div>' +
+            (isActive ? '<span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>' : '');
+
           btn.addEventListener('click', function () {
             openStudyWorkspace(bookObj, num, true);
           });
@@ -1325,7 +1425,7 @@
         window.speechSynthesis.speak(utter);
       }
 
-      // Step 1-2: Vocab Flashcards (with Translation Toggle on Example Sentence)
+      // Step 1-2: Vocab Flashcards
       function renderVocabCards(vocabList) {
         const grid = document.getElementById('vocab-cards-grid');
         grid.innerHTML = '';
@@ -1472,7 +1572,7 @@
         });
       }
 
-      // Step 2: Comprehension Check Quiz Gate (with Translation Toggle)
+      // Step 2: Comprehension Check Quiz Gate
       function renderComprehensionStep(compQs) {
         const container = document.getElementById('comprehension-container');
         container.innerHTML = '';
@@ -1583,7 +1683,7 @@
         updateStepperUI();
       }
 
-      // Step 3: AI Discussion Talk (블라블라 토크와 동일한 chatHistory role 교차 구조 적용)
+      // Step 3: AI Discussion Talk
       function renderDiscussionStep(discQs, bookTitle, chTitle) {
         const topicCard = document.getElementById('discussion-topic-card');
         const chatLog = document.getElementById('discussion-chat-log');
@@ -1622,7 +1722,6 @@
           '4. 전체 답변은 3~4문장으로 간결하게 작성해.'
         ].join('\n');
 
-        // 블라블라 토크와 똑같은 user(시스템 설정) -> model(첫 질문) 히스토리 초기화
         discussionHistory = [
           { role: 'user', parts: [{ text: systemInstructionText }] },
           { role: 'model', parts: [{ text: mainDisc.questionEn }] }
@@ -1755,7 +1854,7 @@
         box.classList.remove('hidden');
       }
 
-      // Step 4: Essay Builder & AI Hint Feedback (with Translation Toggle)
+      // Step 4: Essay Builder & AI Hint Feedback
       function renderEssayBuilder(essayPrompt) {
         const promptBox = document.getElementById('essay-prompt-box');
         const essayTrans = buildTranslationToggle(essayPrompt.topicKo, 'text-xs text-indigo-300/90 mt-2 pt-2 border-t border-slate-800');
@@ -1963,6 +2062,7 @@
       }
 
       function resetToHome() {
+        closeChapterSidebar();
         const studyView = document.getElementById('view-study');
         studyView.classList.add('hidden');
         studyView.classList.remove('flex');
@@ -1980,7 +2080,6 @@
 
       // Initialize App & Bind All Events Safely
       document.addEventListener('DOMContentLoaded', function () {
-        // Ensure seed book exists with full schema
         const localDb = loadLocalDb();
         const seed = localDb['number-the-stars'];
         if (!seed || !seed.chapters || !seed.chapters['1'] || !Array.isArray(seed.chapters['1'].polysemyTraps)) {
@@ -2018,7 +2117,7 @@
           }
         });
 
-        // Bind UI Events
+        // Search & Navigation Events
         document.getElementById('search-form').addEventListener('submit', function (e) {
           e.preventDefault();
           const q = document.getElementById('search-input').value.trim();
@@ -2027,6 +2126,28 @@
 
         document.getElementById('btn-back-home').addEventListener('click', resetToHome);
 
+        // Mobile Chapter Sidebar Drawer Events
+        document.getElementById('btn-mobile-chapters').addEventListener('click', openChapterSidebar);
+        document.getElementById('btn-close-sidebar').addEventListener('click', closeChapterSidebar);
+        document.getElementById('chapter-sidebar-backdrop').addEventListener('click', closeChapterSidebar);
+
+        // Custom Chapter Number Jump / Generate Form
+        document.getElementById('custom-chapter-form').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          if (!currentBookData) return;
+          const inputEl = document.getElementById('custom-chapter-input');
+          const targetNum = parseInt(inputEl.value, 10);
+          if (!targetNum || targetNum < 1) return;
+          inputEl.value = '';
+
+          if (currentBookData.chapters && currentBookData.chapters[String(targetNum)]) {
+            openStudyWorkspace(currentBookData, targetNum, true);
+          } else {
+            await generateBookViaAI(currentBookData.title, targetNum);
+          }
+        });
+
+        // Settings & DB Events
         document.getElementById('btn-open-settings-landing').addEventListener('click', openSettingsModal);
         document.getElementById('btn-open-settings-study').addEventListener('click', openSettingsModal);
         document.getElementById('btn-close-settings').addEventListener('click', closeSettingsModal);
